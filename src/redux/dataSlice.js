@@ -70,7 +70,7 @@ const dataSlice = createSlice({
     rooms: [],
     busyRoom: [],
     allImages: [],
-    isConfirmOrder: true,
+    isConfirmOrder: false,
     totalSummary: null,
     bookingDate: null,
     roomAndGuest: null,

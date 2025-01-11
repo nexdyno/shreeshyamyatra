@@ -118,7 +118,7 @@
 
 import { bookingCreate, setIsConfirmOrder } from "@/redux/dataSlice";
 import Image from "next/image";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { IoChevronBackOutline } from "react-icons/io5";
 import { v4 as uuidv4 } from "uuid";
 import { parse, format } from "date-fns";
@@ -127,28 +127,36 @@ import toast from "react-hot-toast";
 
 export default function PaymentBar({ formData, setStep }) {
   const dispatch = useDispatch();
+  const {
+    totalSummary,
+    selectedRoom,
+    bookingDate,
+    roomAndGuest,
+    matchedProperty,
+  } = useSelector((state) => state.data);
   const [roomTag, setRoomTag] = useState(null);
-  const [totalSummary, setTotalSummary] = useState(null);
-  const [selectedRoom, setSelectedRoom] = useState(null);
-  const [bookingDate, setBookingDate] = useState(null);
-  const [roomAndGuest, setRoomAndGuest] = useState(null);
-  const [matchedProperty, setMatchedProperty] = useState(null);
+  // const [totalSummary, setTotalSummary] = useState(null);
+  // const [selectedRoom, setSelectedRoom] = useState(null);
+  // const [bookingDate, setBookingDate] = useState(null);
+  // const [roomAndGuest, setRoomAndGuest] = useState(null);
+  // const [matchedProperty, setMatchedProperty] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const [formattedDates, setFormattedDates] = useState({
     startDate: "",
     endDate: "",
   });
 
-  useEffect(() => {
-    // Access localStorage only in the browser
-    if (typeof window !== "undefined") {
-      setTotalSummary(JSON.parse(localStorage.getItem("totalSummary")));
-      setSelectedRoom(JSON.parse(localStorage.getItem("selectedRoom")));
-      setBookingDate(JSON.parse(localStorage.getItem("bookingDate")));
-      setRoomAndGuest(JSON.parse(localStorage.getItem("roomAndGuest")));
-      setMatchedProperty(JSON.parse(localStorage.getItem("matchedProperty")));
-    }
-  }, []);
+  // useEffect(() => {
+  //   // Access localStorage only in the browser
+  //   if (typeof window !== "undefined") {
+  //     setTotalSummary(JSON.parse(localStorage.getItem("totalSummary")));
+  //     setSelectedRoom(JSON.parse(localStorage.getItem("selectedRoom")));
+  //     setBookingDate(JSON.parse(localStorage.getItem("bookingDate")));
+  //     setRoomAndGuest(JSON.parse(localStorage.getItem("roomAndGuest")));
+  //     setMatchedProperty(JSON.parse(localStorage.getItem("matchedProperty")));
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (selectedRoom && roomAndGuest) {
@@ -237,15 +245,70 @@ export default function PaymentBar({ formData, setStep }) {
     }
   };
 
-  if (
-    !totalSummary ||
-    !selectedRoom ||
-    !bookingDate ||
-    !roomAndGuest ||
-    !matchedProperty
-  ) {
-    return <div>Loading...</div>;
-  }
+  // const handelBooking = async () => {
+  //   const guestData = prepareGuestData(formData);
+  //   setIsProcessing(true);
+  //   try {
+  //     const response = await fetch("/api/payment", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         amount: guestData?.total_amount,
+  //         guestData,
+  //       }),
+  //     });
+  //     const data = await response.json();
+  //     if (response.ok) {
+  //       console.log("Order created:", data);
+
+  //       // Call Razorpay Checkout with the order ID
+  //       const options = {
+  //         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+  //         amount: amount * 100,
+  //         currency: "INR",
+  //         name: "Shree Shyam Yatra",
+  //         description: "Payment for the Room Booking",
+  //         order_id: data.id,
+  //         handler: function (response) {
+  //           console.log("Payment successful:", response);
+  //           // Handle payment success
+  //         },
+  //         prefill: {
+  //           name: guestData.name,
+  //           email: guestData.email,
+  //           contact: guestData.contact,
+  //         },
+  //         notes: {
+  //           address: "Khatu shyam",
+  //         },
+  //         theme: {
+  //           color: "#3399cc",
+  //         },
+  //       };
+
+  //       const rzp = new window.Razorpay(options);
+  //       rzp.open();
+  //     } else {
+  //       console.error("Error creating order:", data.error);
+  //     }
+  //   } catch (error) {
+  //     console.error("Payment failed", error);
+  //   } finally {
+  //     setIsProcessing(false);
+  //   }
+  // };
+
+  // if (
+  //   !totalSummary ||
+  //   !selectedRoom ||
+  //   !bookingDate ||
+  //   !roomAndGuest ||
+  //   !matchedProperty
+  // ) {
+  //   return <div>Loading...</div>;
+  // }
   return (
     <div className="bg-white p-5 font-poppins mt-5 w-full ">
       <h3 className="text-2xl font-semibold pb-4">{selectedRoom?.name}</h3>

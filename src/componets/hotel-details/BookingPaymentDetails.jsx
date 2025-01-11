@@ -3,47 +3,20 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import DateSelector from "../home/DateSelector";
 import RoomGuestSelector from "../home/RoomGuestSelector";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setTotalSummary } from "@/redux/dataSlice";
 import toast from "react-hot-toast";
+import { checkUserSession, setLoginIsModalOpen } from "@/redux/authSlice";
+import { supabase } from "@/lib/supabase/supabaseClient";
 
 export default function BookingPaymentDetails() {
   const dispatch = useDispatch();
-  // const roomAndGuest = JSON.parse(localStorage.getItem("roomAndGuest"));
-  // const bookingDate = JSON.parse(localStorage.getItem("bookingDate"));
-  // const selectedRoom = JSON.parse(localStorage.getItem("selectedRoom"));
-  // const matchedProperty = JSON.parse(localStorage.getItem("matchedProperty"));
-  const [roomAndGuest, setRoomAndGuest] = useState(null);
-  const [bookingDate, setBookingDate] = useState(null);
-  const [selectedRoom, setSelectedRoom] = useState(null);
-  const [matchedProperty, setMatchedProperty] = useState(null);
+  const [isLogin, setIsLogIn] = useState(false);
+  const { roomAndGuest, bookingDate, selectedRoom, matchedProperty } =
+    useSelector((state) => state.data);
+  const { session, status, error } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      // Safely access localStorage
-      setRoomAndGuest(
-        localStorage.getItem("roomAndGuest")
-          ? JSON.parse(localStorage.getItem("roomAndGuest"))
-          : null
-      );
-      setBookingDate(
-        localStorage.getItem("bookingDate")
-          ? JSON.parse(localStorage.getItem("bookingDate"))
-          : null
-      );
-      setSelectedRoom(
-        localStorage.getItem("selectedRoom")
-          ? JSON.parse(localStorage.getItem("selectedRoom"))
-          : null
-      );
-      setMatchedProperty(
-        localStorage.getItem("matchedProperty")
-          ? JSON.parse(localStorage.getItem("matchedProperty"))
-          : null
-      );
-    }
-  }, []);
-
+  console.log(session, "sessionsessionsessionsto");
   const [billingData, setBillingData] = useState({
     numberOfDays: 1,
     commission: 0,
@@ -105,9 +78,32 @@ export default function BookingPaymentDetails() {
     JSON.stringify(selectedRoom),
     JSON.stringify(roomAndGuest),
   ]);
+  useEffect(() => {
+    // Check user session on mount
+    dispatch(checkUserSession());
 
+    // Real-time auth state listener
+    const { data: authListener } = supabase.auth.onAuthStateChange(() => {
+      dispatch(checkUserSession());
+    });
+
+    return () => {
+      if (authListener?.subscription) {
+        authListener.subscription.unsubscribe();
+      }
+    };
+  }, [dispatch]);
   const handleBook = () => {
     dispatch(setTotalSummary(billingData));
+    if (session?.user?.email || session?.user?.phone) {
+      setIsLogIn(true);
+    } else {
+      setIsLogIn(false);
+      alert(" please login first.");
+      dispatch(setLoginIsModalOpen(true));
+    }
+
+    // Check user session on mount
   };
 
   return (
@@ -171,15 +167,23 @@ export default function BookingPaymentDetails() {
             </div>
           </div>
         </div>
-
-        <Link href="/guest-details">
+        {isLogin ? (
+          <Link href="/guest-details">
+            <button
+              onClick={handleBook}
+              className="w-full mt-5 bg-primaryGradient text-white text-lg font-semibold py-2 rounded-sm hover:opacity-90 transition"
+            >
+              Continue to Book
+            </button>
+          </Link>
+        ) : (
           <button
             onClick={handleBook}
             className="w-full mt-5 bg-primaryGradient text-white text-lg font-semibold py-2 rounded-sm hover:opacity-90 transition"
           >
             Continue to Book
           </button>
-        </Link>
+        )}
 
         {/* Footer Section */}
         <div className="mt-5 text-gray-600 text-sm space-y-2">

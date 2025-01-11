@@ -7,26 +7,11 @@ import { MdPeopleAlt } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 
 const RoomGuestSelector = () => {
+  // const roomAndGuest = JSON.parse(localStorage.getItem("roomAndGuest"));
+  // const selectedRoom = JSON.parse(localStorage.getItem("selectedRoom"));
+
   const dispatch = useDispatch();
-
-  const [roomAndGuest, setRoomAndGuest] = useState(null);
-  const [selectedRoom, setSelectedRoom] = useState(null);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedRoomAndGuest = localStorage.getItem("roomAndGuest");
-      const storedSelectedRoom = localStorage.getItem("selectedRoom");
-
-      // Safely parse JSON and set state
-      setRoomAndGuest(
-        storedRoomAndGuest ? JSON.parse(storedRoomAndGuest) : null
-      );
-      setSelectedRoom(
-        storedSelectedRoom ? JSON.parse(storedSelectedRoom) : null
-      );
-    }
-  }, []);
-  // const { roomAndGuest, selectedRoom } = useSelector((state) => state.data);
+  const { roomAndGuest, selectedRoom } = useSelector((state) => state.data);
   const [guests, setGuests] = useState(roomAndGuest?.guest || 2);
   const [showPopup, setShowPopup] = useState(false);
   const [rooms, setRooms] = useState(roomAndGuest?.room || 1);

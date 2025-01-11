@@ -28,28 +28,11 @@ export default function RoomDetails({ property }) {
     [rooms, property.id]
   );
 
-  // useEffect(() => {
-  //   dispatch(fetchRooms());
-  //   console.log(rooms, "Rooms Details");
-  //   const matchRooms = rooms?.filter(
-  //     (item) => item.property_id === property.id
-  //   );
-  //   console.log(matchRooms, "Match Rooms");
-  //   // dispatch(setMatchedProperty(foundProperty || null));
-  // }, [property, dispatch]);
-
   useEffect(() => {
-    // Dispatch fetchRooms only if rooms haven't been fetched yet or if the property has changed
     if (!rooms || rooms.length === 0 || rooms[0].property_id !== property.id) {
       dispatch(fetchRooms());
     }
-
-    // const matchRooms = rooms?.filter(
-    //   (item) => item.property_id === property.id
-    // );
-    // console.log(matchRooms, "Match Rooms");
   }, []);
-  // }, [property, dispatch, rooms]);
 
   const scrollToPricing = () => {
     if (pricingRef.current) {

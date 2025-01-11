@@ -12,50 +12,13 @@ import { useDispatch, useSelector } from "react-redux";
 
 export default function RoomCard({ matchRooms }) {
   const [filterRoom, setFilterRoom] = useState(null);
-  const [bookingDate, setBookingDate] = useState(null);
-
   const [avlRoom, setAvlRoom] = useState([]); // Available rooms with quantities
 
   const dispatch = useDispatch();
-  const { OneRoom, selectedRoom, busyRoom } = useSelector(
+  const { OneRoom, selectedRoom, busyRoom, bookingDate } = useSelector(
     (state) => state.data
   ); // Selected room
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setBookingDate(
-        localStorage.getItem("bookingDate")
-          ? JSON.parse(localStorage.getItem("bookingDate"))
-          : null
-      );
-    }
-  }, []);
-  // const bookingDate = JSON.parse(localStorage.getItem("bookingDate"));
-  // let roomAndGuest = JSON.parse(localStorage.getItem("roomAndGuest"));
 
-  // const getAvailableRooms = () => {
-  //   if (!bookingDate || !matchRooms || matchRooms.length === 0) return []; // Early exit if dependencies are missing
-
-  //   const start = new Date(bookingDate.startDate);
-  //   const end = new Date(bookingDate.endDate);
-
-  //   return matchRooms.filter((room) => {
-  //     const isRoomBusy = busyRoom.some((busyRoom) => {
-  //       if (room.id === busyRoom.room_id) {
-  //         const busyStart = new Date(busyRoom.start_date);
-  //         const busyEnd = new Date(busyRoom.end_date);
-
-  //         return (
-  //           (start >= busyStart && start <= busyEnd) || // Start date falls within a busy range
-  //           (end >= busyStart && end <= busyEnd) || // End date falls within a busy range
-  //           (start <= busyStart && end >= busyEnd) // Date range fully overlaps a busy range
-  //         );
-  //       }
-  //       return false;
-  //     });
-
-  //     return !isRoomBusy;
-  //   });
-  // };
   const getAvailableRooms = () => {
     if (!bookingDate || !matchRooms || matchRooms.length === 0) return []; // Early exit if dependencies are missing
 
@@ -104,6 +67,13 @@ export default function RoomCard({ matchRooms }) {
       setAvlRoom(result); // Set initial available rooms state
     }
   }, [JSON.stringify(bookingDate), busyRoom, matchRooms]);
+
+  useEffect(() => {
+    if (!selectedRoom && avlRoom.length > 0) {
+      // Default to the first room in avlRoom
+      dispatch(setSelectedRoom(avlRoom[0]));
+    }
+  }, [selectedRoom, avlRoom, dispatch]);
 
   const handleRoomSelect = (room) => {
     dispatch(setSelectedRoom(room));
@@ -157,24 +127,6 @@ export default function RoomCard({ matchRooms }) {
               <p className="text-base text-gray-500">
                 Rate: ₹{room.rate} / night
               </p>
-              {/* <p className="text-sm text-gray-500">
-                Max Adults: {room.max_adults}
-              </p>
-              <p className="text-sm text-gray-500">
-                Max Children: {room.max_children}
-              </p>
-              <p className="text-sm text-gray-500">
-                Extra Charge per Child: ₹{room.extra_charge_per_child}
-              </p>
-              <p className="text-sm text-gray-500">
-                Extra Charge per Adult: ₹{room.extra_charge_per_adult}
-              </p>
-              <p className="text-sm text-gray-500">
-                Total Rooms Available: {room.total_rooms}
-              </p>
-              <p className="text-sm text-gray-500">
-                Total Occupancy: {room.total_occupancy}
-              </p> */}
 
               {/* Amenities */}
               <div className="mt-3">
