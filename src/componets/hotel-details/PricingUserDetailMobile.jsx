@@ -62,10 +62,40 @@ export default function PricingUserDetailMobile({ scrollToPricing }) {
   };
 
   const dispatch = useDispatch();
-  const roomAndGuest = JSON.parse(localStorage.getItem("roomAndGuest"));
-  const bookingDate = JSON.parse(localStorage.getItem("bookingDate"));
-  const selectedRoom = JSON.parse(localStorage.getItem("selectedRoom"));
-  const matchedProperty = JSON.parse(localStorage.getItem("matchedProperty"));
+  // const roomAndGuest = JSON.parse(localStorage.getItem("roomAndGuest"));
+  // const bookingDate = JSON.parse(localStorage.getItem("bookingDate"));
+  // const selectedRoom = JSON.parse(localStorage.getItem("selectedRoom"));
+  // const matchedProperty = JSON.parse(localStorage.getItem("matchedProperty"));
+  const [roomAndGuest, setRoomAndGuest] = useState(null);
+  const [bookingDate, setBookingDate] = useState(null);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [matchedProperty, setMatchedProperty] = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // Safely access localStorage
+      setRoomAndGuest(
+        localStorage.getItem("roomAndGuest")
+          ? JSON.parse(localStorage.getItem("roomAndGuest"))
+          : null
+      );
+      setBookingDate(
+        localStorage.getItem("bookingDate")
+          ? JSON.parse(localStorage.getItem("bookingDate"))
+          : null
+      );
+      setSelectedRoom(
+        localStorage.getItem("selectedRoom")
+          ? JSON.parse(localStorage.getItem("selectedRoom"))
+          : null
+      );
+      setMatchedProperty(
+        localStorage.getItem("matchedProperty")
+          ? JSON.parse(localStorage.getItem("matchedProperty"))
+          : null
+      );
+    }
+  }, []);
 
   const [billingData, setBillingData] = useState({
     numberOfDays: 1,

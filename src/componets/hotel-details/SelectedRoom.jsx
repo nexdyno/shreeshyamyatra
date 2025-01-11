@@ -12,14 +12,24 @@ import { useDispatch, useSelector } from "react-redux";
 
 export default function RoomCard({ matchRooms }) {
   const [filterRoom, setFilterRoom] = useState(null);
+  const [bookingDate, setBookingDate] = useState(null);
+
   const [avlRoom, setAvlRoom] = useState([]); // Available rooms with quantities
 
   const dispatch = useDispatch();
   const { OneRoom, selectedRoom, busyRoom } = useSelector(
     (state) => state.data
   ); // Selected room
-
-  const bookingDate = JSON.parse(localStorage.getItem("bookingDate"));
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setBookingDate(
+        localStorage.getItem("bookingDate")
+          ? JSON.parse(localStorage.getItem("bookingDate"))
+          : null
+      );
+    }
+  }, []);
+  // const bookingDate = JSON.parse(localStorage.getItem("bookingDate"));
   // let roomAndGuest = JSON.parse(localStorage.getItem("roomAndGuest"));
 
   // const getAvailableRooms = () => {

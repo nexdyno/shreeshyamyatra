@@ -11,7 +11,12 @@ import { setBookingDate } from "@/redux/dataSlice";
 
 const DateSelector = () => {
   const dispatch = useDispatch();
-  const bookingDate = JSON.parse(localStorage.getItem("bookingDate"));
+  const [bookingDate, setBookingDate] = useState(null);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setBookingDate(JSON.parse(localStorage.getItem("bookingDate")));
+    }
+  }, []);
 
   // const { bookingDate } = useSelector((state) => state.data);
   const [dateRange, setDateRange] = useState(() => {
