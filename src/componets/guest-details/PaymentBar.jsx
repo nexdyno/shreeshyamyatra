@@ -1,119 +1,3 @@
-// "use client";
-
-// import { bookingCreate, setIsConfirmOrder } from "@/redux/dataSlice";
-// import Image from "next/image";
-// import { useDispatch, useSelector } from "react-redux";
-// import { IoChevronBackOutline } from "react-icons/io5";
-// import { v4 as uuidv4 } from "uuid";
-// import { parse, format } from "date-fns";
-// import { useEffect, useState } from "react";
-// import toast from "react-hot-toast";
-
-// export default function PaymentBar({ formData, setStep }) {
-//   const dispatch = useDispatch();
-//   const [roomTag, setRoomTag] = useState(null);
-//   // const { selectedRoom, bookingDate, roomAndGuest } = useSelector(
-//   //   (state) => state.data
-//   // );
-//   const generateUniqueIds = () => {
-//     return {
-//       id: uuidv4(),
-//       booking_id: uuidv4(),
-//       room_book: uuidv4(),
-//     };
-//   };
-
-//   const totalSummary = JSON.parse(localStorage.getItem("totalSummary"));
-//   const selectedRoom = JSON.parse(localStorage.getItem("selectedRoom"));
-//   const bookingDate = JSON.parse(localStorage.getItem("bookingDate"));
-//   const roomAndGuest = JSON.parse(localStorage.getItem("roomAndGuest"));
-//   const matchedProperty = JSON.parse(localStorage.getItem("matchedProperty"));
-
-//   const [formattedDates, setFormattedDates] = useState({
-//     startDate: "",
-//     endDate: "",
-//   });
-
-//   useEffect(() => {
-//     const { room_book } = generateUniqueIds();
-
-//     setRoomTag({
-//       id: room_book,
-//       rate: selectedRoom?.rate,
-//       room_id: selectedRoom?.id,
-//       quantity: roomAndGuest?.room,
-//       room_name: selectedRoom?.name,
-//       special_requirements: null,
-//     });
-//   }, []);
-
-//   useEffect(() => {
-//     if (bookingDate?.startDate && bookingDate?.endDate) {
-//       const formatDate = (dateString) => {
-//         const parsedDate = parse(dateString, "MMM d, yyyy", new Date());
-
-//         // Validate the parsed date
-//         if (parsedDate) {
-//           return format(parsedDate, "yyyy-MM-dd");
-//         } else {
-//           console.error(`Invalid date format: ${dateString}`);
-//           return ""; // Return an empty string if the date is invalid
-//         }
-//       };
-
-//       setFormattedDates({
-//         startDate: formatDate(bookingDate?.startDate),
-//         endDate: formatDate(bookingDate?.endDate),
-//       });
-//     }
-//   }, []);
-
-//   const prepareGuestData = (formData) => {
-//     const { id, booking_id } = generateUniqueIds();
-
-//     return {
-//       id,
-//       property_id: "253b53f8-1442-4922-9589-9bec590d2556",
-//       name: formData?.firstName,
-//       contact: formData?.mobile,
-//       email: formData?.email,
-//       check_in_date: formattedDates.startDate,
-//       check_out_date: formattedDates.endDate,
-//       guest_check_in_time: matchedProperty?.check_in_time,
-//       guest_check_out_time: matchedProperty?.check_out_time,
-//       number_of_children: formData?.children,
-//       number_of_adults: formData?.adults,
-//       room_assigned: [roomTag],
-//       bill_clear: false,
-//       created_at: new Date(),
-//       updated_at: new Date(),
-//       booking_id,
-//       booking_status: "pending",
-//       payments: [],
-//       paid_to_status: "paidFromGuest",
-//       is_manual_entry: false,
-//       total_amount: totalSummary?.totalPrice,
-//     };
-//   };
-
-//   const handelBooking = async () => {
-//     const guestData = prepareGuestData(formData);
-
-//     try {
-//       const result = await dispatch(bookingCreate(guestData)).unwrap();
-
-//       toast.success("Booking created successfully!");
-//       if (!matchedProperty?.isAuto) {
-//         dispatch(setIsConfirmOrder(true));
-//       }
-//     } catch (error) {
-//       console.error("Error occurred during booking:", error);
-//       toast.error(
-//         "Failed to create booking: " + (error?.message || "Unknown error")
-//       );
-//     }
-//   };
-
 "use client";
 
 import { bookingCreate, setIsConfirmOrder } from "@/redux/dataSlice";
@@ -124,6 +8,8 @@ import { v4 as uuidv4 } from "uuid";
 import { parse, format } from "date-fns";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import Razorpay from "razorpay";
+import Script from "next/script";
 
 export default function PaymentBar({ formData, setStep }) {
   const dispatch = useDispatch();
@@ -135,28 +21,22 @@ export default function PaymentBar({ formData, setStep }) {
     matchedProperty,
   } = useSelector((state) => state.data);
   const [roomTag, setRoomTag] = useState(null);
-  // const [totalSummary, setTotalSummary] = useState(null);
-  // const [selectedRoom, setSelectedRoom] = useState(null);
-  // const [bookingDate, setBookingDate] = useState(null);
-  // const [roomAndGuest, setRoomAndGuest] = useState(null);
-  // const [matchedProperty, setMatchedProperty] = useState(null);
+
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // const loadRazorpayScript = () => {
+  //   return new Promise((resolve, reject) => {
+  //     const script = document.createElement("script");
+  //     script.src = "https://checkout.razorpay.com/v1/checkout.js";
+  //     script.onload = () => resolve(true);
+  //     script.onerror = () => reject(new Error("Failed to load Razorpay SDK"));
+  //     document.body.appendChild(script);
+  //   });
+  // };
   const [formattedDates, setFormattedDates] = useState({
     startDate: "",
     endDate: "",
   });
-
-  // useEffect(() => {
-  //   // Access localStorage only in the browser
-  //   if (typeof window !== "undefined") {
-  //     setTotalSummary(JSON.parse(localStorage.getItem("totalSummary")));
-  //     setSelectedRoom(JSON.parse(localStorage.getItem("selectedRoom")));
-  //     setBookingDate(JSON.parse(localStorage.getItem("bookingDate")));
-  //     setRoomAndGuest(JSON.parse(localStorage.getItem("roomAndGuest")));
-  //     setMatchedProperty(JSON.parse(localStorage.getItem("matchedProperty")));
-  //   }
-  // }, []);
 
   useEffect(() => {
     if (selectedRoom && roomAndGuest) {
@@ -228,22 +108,22 @@ export default function PaymentBar({ formData, setStep }) {
     };
   };
 
-  const handelBooking = async () => {
-    const guestData = prepareGuestData(formData);
+  // const handelBooking = async () => {
+  //   const guestData = prepareGuestData(formData);
 
-    try {
-      const result = await dispatch(bookingCreate(guestData)).unwrap();
-      toast.success("Booking created successfully!");
-      if (!matchedProperty?.isAuto) {
-        dispatch(setIsConfirmOrder(true));
-      }
-    } catch (error) {
-      console.error("Error occurred during booking:", error);
-      toast.error(
-        "Failed to create booking: " + (error?.message || "Unknown error")
-      );
-    }
-  };
+  //   try {
+  //     const result = await dispatch(bookingCreate(guestData)).unwrap();
+  //     toast.success("Booking created successfully!");
+  //     if (!matchedProperty?.isAuto) {
+  //       dispatch(setIsConfirmOrder(true));
+  //     }
+  //   } catch (error) {
+  //     console.error("Error occurred during booking:", error);
+  //     toast.error(
+  //       "Failed to create booking: " + (error?.message || "Unknown error")
+  //     );
+  //   }
+  // };
 
   // const handelBooking = async () => {
   //   const guestData = prepareGuestData(formData);
@@ -299,18 +179,92 @@ export default function PaymentBar({ formData, setStep }) {
   //     setIsProcessing(false);
   //   }
   // };
+  console.log("Razorpay Key ID:", process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID);
 
-  // if (
-  //   !totalSummary ||
-  //   !selectedRoom ||
-  //   !bookingDate ||
-  //   !roomAndGuest ||
-  //   !matchedProperty
-  // ) {
-  //   return <div>Loading...</div>;
-  // }
+  const handelBooking = async () => {
+    const guestData = prepareGuestData(formData);
+    setIsProcessing(true);
+    try {
+      // const isScriptLoaded = await loadRazorpayScript();
+      // if (!isScriptLoaded) {
+      //   toast.error("Failed to load Razorpay SDK");
+      //   return;
+      // }
+      const response = await fetch("/api/payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: guestData?.total_amount,
+          guestData,
+        }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Order created:", data);
+        const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+        if (!razorpayKey) {
+          throw new Error(
+            "Razorpay key is missing. Check environment variables."
+          );
+        }
+
+        // Call Razorpay Checkout with the order ID
+        const options = {
+          key_id: razorpayKey,
+          amount: guestData.total_amount * 100, // Ensure this is the correct amount
+          currency: "INR",
+          name: "Shree Shyam Yatra",
+          description: "Payment Booking",
+          order_id: data.orderId, // Adjust according to your response structure
+          handler: function (response) {
+            console.log("Payment successful:", response);
+
+            // After successful payment, show toast
+            toast.success("Booking successfully created!");
+
+            // Handle further actions like updating state or navigating
+          },
+          prefill: {
+            name: guestData.name,
+            email: guestData.email,
+            contact: guestData.contact,
+          },
+          notes: {
+            address: "Khatu shyam",
+          },
+          theme: {
+            color: "#3399cc",
+          },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      } else {
+        console.error("Error creating order:", data.error);
+        toast.error("Failed to create order. Please try again.");
+      }
+    } catch (error) {
+      console.error("Payment failed", error);
+      toast.error("Payment failed. Please try again.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  if (
+    !totalSummary ||
+    !selectedRoom ||
+    !bookingDate ||
+    !roomAndGuest ||
+    !matchedProperty
+  ) {
+    return <div>Loading...</div>;
+  }
   return (
     <div className="bg-white p-5 font-poppins mt-5 w-full ">
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       <h3 className="text-2xl font-semibold pb-4">{selectedRoom?.name}</h3>
       <div className="w-full flex gap-2">
         <div className="w-[70%] space-y-2">

@@ -99,7 +99,7 @@ export async function POST(req) {
     const { amount, guestData } = await req.json();
 
     // Generate a unique receipt ID using UUID
-    const receiptId = `receipt_${uuidv4()}`;
+    const receiptId = `rcpt_${uuidv4().substring(0, 30)}`; // Ensures receipt length is <= 40
 
     // Create a Razorpay order
     const order = await razorpay.orders.create({

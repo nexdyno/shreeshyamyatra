@@ -5,19 +5,26 @@ import ShowHotels from "@/container/hotels/ShowHotels";
 import { useAppContext } from "@/context/AppContext";
 import { fetchProperty, fetchRooms } from "@/redux/dataSlice";
 import { usePathname } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Page() {
   const { property, rooms, status, error } = useSelector((state) => state.data);
   const dispatch = useDispatch();
-  const pathName = usePathname(); // If pathName is used, make sure it's set properly in your context
-
+  const pathName = usePathname();
   useEffect(() => {
     // Only dispatch actions if the status is "idle" and data is not yet fetched
+    const fetchData = async () => {
+      try {
+        await dispatch(fetchProperty()).unwrap();
+        await dispatch(fetchRooms()).unwrap();
+      } catch (err) {
+        console.log("erorr while fetching the data", err);
+      } finally {
+      }
+    };
     if (status === "idle" && !property.length && !rooms.length) {
-      dispatch(fetchProperty());
-      dispatch(fetchRooms());
+      fetchData();
     }
   }, [dispatch, status, property, rooms]); // Dependency array includes checks for fetched data
 

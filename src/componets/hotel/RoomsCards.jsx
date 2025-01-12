@@ -204,7 +204,7 @@ function RoomCard({ room }) {
           ))}
         </div>
 
-        <div className="flex flex-col gap-5 lg:gap-0 lg:flex-row items-start lg:items-center justify-between">
+        <div className="flex flex-col gap-5 lg:gap-0 lg:flex-row items-start lg:items-center justify-between lg:pr-16">
           <div className="flex flex-col gap-1">
             <p>{room?.rate}</p>
             <p>+ ₹106 taxes & fees · per room per night</p>
@@ -220,9 +220,9 @@ function RoomCard({ room }) {
               </button>
             </Link>
 
-            <button className="py-2 px-5 text-white rounded-sm bg-primaryGradient hover:bg-black hover:text-white transition-all duration-200 ease-in-out text-base font-semibold">
+            {/* <button className="py-2 px-5 text-white rounded-sm bg-primaryGradient hover:bg-black hover:text-white transition-all duration-200 ease-in-out text-base font-semibold">
               Book now
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

@@ -15,40 +15,38 @@ import {
   fetchRooms,
 } from "@/redux/dataSlice";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Home() {
   const { setRoutePathName } = useAppContext();
   const pathName = usePathname();
-  // const authUser = localStorage.getItem("sb-qlryhlvrtlpfbxrlumwm-auth-token");
 
   const dispatch = useDispatch();
-  const { profiles, property, rooms } = useSelector((state) => state.data);
+
+  const { property, error, status } = useSelector((state) => state.data);
   const { userData } = useSelector((state) => state.auth);
+  const [isLoading, setIsLoading] = useState(true);
   console.log(userData, "userData");
 
   useEffect(() => {
-    // console.log("Initializing App");
-
-    // const initializeAuth = async () => {
-    //   const storedUserData = JSON.parse(localStorage.getItem("userData"));
-
-    //   if (authUser && authUser.user) {
-    //     console.log("User already signed in:", storedUserData);
-    //     dispatch(setUserData(storedUserData)); // Rehydrate Redux
-    //   } else {
-    //     console.log("Signing in anonymously...");
-    //     await dispatch(anonymouslySignin());
-    //   }
-    // };
-    // initializeAuth();
-    // dispatch(fetchRooms());
     dispatch(anonymouslySignin());
-    dispatch(fetchProperty());
-    dispatch(fetchImages());
-  }, [dispatch]);
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        await dispatch(fetchProperty()).unwrap();
+        await dispatch(fetchImages()).unwrap();
+      } catch (err) {
+        setIsLoading(false);
+        console.error("Error in fetching data:", err);
+      } finally {
+        setIsLoading(false);
+        console.log("Data fetching completed");
+      }
+    };
 
+    fetchData();
+  }, [dispatch]);
   return (
     <div>
       <div className="lg:hidden">
@@ -57,12 +55,7 @@ export default function Home() {
       <TopBanner />
       {/* <RecommendedRooms /> */}
       <BannerOffer />
-      <OfferForYou property={property} />
-
-      {/* Uncomment these sections as needed */}
-      {/* <HotelBannerOffer /> */}
-      {/* <OurCollection /> */}
-      {/* <MapSection /> */}
+      <OfferForYou property={property} isLoading={isLoading} />
     </div>
   );
 }

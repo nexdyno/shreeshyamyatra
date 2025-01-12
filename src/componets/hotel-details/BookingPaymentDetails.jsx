@@ -11,7 +11,7 @@ import { supabase } from "@/lib/supabase/supabaseClient";
 
 export default function BookingPaymentDetails() {
   const dispatch = useDispatch();
-  const [isLogin, setIsLogIn] = useState(false);
+  const [isLogin, setIsLogIn] = useState(true);
   const { roomAndGuest, bookingDate, selectedRoom, matchedProperty } =
     useSelector((state) => state.data);
   const { session, status, error } = useSelector((state) => state.auth);

@@ -75,12 +75,32 @@ const SignupForm = ({
     if (step > 1) setStep(step - 1);
   };
 
+  // const handleGoogleLogin = async () => {
+  //   const { data, error } = await googleAuth();
+  //   if (error) {
+  //     alert("Login failed: " + error.message);
+  //   } else {
+  //     alert("Login successful!");
+  //   }
+  // };
   const handleGoogleLogin = async () => {
-    const { data, error } = await googleAuth();
-    if (error) {
-      alert("Login failed: " + error.message);
-    } else {
-      alert("Login successful!");
+    try {
+      const { data, error } = await googleAuth();
+
+      if (error) {
+        console.error("Google login failed:", error);
+        alert(`Login failed: ${error.message}`);
+        return;
+      }
+
+      if (data) {
+        console.log("Google login successful:", data);
+        alert("Login successful!");
+        // Perform post-login actions, e.g., navigation or user state update.
+      }
+    } catch (err) {
+      console.error("An unexpected error occurred:", err);
+      alert("An unexpected error occurred. Please try again later.");
     }
   };
 

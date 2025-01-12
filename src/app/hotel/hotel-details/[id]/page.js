@@ -1,15 +1,21 @@
 "use client";
+
 import SubNavbarMobile from "@/componets/hotel/SubNavbarMobile";
 import HotelDetails from "@/container/hotel-details/HotelDetails";
 import { useAppContext } from "@/context/AppContext";
 import { fetchProperty, setMatchedProperty } from "@/redux/dataSlice";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 export default function Page() {
   const dispatch = useDispatch();
-  const { property, matchedProperty } = useSelector((state) => state.data);
+  const { property, matchedProperty, error } = useSelector(
+    (state) => state.data
+  );
+  const [isLoading, setIsLoading] = useState(true); // Set isLoading to true initially
   const { setRoutePathName } = useAppContext();
   const pathName = usePathname();
 
@@ -17,8 +23,20 @@ export default function Page() {
 
   // Fetch property if it's not available
   useEffect(() => {
+    const handleFetchProperty = async () => {
+      try {
+        await dispatch(fetchProperty()).unwrap();
+      } catch (err) {
+        console.error("Error while fetching the data", err);
+      } finally {
+        setIsLoading(false); // Set loading to false after fetching completes
+      }
+    };
+
     if (!property || property.length === 0) {
-      dispatch(fetchProperty());
+      handleFetchProperty();
+    } else {
+      setIsLoading(false); // If property already exists, stop loading
     }
   }, [property, dispatch]);
 
@@ -40,10 +58,18 @@ export default function Page() {
         <SubNavbarMobile />
       </div>
       <div>
-        {matchedProperty ? (
+        {isLoading ? (
+          <div className="w-full min-h-screen ">
+            <div className="flex items-center justify-center h-screen">
+              <div className="w-16 h-16 border-4 border-t-transparent border-blue-600 border-solid rounded-full animate-spin"></div>
+            </div>
+          </div>
+        ) : matchedProperty ? (
           <HotelDetails property={matchedProperty} />
+        ) : error ? (
+          <p className="text-center text-red-500">Error: {error}</p> // Show error message
         ) : (
-          <p className="text-center text-red-500">Property not found</p>
+          <p className="text-center text-red-500">Property not found</p> // Show "Property not found" if no match
         )}
       </div>
     </div>

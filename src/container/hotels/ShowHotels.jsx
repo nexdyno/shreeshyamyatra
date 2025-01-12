@@ -1,6 +1,8 @@
 import SubNavbarMobile from "@/componets/hotel/SubNavbarMobile";
 import FilterSideBar from "@/componets/hotel/FilterSideBar";
 import RoomsCards from "@/componets/hotel/RoomsCards";
+import RoomDetailsSkeleton from "@/componets/hotel/RoomDetailsSkeleton";
+import FilterSideBarSkeleton from "@/componets/hotel/FilterSideBarSkeleton";
 
 export default function ShowHotels({ data, status, error }) {
   return (
@@ -16,7 +18,10 @@ export default function ShowHotels({ data, status, error }) {
           scrollbarColor: "#2276E3",
         }}
       >
-        <FilterSideBar />
+        {(status === "loading" || status === "idle") && (
+          <FilterSideBarSkeleton />
+        )}
+        {status === "succeeded" && <FilterSideBar />}
       </div>
       <div
         className="w-full lg:w-[80%] h-full overflow-y-auto"
@@ -26,11 +31,7 @@ export default function ShowHotels({ data, status, error }) {
           scrollbarColor: "#2276E3",
         }}
       >
-        {(status === "loading" || status === "idle") && (
-          <div className="flex justify-center items-center h-screen">
-            <p>Loading...</p>
-          </div>
-        )}
+        {(status === "loading" || status === "idle") && <RoomDetailsSkeleton />}
 
         {status === "failed" && (
           <div className="flex justify-center items-center h-screen">
