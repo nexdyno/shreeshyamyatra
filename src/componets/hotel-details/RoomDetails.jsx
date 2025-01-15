@@ -57,7 +57,7 @@ export default function RoomDetails({ property }) {
             <h1 className="text-secondary text-2xl font-semibold">
               {property.name}
             </h1>
-            <p className="text-sm text-gray-500">{property.description}</p>
+            {/* <p className="text-sm text-gray-500">{property.description}</p> */}
           </div>
           {/* Rating */}
           <div className="w-fit bg-green-500 text-white flex gap-2 items-center py-0.5 px-2 rounded-sm">

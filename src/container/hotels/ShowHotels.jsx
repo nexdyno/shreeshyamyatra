@@ -7,6 +7,7 @@ import { CiEdit } from "react-icons/ci";
 import { useDispatch, useSelector } from "react-redux";
 import { IoIosArrowBack, IoMdArrowBack } from "react-icons/io";
 import { setIsSearchOpen } from "@/redux/dataSlice";
+import InsideNavabr from "@/componets/common/InsideNavabr";
 
 export default function ShowHotels({ data, status, error }) {
   const dispatch = useDispatch();
@@ -17,10 +18,9 @@ export default function ShowHotels({ data, status, error }) {
   return (
     <div className="w-full h-screen  flex flex-col lg:flex-row">
       <div className="w-full md:hidden">
-        <div className="bg-white py-4 border-b px-6 flex items-center justify-between shadow-sm rounded-sm">
-          {/* Left Section */}
+        {/*         
+        <div className="bg-white py-4 border-b border-gray-400 px-6 flex items-center justify-between shadow-sm rounded-sm">
           <div className="flex flex-col gap-2">
-            {/* Header with Back Arrow and Title */}
             <div className="flex items-center">
               <span className="cursor-pointer text-gray-600 -ml-5">
                 <IoMdArrowBack size={20} className="text-black font-bold" />
@@ -30,9 +30,7 @@ export default function ShowHotels({ data, status, error }) {
               </p>
             </div>
 
-            {/* Booking Info */}
             <div className="flex items-center text-sm font-semibold font-poppins text-gray-600 px-2">
-              {/* Date Range */}
               <span className="mr-6">
                 {bookingDate
                   ? `${new Date(bookingDate?.startDate).toLocaleDateString(
@@ -51,7 +49,6 @@ export default function ShowHotels({ data, status, error }) {
                   : "Please select the date"}
               </span>
 
-              {/* Room and Guest Info */}
               <span>
                 {roomAndGuest
                   ? `${roomAndGuest?.room} room${
@@ -64,7 +61,6 @@ export default function ShowHotels({ data, status, error }) {
             </div>
           </div>
 
-          {/* Edit Button */}
           <div className="bg-gray-100 hover:bg-gray-200 rounded-full p-2 cursor-pointer shadow-sm">
             <CiEdit
               onClick={() => dispatch(setIsSearchOpen(true))}
@@ -72,7 +68,8 @@ export default function ShowHotels({ data, status, error }) {
               className="text-gray-600"
             />
           </div>
-        </div>
+        </div> */}
+        <InsideNavabr />
         {IsSearchOpen ? (
           <SubNavbarMobile
             IsSearchOpen={IsSearchOpen}

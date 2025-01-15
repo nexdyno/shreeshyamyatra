@@ -122,7 +122,7 @@ function RoomCard({ room }) {
   };
 
   return (
-    <div className="w-full min-h-[30vh] flex flex-col lg:flex-row gap-2 py-3 px-3 lg:px-0">
+    <div className="w-full min-h-[30vh] flex flex-col lg:flex-row gap-2 py-3 px-3 lg:px-0 overflow-hidden">
       {/* Left Section */}
       <div className="w-full lg:w-[40%] min-h-[30vh] flex ">
         {/* Swiper Section */}
@@ -207,7 +207,7 @@ function RoomCard({ room }) {
         <div className="flex flex-col gap-5 lg:gap-0 lg:flex-row items-start lg:items-center justify-between lg:pr-16">
           <div className="flex flex-col gap-1">
             <p>{room?.rate}</p>
-            <p>+ ₹106 taxes & fees · per room per night</p>
+            {/* <p>+ ₹106 taxes & fees · per room per night</p> */}
           </div>
 
           <div className="flex items-center gap-5 text-nowrap cursor-pointer">

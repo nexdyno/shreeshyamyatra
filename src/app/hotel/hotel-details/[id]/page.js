@@ -3,7 +3,11 @@
 import SubNavbarMobile from "@/componets/hotel/SubNavbarMobile";
 import HotelDetails from "@/container/hotel-details/HotelDetails";
 import { useAppContext } from "@/context/AppContext";
-import { fetchProperty, setMatchedProperty } from "@/redux/dataSlice";
+import {
+  fetchProperty,
+  setIsSearchOpen,
+  setMatchedProperty,
+} from "@/redux/dataSlice";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,10 +15,11 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { anonymouslySignin, setUserSession } from "@/redux/authSlice";
 import { initializeSession } from "@/lib/helperFunctions/sessionChecker";
+import InsideNavabr from "@/componets/common/InsideNavabr";
 
 export default function Page() {
   const dispatch = useDispatch();
-  const { property, matchedProperty, error } = useSelector(
+  const { property, matchedProperty, error, IsSearchOpen } = useSelector(
     (state) => state.data
   );
   const { sessionFromLocal } = useSelector((state) => state.auth);
@@ -60,9 +65,17 @@ export default function Page() {
   }, [pathName, setRoutePathName]);
 
   return (
-    <div className="pt-[35vh] lg:pt-20">
-      <div className="fixed top-0 pt-3 left-0 w-full z-20 bg-white">
-        <SubNavbarMobile />
+    <div className=" pt-32 lg:pt-20">
+      <div className="fixed md:hidden top-0 pt-3 left-0 w-full z-20 bg-white">
+        <InsideNavabr />
+        {IsSearchOpen ? (
+          <SubNavbarMobile
+            IsSearchOpen={IsSearchOpen}
+            onClose={() => dispatch(setIsSearchOpen(false))}
+          />
+        ) : (
+          ""
+        )}
       </div>
       <div>
         {isLoading ? (
