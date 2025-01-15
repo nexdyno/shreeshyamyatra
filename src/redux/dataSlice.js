@@ -70,6 +70,7 @@ const dataSlice = createSlice({
     rooms: [],
     busyRoom: [],
     allImages: [],
+    IsSearchOpen: false,
     isConfirmOrder: false,
     totalSummary: null,
     bookingDate: null,
@@ -85,6 +86,9 @@ const dataSlice = createSlice({
     setMatchedProperty: (state, action) => {
       state.matchedProperty = action.payload;
       localStorage.setItem("matchedProperty", JSON.stringify(action.payload));
+    },
+    setIsSearchOpen: (state, action) => {
+      state.IsSearchOpen = action.payload;
     },
     setOneRoom: (state, action) => {
       state.OneRoom = action.payload;
@@ -199,5 +203,6 @@ export const {
   setSelectedRoom,
   setTotalSummary,
   setIsConfirmOrder,
+  setIsSearchOpen,
 } = dataSlice.actions;
 export default dataSlice.reducer;

@@ -8,6 +8,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 
 import { useSelector } from "react-redux";
 import LoadingOfferForYou from "./LoadingOfferForYou";
+import Image from "next/image";
 
 export default function OfferForYou({ property, isLoading }) {
   const options = ["All", "Hotel", "Resort", "Villa"];
@@ -62,24 +63,32 @@ export default function OfferForYou({ property, isLoading }) {
             ))}
           </div>
           {/* Cards Section */}
+
           <div className="overflow-x-auto lg:overflow-hidden">
             <div className="flex sm:flex-wrap md:grid-cols-3 lg:grid lg:grid-cols-3 gap-6 overflow-x-auto w-full">
               {filteredProperties.slice(0, 6)?.map((item) => (
                 <Link key={item.id} href={`/hotel/hotel-details/${item?.id}`}>
                   <div className="border border-gray-300 rounded-lg overflow-hidden transition duration-300 p-5 flex-shrink-0 w-72 lg:w-full">
-                    <img
-                      src={item.logo_url || "/assets/home/default-image.svg"}
-                      alt={item.name}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="p-4">
-                      <h2 className="text-lg font-bold mb-2">{item.name}</h2>
-                      <p className="text-sm text-gray-600">{item.address}</p>
-                      <p className="text-sm text-gray-600 mb-4">
-                        {item.description}
-                      </p>
-                      <button className="mt-4 bg-primaryGradient text-white py-2 px-4 rounded-sm hover:bg-blue-700 transition duration-300">
-                        Book Now
+                    {/* <div className="border border-gray-300 rounded-lg overflow-hidden transition duration-300 p-5  flex flex-col h-full"> */}
+                    <div className="relative h-40 w-full mb-4">
+                      <Image
+                        src={item.logo_url || "/assets/home/default-image.svg"}
+                        alt={item.name}
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-t-lg"
+                      />
+                    </div>
+                    <div className="flex-grow flex flex-col justify-between">
+                      <div>
+                        <h2 className="text-lg font-bold mb-2">{item.name}</h2>
+                        <p className="text-sm text-gray-600">{item.address}</p>
+                        <p className="text-sm text-gray-600 mb-4">
+                          {item.description}
+                        </p>
+                      </div>
+                      <button className="mt-4 bg-transparent border border-gray-800 hover:border-none text-gray-800 py-2 px-4 rounded-sm hover:bg-gray-800 hover:text-white transition duration-300 w-full font-semibold">
+                        View Details
                       </button>
                     </div>
                   </div>
@@ -87,9 +96,9 @@ export default function OfferForYou({ property, isLoading }) {
               ))}
             </div>
 
-            <div className="w-full h-full mt-10 flex items-center justify-center font-poppins">
+            <div className="w-full h-full mt-5 lg:mt-10 flex items-center justify-center font-poppins">
               <Link href="/properties">
-                <button className="px-10 py-2 rounded-sm font-medium tracking-wide text-lg text-white bg-primaryGradient">
+                <button className="text-primary font-semibold underline font-poppins text-xl">
                   View All
                 </button>
               </Link>

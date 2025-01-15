@@ -48,6 +48,7 @@ export default function Home() {
       try {
         await dispatch(fetchProperty()).unwrap();
         await dispatch(fetchImages()).unwrap();
+        await dispatch(fetchRooms()).unwrap();
       } catch (err) {
         console.error("Error in fetching data:", err);
       } finally {

@@ -2,6 +2,7 @@
 
 import LoadingOfferForYou from "@/container/home/LoadingOfferForYou";
 import { fetchImages, fetchProperty } from "@/redux/dataSlice";
+import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,30 +33,38 @@ export default function Page() {
   }, [dispatch, property]);
 
   return (
-    <div className="w-full min-h-screen font-poppins mt-20 px-20 pb-10">
-      <div className="w-full flex items-center justify-center py-10">
-        <h1 className="font-semibold tracking-wide text-5xl">All Hotels</h1>
+    <div className="w-full min-h-screen font-poppins px-5 mt-5 lg:mt-20 lg:px-20 pb-20 lg:pb-10">
+      <div className="w-full flex items-center justify-center py-5 lg:py-10">
+        <h1 className="font-semibold tracking-wide text-2xl lg:text-5xl">
+          All Hotels
+        </h1>
       </div>
       {isLoading ? (
         <LoadingOfferForYou />
       ) : (
-        <div className="flex sm:flex-wrap md:grid-cols-3 lg:grid lg:grid-cols-3 gap-6 overflow-x-auto w-full">
-          {property?.map((item) => (
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+          {property?.slice(0, 6)?.map((item) => (
             <Link key={item.id} href={`/hotel/hotel-details/${item?.id}`}>
-              <div className="border border-gray-300 rounded-lg overflow-hidden transition duration-300 p-5 flex-shrink-0 w-72 lg:w-full">
-                <img
-                  src={item.logo_url || "/assets/home/default-image.svg"}
-                  alt={item.name}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-4">
-                  <h2 className="text-lg font-bold mb-2">{item.name}</h2>
-                  <p className="text-sm text-gray-600">{item.address}</p>
-                  <p className="text-sm text-gray-600 mb-4">
-                    {item.description}
-                  </p>
-                  <button className="mt-4 bg-primaryGradient text-white py-2 px-4 rounded-sm hover:bg-blue-700 transition duration-300">
-                    Book Now
+              <div className="border border-gray-300 rounded-lg overflow-hidden transition duration-300 p-5 flex flex-col h-full">
+                <div className="relative h-40 w-full mb-4">
+                  <Image
+                    src={item.logo_url || "/assets/home/default-image.svg"}
+                    alt={item.name}
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-t-lg"
+                  />
+                </div>
+                <div className="flex-grow flex flex-col justify-between">
+                  <div>
+                    <h2 className="text-lg font-bold mb-2">{item.name}</h2>
+                    <p className="text-sm text-gray-600">{item.address}</p>
+                    <p className="text-sm text-gray-600 mb-4">
+                      {item.description}
+                    </p>
+                  </div>
+                  <button className="mt-4 bg-transparent border border-gray-800 hover:border-none text-gray-800 py-2 px-4 rounded-sm hover:bg-gray-800 hover:text-white transition duration-300 w-full font-semibold">
+                    View Details
                   </button>
                 </div>
               </div>

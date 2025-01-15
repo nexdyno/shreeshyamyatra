@@ -71,7 +71,7 @@ export default function BannerOffer() {
   ];
 
   return (
-    <div className="w-full h-[80vh] lg:h-[70vh] lg:px-20 py-10 font-poppins">
+    <div className="w-full min-h-fit lg:h-[70vh] lg:px-20 py-10 font-poppins">
       <div
         className="w-full h-full md:rounded-md"
         style={{
