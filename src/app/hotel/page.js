@@ -3,6 +3,8 @@
 import FilterAndSort from "@/componets/common/FilterAndSort";
 import ShowHotels from "@/container/hotels/ShowHotels";
 import { useAppContext } from "@/context/AppContext";
+import { initializeSession } from "@/lib/helperFunctions/sessionChecker";
+import { anonymouslySignin, setUserSession } from "@/redux/authSlice";
 import { fetchProperty, fetchRooms } from "@/redux/dataSlice";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -10,10 +12,10 @@ import { useDispatch, useSelector } from "react-redux";
 
 export default function Page() {
   const { property, rooms, status, error } = useSelector((state) => state.data);
+  const { sessionFromLocal } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const pathName = usePathname();
   useEffect(() => {
-    // Only dispatch actions if the status is "idle" and data is not yet fetched
     const fetchData = async () => {
       try {
         await dispatch(fetchProperty()).unwrap();
@@ -25,6 +27,10 @@ export default function Page() {
     };
     if (status === "idle" && !property.length && !rooms.length) {
       fetchData();
+    }
+
+    if (!sessionFromLocal) {
+      initializeSession(dispatch);
     }
   }, [dispatch, status, property, rooms]); // Dependency array includes checks for fetched data
 

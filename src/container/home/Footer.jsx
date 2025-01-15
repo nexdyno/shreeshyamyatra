@@ -27,27 +27,28 @@ const footerLinks = [
     title: "OUR SERVICES",
     linksArray: [
       {
-        name: "Register Your Property",
+        name: "List Your property",
         link: "#",
       },
       {
-        name: "Hotel Management Services",
+        name: "Register Properties",
+        link: "#",
+      },
+
+      {
+        name: "Hotel Room Booking",
         link: "#",
       },
       {
-        name: "Promotional Campaigns",
+        name: "All Rooms",
         link: "#",
       },
       {
-        name: "Revenue Management",
+        name: "Offers For you",
         link: "#",
       },
       {
-        name: "Customer Support",
-        link: "#",
-      },
-      {
-        name: "Partner Training",
+        name: "Call us now for the Booking",
         link: "#",
       },
     ],
@@ -57,15 +58,15 @@ const footerLinks = [
     linksArray: [
       {
         name: "About Us",
-        link: "#",
+        link: "/about",
       },
       {
         name: "Terms & Conditions",
-        link: "#",
+        link: "/legal/termsAndConditions",
       },
       {
         name: "Privacy Policy",
-        link: "#",
+        link: "/legal/privacyPolicy",
       },
       {
         name: "Contact Us",
@@ -80,12 +81,12 @@ const ContactDetailsDiv = () => {
     {
       Icon: FaPhone, // Icon name
       title: "Phone Number:",
-      value: "+1 234-567-890",
+      value: "7073390557",
     },
     {
       Icon: FaMailBulk, // Icon name
       title: "Email Address:",
-      value: "support@hotelbooking.com",
+      value: "support@shreeshyamyatra.com",
     },
     {
       Icon: FaLocationArrow, // Icon name

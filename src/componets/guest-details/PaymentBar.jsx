@@ -37,7 +37,6 @@ export default function PaymentBar({ formData, setStep }) {
     startDate: "",
     endDate: "",
   });
-
   useEffect(() => {
     if (selectedRoom && roomAndGuest) {
       const { room_book } = generateUniqueIds();
@@ -85,7 +84,7 @@ export default function PaymentBar({ formData, setStep }) {
 
     return {
       id,
-      property_id: "253b53f8-1442-4922-9589-9bec590d2556",
+      property_id: selectedRoom?.property_id,
       name: formData?.firstName,
       contact: formData?.mobile,
       email: formData?.email,

@@ -7,7 +7,12 @@ import OfferForYou from "@/container/home/OfferForYou";
 import RecommendedRooms from "@/container/home/RecommendedRooms";
 import TopBanner from "@/container/home/TopBanner";
 import { useAppContext } from "@/context/AppContext";
-import { anonymouslySignin } from "@/redux/authSlice";
+import { initializeSession } from "@/lib/helperFunctions/sessionChecker";
+import {
+  anonymouslySignin,
+  checkUserSession,
+  setUserSession,
+} from "@/redux/authSlice";
 import {
   fetchImages,
   fetchProfiles,
@@ -25,19 +30,25 @@ export default function Home() {
   const dispatch = useDispatch();
 
   const { property, error, status } = useSelector((state) => state.data);
-  const { userData } = useSelector((state) => state.auth);
+  const { userData, sessionFromLocal } = useSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(true);
-  console.log(userData, "userData");
 
   useEffect(() => {
-    dispatch(anonymouslySignin());
+    // const initializeSession = async () => {
+    //   // Retrieve and set the session token
+    //   const token = localStorage.getItem("sb-qlryhlvrtlpfbxrlumwm-auth-token");
+    //   if (token) {
+    //     dispatch(setUserSession(token));
+    //   } else {
+    //     await dispatch(anonymouslySignin());
+    //   }
+    // };
     const fetchData = async () => {
       setIsLoading(true);
       try {
         await dispatch(fetchProperty()).unwrap();
         await dispatch(fetchImages()).unwrap();
       } catch (err) {
-        setIsLoading(false);
         console.error("Error in fetching data:", err);
       } finally {
         setIsLoading(false);
@@ -45,8 +56,16 @@ export default function Home() {
       }
     };
 
-    fetchData();
+    const initialize = async () => {
+      if (!sessionFromLocal) {
+        await initializeSession(dispatch);
+      }
+      fetchData();
+    };
+
+    initialize();
   }, [dispatch]);
+
   return (
     <div>
       <div className="lg:hidden">

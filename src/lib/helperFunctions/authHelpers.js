@@ -7,6 +7,10 @@ export const googleAuth = async () => {
     const { data: authData, error: authError } =
       await supabase.auth.signInWithOAuth({
         provider: "google",
+        options: {
+          redirectTo:
+            process.env.NEXT_PUBLIC_REDIRECT_URL || "http://localhost:3000", // Replace with your intended URL
+        },
       });
 
     if (authError) {

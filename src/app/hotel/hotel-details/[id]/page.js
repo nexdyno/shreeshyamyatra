@@ -9,12 +9,16 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { anonymouslySignin, setUserSession } from "@/redux/authSlice";
+import { initializeSession } from "@/lib/helperFunctions/sessionChecker";
 
 export default function Page() {
   const dispatch = useDispatch();
   const { property, matchedProperty, error } = useSelector(
     (state) => state.data
   );
+  const { sessionFromLocal } = useSelector((state) => state.auth);
+
   const [isLoading, setIsLoading] = useState(true); // Set isLoading to true initially
   const { setRoutePathName } = useAppContext();
   const pathName = usePathname();
@@ -37,6 +41,9 @@ export default function Page() {
       handleFetchProperty();
     } else {
       setIsLoading(false); // If property already exists, stop loading
+    }
+    if (!sessionFromLocal) {
+      initializeSession(dispatch);
     }
   }, [property, dispatch]);
 

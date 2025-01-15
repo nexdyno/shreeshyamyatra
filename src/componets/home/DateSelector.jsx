@@ -25,7 +25,7 @@ const DateSelector = () => {
     } else {
       const today = new Date();
       const startDate = new Date(today);
-      startDate.setDate(today.getDate() + 1);
+      startDate.setDate(today.getDate());
 
       const endDate = new Date(startDate);
       endDate.setDate(startDate.getDate() + 1);

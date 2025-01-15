@@ -78,30 +78,30 @@ export default function BookingPaymentDetails() {
     JSON.stringify(selectedRoom),
     JSON.stringify(roomAndGuest),
   ]);
-  useEffect(() => {
-    // Check user session on mount
-    dispatch(checkUserSession());
+  // useEffect(() => {
+  //   // Check user session on mount
+  //   dispatch(checkUserSession());
 
-    // Real-time auth state listener
-    const { data: authListener } = supabase.auth.onAuthStateChange(() => {
-      dispatch(checkUserSession());
-    });
+  //   // Real-time auth state listener
+  //   const { data: authListener } = supabase.auth.onAuthStateChange(() => {
+  //     dispatch(checkUserSession());
+  //   });
 
-    return () => {
-      if (authListener?.subscription) {
-        authListener.subscription.unsubscribe();
-      }
-    };
-  }, [dispatch]);
+  //   return () => {
+  //     if (authListener?.subscription) {
+  //       authListener.subscription.unsubscribe();
+  //     }
+  //   };
+  // }, [dispatch]);
   const handleBook = () => {
     dispatch(setTotalSummary(billingData));
-    if (session?.user?.email || session?.user?.phone) {
-      setIsLogIn(true);
-    } else {
-      setIsLogIn(false);
-      alert(" please login first.");
-      dispatch(setLoginIsModalOpen(true));
-    }
+    // if (session?.user?.email || session?.user?.phone) {
+    //   setIsLogIn(true);
+    // } else {
+    //   setIsLogIn(false);
+    //   alert(" please login first.");
+    //   dispatch(setLoginIsModalOpen(true));
+    // }
 
     // Check user session on mount
   };
