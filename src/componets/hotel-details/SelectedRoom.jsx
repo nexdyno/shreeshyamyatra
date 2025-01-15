@@ -85,81 +85,88 @@ export default function RoomCard({ matchRooms }) {
       )
     );
   };
+  console.log(avlRoom, "avlRoom avlRoom");
 
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-4">All Rooms</h2>
-      <div className="space-y-6">
-        {avlRoom?.map((room) => (
-          <div
-            key={room.id}
-            className={`flex flex-col md:flex-row border rounded-lg hover:shadow-md p-4 bg-white cursor-pointer ${
-              selectedRoom?.id === room.id ? "border-primary bg-blue-100" : "" // Highlight selected room
-            }`}
-            onClick={() => handleRoomSelect(room)} // Select room on click
-          >
-            {/* Image Section */}
-            <div className="relative w-full md:w-1/3 h-48 md:h-auto overflow-hidden rounded-md shadow-md">
-              <Image
-                src={room.image || "/assets/home/image1.svg"} // Fallback image
-                alt={`${room.name} Image`}
-                layout="fill"
-                objectFit="cover"
-              />
-            </div>
-
-            {/* Details Section */}
-            <div className="flex-1 md:pl-6 mt-4 md:mt-0">
-              {/* Room Name */}
-              <div className="flex items-center mb-2">
-                <h3 className="text-xl font-semibold">
-                  {room.name}
-                  {OneRoom?.id === room.id && (
-                    <FaCheckCircle className="text-green-500 ml-2" /> // Green check if selected
-                  )}
-                </h3>
+      {avlRoom.length !== 0 ? (
+        <div className="space-y-6">
+          {avlRoom?.map((room) => (
+            <div
+              key={room.id}
+              className={`flex flex-col md:flex-row border rounded-lg hover:shadow-md p-4 bg-white cursor-pointer ${
+                selectedRoom?.id === room.id ? "border-primary bg-blue-100" : "" // Highlight selected room
+              }`}
+              onClick={() => handleRoomSelect(room)} // Select room on click
+            >
+              {/* Image Section */}
+              <div className="relative w-full md:w-1/3 h-48 md:h-auto overflow-hidden rounded-md shadow-md">
+                <Image
+                  src={room.image || "/assets/home/image1.svg"} // Fallback image
+                  alt={`${room.name} Image`}
+                  layout="fill"
+                  objectFit="cover"
+                />
               </div>
 
-              {/* Room Details */}
-              <p className="text-sm text-gray-500">
-                <p>Available Quantity: {room.available_quantity}</p>
-              </p>
-              <p className="text-base text-gray-500">
-                Rate: ₹{room.rate} / night
-              </p>
+              {/* Details Section */}
+              <div className="flex-1 md:pl-6 mt-4 md:mt-0">
+                {/* Room Name */}
+                <div className="flex items-center mb-2">
+                  <h3 className="text-xl font-semibold">
+                    {room.name}
+                    {OneRoom?.id === room.id && (
+                      <FaCheckCircle className="text-green-500 ml-2" /> // Green check if selected
+                    )}
+                  </h3>
+                </div>
 
-              {/* Amenities */}
-              <div className="mt-3">
-                <h4 className="text-sm font-semibold mb-2">Amenities:</h4>
-                <div className="flex flex-wrap gap-2">
-                  <div className="flex items-center gap-1 text-gray-600">
-                    <FaSnowflake />
-                    <span>AC</span>
-                  </div>
+                {/* Room Details */}
+                <p className="text-sm text-gray-500">
+                  <p>Available Quantity: {room.available_quantity}</p>
+                </p>
+                <p className="text-base text-gray-500">
+                  Rate: ₹{room.rate} / night
+                </p>
 
-                  <div className="flex items-center gap-1 text-gray-600">
-                    <FaWifi />
-                    <span>WiFi</span>
-                  </div>
+                {/* Amenities */}
+                <div className="mt-3">
+                  <h4 className="text-sm font-semibold mb-2">Amenities:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    <div className="flex items-center gap-1 text-gray-600">
+                      <FaSnowflake />
+                      <span>AC</span>
+                    </div>
 
-                  <div className="flex items-center gap-1 text-gray-600">
-                    <span>Microwave</span>
-                  </div>
+                    <div className="flex items-center gap-1 text-gray-600">
+                      <FaWifi />
+                      <span>WiFi</span>
+                    </div>
 
-                  <div className="flex items-center gap-1 text-gray-600">
-                    <span>Hair Dryer</span>
-                  </div>
+                    <div className="flex items-center gap-1 text-gray-600">
+                      <span>Microwave</span>
+                    </div>
 
-                  <div className="flex items-center gap-1 text-gray-600">
-                    <FaCouch />
-                    <span>Sofa</span>
+                    <div className="flex items-center gap-1 text-gray-600">
+                      <span>Hair Dryer</span>
+                    </div>
+
+                    <div className="flex items-center gap-1 text-gray-600">
+                      <FaCouch />
+                      <span>Sofa</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <h1 className="text-2xl py-5 font-semibold text-center font-poppins text-black">
+          No Rooms are Available for the Selected date
+        </h1>
+      )}
     </div>
   );
 }

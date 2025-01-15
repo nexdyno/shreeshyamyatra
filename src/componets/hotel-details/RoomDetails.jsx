@@ -6,8 +6,15 @@ import Image from "next/image";
 import { BsTvFill } from "react-icons/bs";
 import { FaStar } from "react-icons/fa";
 import { IoIosPerson } from "react-icons/io";
-import { IoBed } from "react-icons/io5";
-import { MdBackupTable, MdWater, MdWifi } from "react-icons/md";
+import { IoBed, IoFitnessOutline } from "react-icons/io5";
+import {
+  MdBackupTable,
+  MdPool,
+  MdSpa,
+  MdTv,
+  MdWater,
+  MdWifi,
+} from "react-icons/md";
 import BookingPaymentDetails from "./BookingPaymentDetails";
 import PricingUserDetailMobile from "./PricingUserDetailMobile";
 import SelectedRoom from "./SelectedRoom";
@@ -60,12 +67,11 @@ export default function RoomDetails({ property }) {
         </div>
 
         {/* Room Types */}
-        <div className="pt-5 lg:pt-10 flex items-start lg:items-center gap-5 md:gap-10">
+        {/* <div className="pt-5 lg:pt-10 flex items-start lg:items-center gap-5 md:gap-10">
           <h1 className="text-lg md:text-xl font-semibold text-start text-secondary text-nowrap">
             Rooms Type
           </h1>
           <div className="flex flex-wrap items-center gap-4">
-            {/* Replace these buttons with dynamic room types if available */}
             <button className="text-black border border-black text-sm md:text-base rounded-full bg-transparent py-0.5 md:py-1 px-3 lg:px-4 hover:bg-black hover:text-white">
               Basic
             </button>
@@ -76,7 +82,7 @@ export default function RoomDetails({ property }) {
               Premium
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* Amenities */}
         <div className="py-10">
@@ -91,10 +97,12 @@ export default function RoomDetails({ property }) {
               <div key={index} className="flex gap-2 text-2xl items-center">
                 <div className="text-gray-500">
                   {/* Placeholder icons for now */}
-                  {facility === "gym" && <IoBed />}
-                  {facility === "wifi" && <MdWifi />}
-                  {facility === "spa" && <MdWater />}
-                  {facility === "tv" && <BsTvFill />}
+                  {facility === "gym" && <IoFitnessOutline />} {/* Gym */}
+                  {facility === "wifi" && <MdWifi />} {/* WiFi */}
+                  {facility === "spa" && <MdSpa />} {/* Spa */}
+                  {facility === "tv" && <MdTv />} {/* TV */}
+                  {facility === "swimmingPool" && <MdPool />}{" "}
+                  {/* Swimming Pool */}
                 </div>
                 <p className="text-xs md:text-sm text-gray-500">{facility}</p>
               </div>
@@ -109,12 +117,12 @@ export default function RoomDetails({ property }) {
         </div>
         <SelectedRoom matchRooms={matchRooms} />
         {/* Reviews Section */}
-        <div className="w-full h-full py-3">
+
+        {/* <div className="w-full h-full py-3">
           <h1 className="text-2xl font-semibold text-start text-secondary mb-4">
             Rating And Reviews
           </h1>
           <div className="flex flex-col gap-4">
-            {/* Example Review */}
             <div className="flex items-center gap-2">
               <IoIosPerson className="text-gray-500" size={25} />
               <div className="flex gap-1 items-center">
@@ -127,7 +135,7 @@ export default function RoomDetails({ property }) {
               industry.
             </p>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Right Section */}

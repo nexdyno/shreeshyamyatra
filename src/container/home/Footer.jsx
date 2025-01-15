@@ -199,9 +199,9 @@ export default function Footer() {
       <div className="w-full md:hidden">
         <ContactDetailsDiv />
       </div>
-      <div className="mt-6 md:mt-0 bg-[#182532] w-full py-2 flex items-center justify-center text-sm gap-1">
-        <FaRegCopyright />
-        <p>2024 HotelBooking All Rights Reserved.</p>
+      <div className="mt-6 md:mt-0 bg-[#182532] w-full py-2 flex items-center justify-center text-sm gap-1 text-white">
+        <span>&copy; 2024 Nexdyno</span>
+        <p>| Shree Shyam Yatra | All Rights Reserved.</p>
       </div>
     </div>
   );

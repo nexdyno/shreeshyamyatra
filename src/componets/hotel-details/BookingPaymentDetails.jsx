@@ -16,7 +16,7 @@ export default function BookingPaymentDetails() {
     useSelector((state) => state.data);
   const { session, status, error } = useSelector((state) => state.auth);
 
-  console.log(session, "sessionsessionsessionsto");
+  console.log(selectedRoom, "selectedRoomselectedRoom");
   const [billingData, setBillingData] = useState({
     numberOfDays: 1,
     commission: 0,
@@ -47,7 +47,7 @@ export default function BookingPaymentDetails() {
 
     // Calculate room price with GST
 
-    const gstAmount = (matchedProperty?.GST / 100) * selectedRoom?.rate;
+    const gstAmount = (matchedProperty?.gst / 100) * selectedRoom?.rate;
     const roomPriceWIthGST = selectedRoom?.rate + gstAmount;
 
     // Calculate extra person price
@@ -78,6 +78,8 @@ export default function BookingPaymentDetails() {
     JSON.stringify(selectedRoom),
     JSON.stringify(roomAndGuest),
   ]);
+  console.log(billingData, "billingData billingData");
+
   // useEffect(() => {
   //   // Check user session on mount
   //   dispatch(checkUserSession());
@@ -108,100 +110,108 @@ export default function BookingPaymentDetails() {
 
   return (
     <div className="flex justify-end items-center">
-      <div className="bg-white shadow-lg border w-full max-w-md p-5 font-poppins">
-        {/* Price Section */}
-        <div className="border-b pb-5">
-          <div className="flex justify-between items-center">
-            <p className="text-2xl font-semibold text-secondary">
-              Rs .{Math.round(billingData?.roomPriceWIthGST)}
-            </p>
-            <div className="flex items-center space-x-2">
-              <span className="text-gray-400 line-through"></span>
-              <span className="text-red-500 text-sm font-semibold"></span>
+      {selectedRoom ? (
+        <div className="bg-white shadow-lg border w-full max-w-md p-5 font-poppins">
+          {/* Price Section */}
+          <div className="border-b pb-5">
+            <div className="flex justify-between items-center">
+              <p className="text-2xl font-semibold text-secondary">
+                Rs.{" "}
+                {isNaN(billingData?.roomPriceWIthGST) ||
+                !billingData?.roomPriceWIthGST
+                  ? 0
+                  : Math.round(billingData.roomPriceWIthGST)}
+              </p>
+              <div className="flex items-center space-x-2">
+                <span className="text-gray-400 line-through"></span>
+                <span className="text-red-500 text-sm font-semibold"></span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Booking Date Selector */}
-        <div className="border-b py-5">
-          <div className="flex items-center justify-between">
-            <DateSelector />
-            <RoomGuestSelector />
+          {/* Booking Date Selector */}
+          <div className="border-b py-5">
+            <div className="flex items-center justify-between">
+              <DateSelector />
+              <RoomGuestSelector />
+            </div>
+            <div className="mt-3 text-secondary text-sm font-semibold bg-gray-100 py-3 px-4 rounded-md">
+              {selectedRoom?.name || "Select Room"}
+            </div>
           </div>
-          <div className="mt-3 text-secondary text-sm font-semibold bg-gray-100 py-3 px-4 rounded-md">
-            {selectedRoom?.name}
-          </div>
-        </div>
 
-        {/* Total Price */}
+          {/* Total Price */}
 
-        <div className="border-b py-5">
-          <div className="flex gap-2 py-1">
-            <p>Nights</p>
-            <p className="text-secondary font-semibold">
-              {Math.round(billingData?.numberOfDays)}
-            </p>
-          </div>
-          <div className="flex justify-between py-1">
-            <p>Room Price</p>
-            <p className="text-secondary font-semibold">
-              Rs {Math.round(billingData?.finalRoomPrice)}
-            </p>
-          </div>
-          <div className="flex justify-between py-1">
-            <p>Extra Guests: {roomAndGuest?.extraPerson}</p>
-            <p className="text-secondary font-semibold">
-              Rs {Math.round(billingData?.extraPersonPrice)}
-            </p>
-          </div>
-          <div className="mt-3 flex justify-between items-center">
-            <p className="font-semibold text-gray-800">Total Price</p>
-            <div className="text-right">
-              <p className="text-gray-700 text-sm space-x-4">
-                Convenience Fee (All inclusive){" "}
-                <span> {Math.round(billingData?.commission)}</span>
-              </p>
+          <div className="border-b py-5">
+            <div className="flex gap-2 py-1">
+              <p>Nights</p>
               <p className="text-secondary font-semibold">
-                Rs {Math.round(billingData?.totalPrice)}
+                {Math.round(billingData?.numberOfDays)}
               </p>
             </div>
+            <div className="flex justify-between py-1">
+              <p>Room Price</p>
+              <p className="text-secondary font-semibold">
+                Rs {Math.round(billingData?.finalRoomPrice)}
+              </p>
+            </div>
+            <div className="flex justify-between py-1">
+              <p>Extra Guests: {roomAndGuest?.extraPerson}</p>
+              <p className="text-secondary font-semibold">
+                Rs {Math.round(billingData?.extraPersonPrice)}
+              </p>
+            </div>
+            <div className="mt-3 flex justify-between items-center">
+              <p className="font-semibold text-gray-800">Total Price</p>
+              <div className="text-right">
+                <p className="text-gray-700 text-sm space-x-4">
+                  Convenience Fee (All inclusive){" "}
+                  <span> {Math.round(billingData?.commission)}</span>
+                </p>
+                <p className="text-secondary font-semibold">
+                  Rs {Math.round(billingData?.totalPrice)}
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
-        {isLogin ? (
-          <Link href="/guest-details">
+          {isLogin ? (
+            <Link href="/guest-details">
+              <button
+                onClick={handleBook}
+                className="w-full mt-5 bg-primaryGradient text-white text-lg font-semibold py-2 rounded-sm hover:opacity-90 transition"
+              >
+                Continue to Book
+              </button>
+            </Link>
+          ) : (
             <button
               onClick={handleBook}
               className="w-full mt-5 bg-primaryGradient text-white text-lg font-semibold py-2 rounded-sm hover:opacity-90 transition"
             >
               Continue to Book
             </button>
-          </Link>
-        ) : (
-          <button
-            onClick={handleBook}
-            className="w-full mt-5 bg-primaryGradient text-white text-lg font-semibold py-2 rounded-sm hover:opacity-90 transition"
-          >
-            Continue to Book
-          </button>
-        )}
+          )}
 
-        {/* Footer Section */}
-        <div className="mt-5 text-gray-600 text-sm space-y-2">
-          <p>12 people booked this hotel today</p>
-          <p className="text-blue-500 underline cursor-pointer">
-            Cancellation Policy
-          </p>
-          <p className="text-blue-500 underline cursor-pointer">
-            Follow safety measures advised at the hotel
-          </p>
-          <p className="text-gray-500">
-            By proceeding, you agree to our{" "}
-            <span className="text-blue-500 underline cursor-pointer">
-              Guest Policies
-            </span>
-          </p>
+          {/* Footer Section */}
+          <div className="mt-5 text-gray-600 text-sm space-y-2">
+            <p>12 people booked this hotel today</p>
+            <p className="text-blue-500 underline cursor-pointer">
+              Cancellation Policy
+            </p>
+            <p className="text-blue-500 underline cursor-pointer">
+              Follow safety measures advised at the hotel
+            </p>
+            <p className="text-gray-500">
+              By proceeding, you agree to our{" "}
+              <span className="text-blue-500 underline cursor-pointer">
+                Guest Policies
+              </span>
+            </p>
+          </div>
         </div>
-      </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 }

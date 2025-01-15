@@ -35,7 +35,7 @@ const CustomRangeSlider = () => {
             className="absolute top-5 text-sm font-medium text-black"
             style={{ transform: "translateX(-50%)" }}
           >
-            ${minValue}
+            ₹{minValue}
           </div>
         </div>
         {/* Thumb 2 */}
@@ -48,7 +48,7 @@ const CustomRangeSlider = () => {
             className="absolute top-5 text-sm font-medium text-black"
             style={{ transform: "translateX(-50%)" }}
           >
-            ${maxValue}
+            ₹{maxValue}
           </div>
         </div>
         {/* Range Inputs */}
