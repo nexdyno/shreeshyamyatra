@@ -12,6 +12,7 @@
     "@reduxjs/toolkit": "^2.5.0",
     "@supabase/supabase-js": "^2.47.10",
     "axios": "^1.7.9",
+    "crypto": "^1.0.1",
     "date-fns": "^4.1.0",
     "html2canvas": "^1.4.1",
     "install": "^0.13.0",

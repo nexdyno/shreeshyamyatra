@@ -17,7 +17,6 @@ export const AppProvider = ({ children }) => {
   const [mobileSearch, setmobileSearch] = useState(false);
   const [clickCheck, setclickCheck] = useState("");
   const [searchText, setSearchText] = useState("");
-  const [isOTPModalOpen, setIsOTPModalOpen] = useState(false);
   const [isLoginModalOpen, setLoginIsModalOpen] = useState(false);
 
   return (
@@ -31,8 +30,6 @@ export const AppProvider = ({ children }) => {
         setclickCheck,
         searchText,
         setSearchText,
-        isOTPModalOpen,
-        setIsOTPModalOpen,
         isLoginModalOpen,
         setLoginIsModalOpen,
       }}

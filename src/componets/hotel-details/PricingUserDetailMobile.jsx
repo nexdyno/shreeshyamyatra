@@ -94,7 +94,7 @@ export default function PricingUserDetailMobile({ scrollToPricing }) {
 
     // Calculate room price with GST
 
-    const gstAmount = (matchedProperty?.GST / 100) * selectedRoom?.rate;
+    const gstAmount = (matchedProperty?.gst / 100) * selectedRoom?.rate;
     const roomPriceWIthGST = selectedRoom?.rate + gstAmount;
 
     // Calculate extra person price
@@ -191,12 +191,10 @@ export default function PricingUserDetailMobile({ scrollToPricing }) {
           </div>
         </div>
 
-        {/* Booking Details Section */}
-        <form onSubmit={handleSubmit}>
+        {/* <form onSubmit={handleSubmit}>
           <div>
             <h2 className="text-lg font-semibold mb-4">Your booking details</h2>
 
-            {/* Full Name Input */}
             <div className="mb-4">
               <label className="text-sm text-gray-600" htmlFor="fullName">
                 Full name
@@ -218,7 +216,6 @@ export default function PricingUserDetailMobile({ scrollToPricing }) {
               )}
             </div>
 
-            {/* Mobile Number Input */}
             <div className="mb-4">
               <label className="text-sm text-gray-600" htmlFor="mobileNumber">
                 Mobile number
@@ -247,7 +244,6 @@ export default function PricingUserDetailMobile({ scrollToPricing }) {
               )}
             </div>
 
-            {/* Email Address Input */}
             <div className="mb-6">
               <label className="text-sm text-gray-600" htmlFor="email">
                 Email address
@@ -270,7 +266,6 @@ export default function PricingUserDetailMobile({ scrollToPricing }) {
             </div>
           </div>
 
-          {/* Book Now Button */}
           <div className="relative">
             <button
               type="submit"
@@ -279,7 +274,7 @@ export default function PricingUserDetailMobile({ scrollToPricing }) {
               Book now & pay at hotel
             </button>
           </div>
-        </form>
+        </form> */}
       </div>
 
       <div className="lg:hidden fixed bottom-14 bg-white w-full shadow-md py-2 px-3 border border-gray-300 flex items-center justify-between">

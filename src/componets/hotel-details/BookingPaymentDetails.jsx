@@ -4,17 +4,26 @@ import Link from "next/link";
 import DateSelector from "../home/DateSelector";
 import RoomGuestSelector from "../home/RoomGuestSelector";
 import { useDispatch, useSelector } from "react-redux";
-import { setTotalSummary } from "@/redux/dataSlice";
+import { bookingCreate, setTotalSummary } from "@/redux/dataSlice";
 import toast from "react-hot-toast";
 import { checkUserSession, setLoginIsModalOpen } from "@/redux/authSlice";
 import { supabase } from "@/lib/supabase/supabaseClient";
+import { format, parse } from "date-fns";
+import { v4 as uuidv4 } from "uuid";
 
 export default function BookingPaymentDetails() {
   const dispatch = useDispatch();
-  const [isLogin, setIsLogIn] = useState(true);
-  const { roomAndGuest, bookingDate, selectedRoom, matchedProperty } =
-    useSelector((state) => state.data);
+  const [isLogin, setIsLogIn] = useState(false);
+  const [guestData, setGuestData] = useState(null);
+  const {
+    roomAndGuest,
+    bookingDate,
+    selectedRoom,
+    matchedProperty,
+    totalSummary,
+  } = useSelector((state) => state.data);
   const { session, status, error } = useSelector((state) => state.auth);
+  const [roomTag, setRoomTag] = useState(null);
 
   console.log(selectedRoom, "selectedRoomselectedRoom");
   const [billingData, setBillingData] = useState({
@@ -78,36 +87,136 @@ export default function BookingPaymentDetails() {
     JSON.stringify(selectedRoom),
     JSON.stringify(roomAndGuest),
   ]);
-  console.log(billingData, "billingData billingData");
 
-  // useEffect(() => {
-  //   // Check user session on mount
-  //   dispatch(checkUserSession());
-
-  //   // Real-time auth state listener
-  //   const { data: authListener } = supabase.auth.onAuthStateChange(() => {
-  //     dispatch(checkUserSession());
-  //   });
-
-  //   return () => {
-  //     if (authListener?.subscription) {
-  //       authListener.subscription.unsubscribe();
-  //     }
-  //   };
-  // }, [dispatch]);
-  const handleBook = () => {
-    dispatch(setTotalSummary(billingData));
-    // if (session?.user?.email || session?.user?.phone) {
-    //   setIsLogIn(true);
-    // } else {
-    //   setIsLogIn(false);
-    //   alert(" please login first.");
-    //   dispatch(setLoginIsModalOpen(true));
-    // }
-
+  useEffect(() => {
     // Check user session on mount
+    dispatch(checkUserSession());
+
+    // Real-time auth state listener
+    const { data: authListener } = supabase.auth.onAuthStateChange(() => {
+      dispatch(checkUserSession());
+    });
+
+    return () => {
+      if (authListener?.subscription) {
+        authListener.subscription.unsubscribe();
+      }
+    };
+  }, [dispatch]);
+
+  const [formattedDates, setFormattedDates] = useState({
+    startDate: "",
+    endDate: "",
+  });
+  useEffect(() => {
+    if (selectedRoom && roomAndGuest) {
+      const { room_book } = generateUniqueIds();
+
+      setRoomTag({
+        id: room_book,
+        rate: selectedRoom?.rate,
+        room_id: selectedRoom?.id,
+        quantity: roomAndGuest?.room,
+        room_name: selectedRoom?.name,
+        special_requirements: null,
+      });
+    }
+  }, [selectedRoom, roomAndGuest]);
+
+  useEffect(() => {
+    if (bookingDate?.startDate && bookingDate?.endDate) {
+      const formatDate = (dateString) => {
+        const parsedDate = parse(dateString, "MMM d, yyyy", new Date());
+        if (parsedDate) {
+          return format(parsedDate, "yyyy-MM-dd");
+        } else {
+          console.error(`Invalid date format: ${dateString}`);
+          return "";
+        }
+      };
+
+      setFormattedDates({
+        startDate: formatDate(bookingDate?.startDate),
+        endDate: formatDate(bookingDate?.endDate),
+      });
+    }
+  }, [bookingDate]);
+
+  const generateUniqueIds = () => {
+    return {
+      id: uuidv4(),
+      booking_id: uuidv4(),
+      room_book: uuidv4(),
+    };
   };
 
+  const prepareGuestData = (formData) => {
+    const { id, booking_id } = generateUniqueIds();
+    localStorage.setItem("my_id", booking_id);
+
+    return {
+      id,
+      property_id: selectedRoom?.property_id,
+      profile_id: session?.user?.id,
+      name: session?.user_metadata?.name || "",
+      contact: session?.user?.phone || "",
+      email: session?.user?.email || "",
+      check_in_date: formattedDates.startDate,
+      check_out_date: formattedDates.endDate,
+      guest_check_in_time: matchedProperty?.check_in_time,
+      guest_check_out_time: matchedProperty?.check_out_time,
+      number_of_children: 0,
+      number_of_adults: roomAndGuest?.guest,
+      room_assigned: [roomTag],
+      bill_clear: false,
+      created_at: new Date(),
+      updated_at: new Date(),
+      booking_id,
+      booking_status: "processing",
+      payments: [],
+      paid_to_status: "unPaidFromGuest",
+      is_manual_entry: false,
+      total_amount: billingData?.totalPrice,
+      extra_guest: {
+        extraPerson: roomAndGuest?.extraPerson,
+        extraPrice: billingData?.extraPersonPrice,
+      },
+      our_charges: billingData?.commission,
+      total_roomPrice: billingData?.finalRoomPrice,
+    };
+  };
+
+  const bookingProcess = async () => {
+    try {
+      console.log(guestData, "guest data insdide the booking create");
+      await dispatch(bookingCreate(guestData)).unwrap();
+      window.location.href = "/guest-details";
+    } catch (error) {
+      toast.error(
+        error.message ||
+          "An error occurred while booking process. Please try again."
+      );
+    }
+  };
+
+  const handleBook = () => {
+    dispatch(setTotalSummary(billingData));
+    if (session?.user?.email || session?.user?.phone) {
+      const data = prepareGuestData();
+      setIsLogIn(true);
+      setGuestData(data); // This will trigger the useEffect
+    } else {
+      setIsLogIn(false);
+      dispatch(setLoginIsModalOpen(true));
+    }
+  };
+  useEffect(() => {
+    if (guestData) {
+      bookingProcess();
+    }
+  }, [guestData]);
+
+  console.log(guestData, "guest data guest data");
   return (
     <div className="flex justify-end items-center">
       {selectedRoom ? (
@@ -174,23 +283,21 @@ export default function BookingPaymentDetails() {
               </div>
             </div>
           </div>
-          {isLogin ? (
-            <Link href="/guest-details">
-              <button
-                onClick={handleBook}
-                className="w-full mt-5 bg-primaryGradient text-white text-lg font-semibold py-2 rounded-sm hover:opacity-90 transition"
-              >
-                Continue to Book
-              </button>
-            </Link>
-          ) : (
-            <button
+          {/* {isLogin ? ( */}
+          <button
+            onClick={handleBook}
+            className="w-full mt-5 bg-primaryGradient text-white text-lg font-semibold py-2 rounded-sm hover:opacity-90 transition"
+          >
+            Continue to Book
+          </button>
+          {/* ) : ( */}
+          {/* <button
               onClick={handleBook}
               className="w-full mt-5 bg-primaryGradient text-white text-lg font-semibold py-2 rounded-sm hover:opacity-90 transition"
             >
               Continue to Book
-            </button>
-          )}
+            </button> */}
+          {/* )} */}
 
           {/* Footer Section */}
           <div className="mt-5 text-gray-600 text-sm space-y-2">

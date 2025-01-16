@@ -6,14 +6,9 @@ import PaymentBar from "@/componets/guest-details/PaymentBar";
 
 export default function GuestInformation() {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
     email: "",
     mobile: "",
-    checkin: "",
-    checkout: "",
-    adults: 2,
-    children: 0,
   });
 
   const handleSubmit = () => {

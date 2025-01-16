@@ -1,6 +1,12 @@
 "use client";
 
-import { bookingCreate, setIsConfirmOrder } from "@/redux/dataSlice";
+import {
+  bookingCreate,
+  fetchBookingData,
+  saveGuestData,
+  savePaymentDetail,
+  setIsConfirmOrder,
+} from "@/redux/dataSlice";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { IoChevronBackOutline } from "react-icons/io5";
@@ -13,120 +19,95 @@ import Script from "next/script";
 
 export default function PaymentBar({ formData, setStep }) {
   const dispatch = useDispatch();
-  const {
-    totalSummary,
-    selectedRoom,
-    bookingDate,
-    roomAndGuest,
-    matchedProperty,
-  } = useSelector((state) => state.data);
+  const { bookingData } = useSelector((state) => state.data);
+  const { session } = useSelector((state) => state.auth);
   const [roomTag, setRoomTag] = useState(null);
-
   const [isProcessing, setIsProcessing] = useState(false);
-
-  // const loadRazorpayScript = () => {
-  //   return new Promise((resolve, reject) => {
-  //     const script = document.createElement("script");
-  //     script.src = "https://checkout.razorpay.com/v1/checkout.js";
-  //     script.onload = () => resolve(true);
-  //     script.onerror = () => reject(new Error("Failed to load Razorpay SDK"));
-  //     document.body.appendChild(script);
-  //   });
-  // };
-  const [formattedDates, setFormattedDates] = useState({
-    startDate: "",
-    endDate: "",
+  const [isLoading, setIsLoading] = useState(true);
+  const [paymentTableId, setPaymentTableId] = useState(null);
+  const [guestData, setGuestData] = useState({
+    name: "",
+    email: "",
+    contact: "",
+    payments: [],
+    paid_to_status: "paidFromGuest",
+    booking_status: "pending",
   });
-  useEffect(() => {
-    if (selectedRoom && roomAndGuest) {
-      const { room_book } = generateUniqueIds();
-
-      setRoomTag({
-        id: room_book,
-        rate: selectedRoom?.rate,
-        room_id: selectedRoom?.id,
-        quantity: roomAndGuest?.room,
-        room_name: selectedRoom?.name,
-        special_requirements: null,
-      });
-    }
-  }, [selectedRoom, roomAndGuest]);
-
-  useEffect(() => {
-    if (bookingDate?.startDate && bookingDate?.endDate) {
-      const formatDate = (dateString) => {
-        const parsedDate = parse(dateString, "MMM d, yyyy", new Date());
-        if (parsedDate) {
-          return format(parsedDate, "yyyy-MM-dd");
-        } else {
-          console.error(`Invalid date format: ${dateString}`);
-          return "";
-        }
-      };
-
-      setFormattedDates({
-        startDate: formatDate(bookingDate?.startDate),
-        endDate: formatDate(bookingDate?.endDate),
-      });
-    }
-  }, [bookingDate]);
 
   const generateUniqueIds = () => {
     return {
-      id: uuidv4(),
-      booking_id: uuidv4(),
-      room_book: uuidv4(),
+      payment_table_id: uuidv4(),
     };
   };
 
-  const prepareGuestData = (formData) => {
-    const { id, booking_id } = generateUniqueIds();
+  useEffect(() => {
+    if (!formData || !bookingData) return; // Ensure dependencies exist before proceeding
+    if (!paymentTableId) {
+      const { payment_table_id } = generateUniqueIds();
+      setPaymentTableId(payment_table_id);
+    }
+    setGuestData((prevGuestData) => {
+      const updatedGuestData = {
+        ...prevGuestData,
+        name: formData?.name,
+        email: session?.user?.email || formData?.email,
+        contact: session?.user?.phone || formData?.mobile,
+        payments: [paymentTableId],
+      };
 
-    return {
-      id,
-      property_id: selectedRoom?.property_id,
-      name: formData?.firstName,
-      contact: formData?.mobile,
-      email: formData?.email,
-      check_in_date: formattedDates.startDate,
-      check_out_date: formattedDates.endDate,
-      guest_check_in_time: matchedProperty?.check_in_time,
-      guest_check_out_time: matchedProperty?.check_out_time,
-      number_of_children: formData?.children,
-      number_of_adults: formData?.adults,
-      room_assigned: [roomTag],
-      bill_clear: false,
-      created_at: new Date(),
-      updated_at: new Date(),
-      booking_id,
-      booking_status: "pending",
-      payments: [],
-      paid_to_status: "paidFromGuest",
-      is_manual_entry: false,
-      total_amount: totalSummary?.totalPrice,
+      if (bookingData[0]?.is_manual_entry) {
+        updatedGuestData.booking_status = "confirmed";
+      }
+
+      return updatedGuestData;
+    });
+  }, [bookingData, formData]);
+
+  console.log(guestData, paymentTableId, "aadfasdfasd");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const id = localStorage.getItem("my_id");
+        if (!id) {
+          throw new Error("Booking ID not found in local storage");
+        }
+        console.log(id, "id from localStorage");
+        await dispatch(fetchBookingData(id)).unwrap();
+      } catch (error) {
+        console.error("Error while fetching booking data:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
+
+    fetchData();
+  }, [dispatch]);
+
+  const numerOfDays = () => {
+    const checkIn = new Date(bookingData?.[0]?.check_in_date);
+    const checkOut = new Date(bookingData?.[0]?.check_out_date);
+    const differenceInMilliseconds = checkOut - checkIn;
+    return differenceInMilliseconds / (1000 * 60 * 60 * 24);
   };
 
   // const handelBooking = async () => {
-  //   const guestData = prepareGuestData(formData);
-
-  //   try {
-  //     const result = await dispatch(bookingCreate(guestData)).unwrap();
-  //     toast.success("Booking created successfully!");
-  //     if (!matchedProperty?.isAuto) {
-  //       dispatch(setIsConfirmOrder(true));
-  //     }
-  //   } catch (error) {
-  //     console.error("Error occurred during booking:", error);
-  //     toast.error(
-  //       "Failed to create booking: " + (error?.message || "Unknown error")
-  //     );
-  //   }
-  // };
-
-  // const handelBooking = async () => {
-  //   const guestData = prepareGuestData(formData);
   //   setIsProcessing(true);
+  //   const { payment_table_id } = generateUniqueIds();
+  //   setGuestData((prevGuestData) => ({
+  //     ...prevGuestData,
+  //     booking_status: "confirmed",
+  //     name: formData?.name,
+  //     email: formData?.email,
+  //     contact: formData?.mobile,
+  //     payment: [payment_table_id],
+  //   }));
+  //   if (bookingData?.[0]?.is_manual_entry) {
+  //     setGuestData((prevGuestData) => ({
+  //       ...prevGuestData,
+  //       booking_status: "confirmed",
+  //     }));
+  //   }
   //   try {
   //     const response = await fetch("/api/payment", {
   //       method: "POST",
@@ -134,25 +115,36 @@ export default function PaymentBar({ formData, setStep }) {
   //         "Content-Type": "application/json",
   //       },
   //       body: JSON.stringify({
-  //         amount: guestData?.total_amount,
+  //         amount: bookingData?.[0]?.total_amount,
   //         guestData,
+  //         id: bookingData[0]?.id,
   //       }),
   //     });
   //     const data = await response.json();
   //     if (response.ok) {
   //       console.log("Order created:", data);
+  //       const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+  //       if (!razorpayKey) {
+  //         throw new Error(
+  //           "Razorpay key is missing. Check environment variables."
+  //         );
+  //       }
 
   //       // Call Razorpay Checkout with the order ID
   //       const options = {
-  //         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-  //         amount: amount * 100,
+  //         key_id: razorpayKey,
+  //         amount: guestData.total_amount * 100, // Ensure this is the correct amount
   //         currency: "INR",
   //         name: "Shree Shyam Yatra",
-  //         description: "Payment for the Room Booking",
-  //         order_id: data.id,
+  //         description: "Payment Booking",
+  //         order_id: data.orderId,
   //         handler: function (response) {
   //           console.log("Payment successful:", response);
-  //           // Handle payment success
+
+  //           // After successful payment, show toast
+  //           toast.success("Booking successfully created!");
+
+  //           // Handle further actions like updating state or navigating
   //         },
   //         prefill: {
   //           name: guestData.name,
@@ -171,35 +163,35 @@ export default function PaymentBar({ formData, setStep }) {
   //       rzp.open();
   //     } else {
   //       console.error("Error creating order:", data.error);
+  //       toast.error("Failed to create order. Please try again.");
   //     }
   //   } catch (error) {
   //     console.error("Payment failed", error);
+  //     toast.error("Payment failed. Please try again.");
   //   } finally {
   //     setIsProcessing(false);
   //   }
   // };
-  console.log("Razorpay Key ID:", process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID);
 
+  console.log(typeof bookingData?.[0]?.is_manual_entry, "bookindData");
   const handelBooking = async () => {
-    const guestData = prepareGuestData(formData);
     setIsProcessing(true);
+
     try {
-      // const isScriptLoaded = await loadRazorpayScript();
-      // if (!isScriptLoaded) {
-      //   toast.error("Failed to load Razorpay SDK");
-      //   return;
-      // }
       const response = await fetch("/api/payment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: guestData?.total_amount,
+          amount: bookingData?.[0]?.total_amount,
           guestData,
+          id: bookingData[0]?.id,
         }),
       });
+
       const data = await response.json();
+
       if (response.ok) {
         console.log("Order created:", data);
         const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
@@ -216,19 +208,43 @@ export default function PaymentBar({ formData, setStep }) {
           currency: "INR",
           name: "Shree Shyam Yatra",
           description: "Payment Booking",
-          order_id: data.orderId, // Adjust according to your response structure
-          handler: function (response) {
+          order_id: data.orderId,
+          handler: async function (response) {
             console.log("Payment successful:", response);
 
-            // After successful payment, show toast
-            toast.success("Booking successfully created!");
+            // Dispatch Redux action to save guest data directly to Supabase
+            try {
+              const paymentdata = {
+                id: paymentTableId,
+                date: new Date().toISOString(),
+                payment_method: "Credit Card",
+                amount: bookingData?.[0]?.total_amount,
+                paid_to: "a4ceb3e6-e572-47d2-8bc4-21a209a972aa",
+                paid_from: bookingData?.[0]?.profile_id,
+                payment_type: "guestRelated",
+                razorpay_receiptId: data?.receiptId,
+                razorpay_payment_id: response?.razorpay_payment_id,
+                razorpay_order_id: response?.razorpay_order_id,
+                razorpay_signature: response?.razorpay_signature,
+              };
 
-            // Handle further actions like updating state or navigating
+              await dispatch(
+                saveGuestData({
+                  guestData,
+                  id: bookingData[0]?.id,
+                })
+              ).unwrap();
+              await dispatch(savePaymentDetail({ paymentdata })).unwrap();
+              toast.success("Booking successfully created!");
+            } catch (error) {
+              console.error("Error saving guest data", error);
+              toast.error("Error saving guest data. Please try again.");
+            }
           },
           prefill: {
-            name: guestData.name,
-            email: guestData.email,
-            contact: guestData.contact,
+            name: guestData?.name,
+            email: guestData?.email,
+            contact: guestData?.contact,
           },
           notes: {
             address: "Khatu shyam",
@@ -252,19 +268,15 @@ export default function PaymentBar({ formData, setStep }) {
     }
   };
 
-  if (
-    !totalSummary ||
-    !selectedRoom ||
-    !bookingDate ||
-    !roomAndGuest ||
-    !matchedProperty
-  ) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
   return (
     <div className="bg-white p-5 font-poppins mt-5 w-full ">
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
-      <h3 className="text-2xl font-semibold pb-4">{selectedRoom?.name}</h3>
+      <h3 className="text-2xl font-semibold pb-4">
+        {bookingData?.[0]?.room_assigned?.[0]?.room_name}
+      </h3>
       <div className="w-full flex gap-2">
         <div className="w-[70%] space-y-2">
           <p className="text-sm text-secondary py-1 text-start">
@@ -296,33 +308,35 @@ export default function PaymentBar({ formData, setStep }) {
       <div className="text-sm flex flex-col gap-5 py-5 rounded-md font-semibold text-black w-full">
         <div className="flex items-center justify-between border-t border-b p-2">
           <p className="">
-            <span>{bookingDate?.startDate}</span> -{" "}
-            <span>{bookingDate?.endDate}</span>
+            <span>{bookingData?.[0]?.check_in_date}</span> -{" "}
+            <span>{bookingData?.[0]?.check_out_date}</span>
           </p>
           <p className="text-nowrap">
-            <span>Room , {roomAndGuest?.room}</span>{" "}
-            <span>Guest , {roomAndGuest?.guest}</span>
+            <span>Room , {bookingData?.[0]?.room_assigned?.[0]?.quantity}</span>{" "}
+            <span>Guest , {bookingData?.[0]?.number_of_adults}</span>
           </p>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="space-y-1">
               <p className="text-nowrap text-green-700">Check-In</p>
-              <p className="text-center">{matchedProperty?.check_in_time}</p>
+              <p className="text-center">
+                {bookingData?.[0]?.guest_check_out_time}
+              </p>
             </div>
             <div className="space-y-1">
               <p className="text-nowrap text-red-700">Check-Out</p>
-              <p className="text-center">{matchedProperty?.check_out_time}</p>
+              <p className="text-center">
+                {bookingData?.[0]?.guest_check_in_time}
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-4">
             <div className="space-y-1">
               <p className="text-nowrap text-green-700">Adults</p>
-              <p className="text-center">{formData?.adults}</p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-nowrap text-red-700">Children</p>
-              <p className="text-center">{formData?.children}</p>
+              <p className="text-center">
+                {bookingData?.[0]?.number_of_adults}
+              </p>
             </div>
           </div>
         </div>
@@ -333,34 +347,32 @@ export default function PaymentBar({ formData, setStep }) {
       <div className="border-b py-5">
         <div className="flex gap-2 py-1">
           <p>Nights</p>
-          <p className="text-secondary font-semibold">
-            {Math.round(totalSummary?.numberOfDays)}
-          </p>
+          <p className="text-secondary font-semibold">{numerOfDays()}</p>
         </div>
         <div className="flex justify-between py-1">
           <p>Room Price</p>
           <p className="text-secondary font-semibold">
-            Rs {Math.round(totalSummary?.finalRoomPrice)}
+            Rs {Math.round(bookingData?.[0]?.total_roomPrice)}
           </p>
         </div>
         <div className="flex justify-between py-1">
-          <p>Extra Guests: {roomAndGuest?.extraPerson}</p>
+          <p>Extra Guests: {bookingData?.[0]?.extra_guest?.extraPerson}</p>
           <p className="text-secondary font-semibold">
-            Rs {Math.round(totalSummary?.extraPersonPrice)}
+            Rs {Math.round(bookingData?.[0]?.extra_guest?.extraPrice)}
           </p>
         </div>
         {/* <div className="mt-3 flex justify-between items-center mr-4 lg:pr-0"> */}
         <div className="text-right">
           <p className="text-gray-700 text-sm space-x-4 text-nowrap flex items-center justify-between">
             <p> Convenience Fee (All inclusive)</p>{" "}
-            <span> {Math.round(totalSummary?.commission)}</span>
+            <span> Rs {Math.round(bookingData?.[0]?.our_charges)}</span>
           </p>
           <div className="flex items-center justify-between">
             <p className="font-semibold text-gray-800 text-nowrap">
               Total Price
             </p>
             <p className="text-secondary font-semibold">
-              Rs {Math.round(totalSummary?.totalPrice)}
+              Rs {Math.round(bookingData?.[0]?.total_amount)}
             </p>
           </div>
         </div>
@@ -378,7 +390,7 @@ export default function PaymentBar({ formData, setStep }) {
           onClick={handelBooking}
           className="bg-primaryGradient text-white py-2 px-4 rounded-sm hover:bg-blue-600 transition text-base"
         >
-          Pay Now
+          {isProcessing ? "...Loading" : "Pay Now"}
         </button>
       </div>
     </div>

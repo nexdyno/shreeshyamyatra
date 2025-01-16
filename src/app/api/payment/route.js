@@ -11,8 +11,8 @@ const razorpay = new Razorpay({
 
 export async function POST(req) {
   try {
-    // Parse request body for dynamic amount
-    const { amount, guestData } = await req.json();
+    // Parse request body for dynamic amount and guest data
+    const { amount } = await req.json();
 
     // Generate a unique receipt ID using UUID
     const receiptId = `rcpt_${uuidv4().substring(0, 30)}`; // Ensures receipt length is <= 40
@@ -24,25 +24,10 @@ export async function POST(req) {
       receipt: receiptId,
     });
 
-    // Store the order details in Supabase
-    const { data, error } = await supabase
-      .from("guests")
-      .insert(guestData)
-      .select();
+    // At this point, Razorpay order has been created, but we don't save guest data yet.
+    // We'll save the guest data only after the payment is successful.
 
-    if (error) {
-      console.error("Error storing order in Supabase:", error);
-      return NextResponse.json(
-        { error: "Failed to save order in the database" },
-        { status: 500 }
-      );
-    }
-
-    // Return the Razorpay order ID and receipt ID
-    return NextResponse.json(
-      { orderId: order.id, receiptId, data },
-      { status: 200 }
-    );
+    return NextResponse.json({ orderId: order.id, receiptId }, { status: 200 });
   } catch (error) {
     console.error("Error while creating order:", error);
     return NextResponse.json(

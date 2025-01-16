@@ -1,41 +1,45 @@
-import { useAppContext } from "@/context/AppContext";
+import { setIsOTPModalOpen, verifyOtp } from "@/redux/authSlice";
 import React, { useState, useRef } from "react";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
 
-const OTPModal = () => {
-  const { isOTPModalOpen, setIsOTPModalOpen } = useAppContext();
-
+const OTPModal = ({ handleSendOtp, phone }) => {
+  const dispatch = useDispatch();
+  const { isOTPModalOpen } = useSelector((state) => state.auth);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
 
-  // Handle OTP input changes
   const handleChange = (index, value) => {
     if (!isNaN(value) && value.length <= 1) {
       const newOtp = [...otp];
       newOtp[index] = value;
       setOtp(newOtp);
 
-      // Move to the next input if filled
       if (value && index < otp.length - 1) {
         inputRefs.current[index + 1]?.focus();
       }
     }
   };
 
-  // Handle backspace to move focus
   const handleKeyDown = (e, index) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
-  // Verify OTP
-  const handleVerify = () => {
-    const enteredOTP = otp.join("");
-    if (enteredOTP.length === 6) {
-      alert("OTP Verified Successfully!");
-      setIsOTPModalOpen(!isOTPModalOpen);
+  const handleVerify = async () => {
+    const token = otp.join("");
+    if (token.length === 6) {
+      try {
+        await dispatch(verifyOtp({ phone, token })).unwrap();
+        toast.success("OTP Verified Successfully!");
+        dispatch(setIsOTPModalOpen()); // Close modal on success
+      } catch (error) {
+        console.error("OTP Verification Failed:", error);
+        toast.error(error); // Display meaningful error message
+      }
     } else {
-      alert("Please enter a valid 6-digit OTP.");
+      toast.error("Please enter a valid 6-digit OTP.");
     }
   };
 
@@ -43,11 +47,11 @@ const OTPModal = () => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-[#182532] p-10 rounded-md shadow-lg text-center text-white w-11/12 sm:w-2/3 md:w-1/3">
-        <h2 className="text-2xl mb-4 font-bold">Enter verification code</h2>
+      <div className="bg-[#182532] p-10 rounded-md shadow-lg text-center text-white w-11/12 sm:w-2/3 md:w-1/3 relative">
+        <h2 className="text-2xl mb-4 font-bold">Enter Verification Code</h2>
         <p className="mb-4 text-sm">
-          We have sent a Verification code on this +9182****36 number. Please
-          enter the verification code below
+          We have sent a verification code to this +91 {phone}. Please enter the
+          verification code below.
         </p>
 
         {/* OTP Input Fields */}
@@ -77,17 +81,14 @@ const OTPModal = () => {
         {/* Resend Code */}
         <p className="mt-4 text-sm">
           Didn’t get the code?{" "}
-          <button
-            onClick={() => alert("Code Resent!")}
-            className="text-primary underline"
-          >
+          <button onClick={handleSendOtp} className="text-primary underline">
             Resend code
           </button>
         </p>
 
         {/* Close Button */}
         <button
-          onClick={() => setIsOTPModalOpen(!isOTPModalOpen)}
+          onClick={() => dispatch(setIsOTPModalOpen())}
           className="absolute top-3 right-3 text-gray-400 hover:text-white text-lg"
         >
           &times;

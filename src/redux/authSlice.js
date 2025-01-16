@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { supabase } from "@/lib/supabase/supabaseClient";
 import reducer from "./dataSlice";
+import toast from "react-hot-toast";
 
 // Async thunks to fetch data
 export const anonymouslySignin = createAsyncThunk(
@@ -221,7 +222,7 @@ export const googleAuth = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       // const { data, error } = await supabase.auth.linkIdentity({
-      const { data, error } = await supabase.auth.linkIdentity({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo:
@@ -258,9 +259,6 @@ export const sendOtp = createAsyncThunk(
   async (phone, { rejectWithValue }) => {
     try {
       const { data, error } = await supabase.auth.updateUser({ phone });
-      // const { data, error } = await supabase.auth.admin.updateUserById({
-      //   phone,
-      // });
       if (error) throw error;
       return { message: "OTP sent successfully", phone };
     } catch (err) {
@@ -280,7 +278,8 @@ export const verifyOtp = createAsyncThunk(
       if (error) throw error;
       return { user: data.user };
     } catch (err) {
-      return rejectWithValue(err.message);
+      console.error("OTP Verification Failed:", err.message);
+      return rejectWithValue(err.message || "Failed to verify OTP.");
     }
   }
 );
@@ -294,6 +293,7 @@ const authSlice = createSlice({
     userData: null,
     status: "idle",
     error: null,
+    isOTPModalOpen: false,
   },
   reducers: {
     setLoginIsModalOpen: (state, action) => {
@@ -301,6 +301,9 @@ const authSlice = createSlice({
     },
     setUserSession: (state, action) => {
       state.sessionFromLocal = action.payload;
+    },
+    setIsOTPModalOpen: (state, action) => {
+      state.isOTPModalOpen = !state.isOTPModalOpen; // Toggle the current state
     },
   },
   extraReducers: (builder) => {
@@ -411,7 +414,8 @@ const authSlice = createSlice({
       });
   },
 });
-export const { setLoginIsModalOpen, setUserSession } = authSlice.actions;
+export const { setLoginIsModalOpen, setUserSession, setIsOTPModalOpen } =
+  authSlice.actions;
 export default authSlice.reducer;
 
 // export const googleAuth = createAsyncThunk(

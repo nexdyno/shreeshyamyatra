@@ -47,6 +47,7 @@ export const fetchImages = createAsyncThunk("data/fetchImages", async () => {
 export const bookingCreate = createAsyncThunk(
   "data/bookingCreate",
   async (guestData, { rejectWithValue }) => {
+    console.log(guestData, "guestData in redux");
     const { data, error } = await supabase
       .from("guests")
       .insert(guestData)
@@ -60,6 +61,73 @@ export const bookingCreate = createAsyncThunk(
     return data;
   }
 );
+export const fetchBookingData = createAsyncThunk(
+  "data/fetchBookingData",
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data, error } = await supabase
+        .from("guests")
+        .select("*") // Specify columns if necessary
+        .eq("booking_id", id); // Filter by booking_id
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (!data || data.length === 0) {
+        throw new Error("No data found for the given booking ID");
+      }
+
+      return data; // Return the filtered data
+    } catch (err) {
+      return rejectWithValue(err.message || "Failed to fetch booking data");
+    }
+  }
+);
+export const saveGuestData = createAsyncThunk(
+  "data/saveGuestData",
+  async ({ guestData, id }, { rejectWithValue }) => {
+    console.log(guestData, id, "guestdata saveGuestData");
+    try {
+      const { data, error } = await supabase
+        .from("guests") // Table name in Supabase
+        .update(guestData)
+        .eq("id", id)
+        .select();
+
+      if (error) {
+        throw new Error(error.message); // Handle error
+      }
+
+      return data; // Return updated data
+    } catch (error) {
+      return rejectWithValue(error.message); // Return error message if failure
+    }
+  }
+);
+export const savePaymentDetail = createAsyncThunk(
+  "data/savePaymentDetail",
+  async ({ paymentdata }, { rejectWithValue }) => {
+    try {
+      console.log(paymentdata, "paymentdata , paymentdata");
+
+      const { data, error } = await supabase
+        .from("payments")
+        .insert(paymentdata)
+        .select();
+
+      if (error) {
+        throw new Error(error.message); // Handle error
+      }
+
+      // Return the inserted data
+      return data;
+    } catch (error) {
+      console.error("Error inserting payment details:", error);
+      return rejectWithValue(error.message); // Return error message if failure
+    }
+  }
+);
 
 // Slice
 const dataSlice = createSlice({
@@ -70,6 +138,9 @@ const dataSlice = createSlice({
     rooms: [],
     busyRoom: [],
     allImages: [],
+    guestData: null,
+    paymentdata: null,
+    bookingData: null,
     IsSearchOpen: false,
     isConfirmOrder: false,
     totalSummary: null,
@@ -141,6 +212,40 @@ const dataSlice = createSlice({
         state.profiles = action.payload;
       })
       .addCase(fetchProfiles.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(saveGuestData.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(saveGuestData.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.guestData = action.payload;
+      })
+      .addCase(saveGuestData.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(savePaymentDetail.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(savePaymentDetail.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.paymentdata = action.payload;
+      })
+      .addCase(savePaymentDetail.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(fetchBookingData.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(fetchBookingData.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.bookingData = action.payload;
+      })
+      .addCase(fetchBookingData.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })
