@@ -43,7 +43,7 @@ export default function Page() {
         <LoadingOfferForYou />
       ) : (
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
-          {property?.slice(0, 6)?.map((item) => (
+          {property?.map((item) => (
             <Link key={item.id} href={`/hotel/hotel-details/${item?.id}`}>
               <div className="border border-gray-300 rounded-lg overflow-hidden transition duration-300 p-5 flex flex-col h-full">
                 <div className="relative h-40 w-full mb-4">

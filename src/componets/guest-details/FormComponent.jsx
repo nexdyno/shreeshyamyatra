@@ -8,7 +8,13 @@ import "react-phone-input-2/lib/style.css";
 import PhoneInput from "react-phone-input-2";
 import toast from "react-hot-toast";
 
-export default function FormComponent({ onContinue, formData, setFormData }) {
+export default function FormComponent({
+  onContinue,
+  formData,
+  setFormData,
+  setValid,
+  valid,
+}) {
   const { session, isOTPModalOpen } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
@@ -97,6 +103,9 @@ export default function FormComponent({ onContinue, formData, setFormData }) {
       }
     }
   };
+  const handleVerify = () => {
+    if (validateForm()) setValid(true);
+  };
 
   return (
     <>
@@ -181,15 +190,32 @@ export default function FormComponent({ onContinue, formData, setFormData }) {
         </div>
         <button
           type="submit"
-          disabled={session?.user?.phone}
-          onClick={() => handleSendOtp(false)}
-          className="w-[90%] bg-primaryGradient font-semibold text-base text-white py-2 rounded-md shadow hover:bg-blue-600 transition"
+          onClick={() => {
+            session?.user?.phone ? handleVerify() : handleSendOtp(false);
+          }}
+          disabled={valid}
+          className={` hidden lg:block w-[90%] bg-primaryGradient font-semibold text-base text-white py-2 rounded-md shadow hover:bg-blue-600 transition ${
+            valid ? "opacity-50" : ""
+          }`}
         >
-          Send OTP
+          {!valid ? "Verify" : " Details Verified"}
+        </button>
+        <button
+          type="submit"
+          onClick={() => {
+            session?.user?.phone ? handleVerify() : handleSendOtp(false);
+          }}
+          className={`lg:hidden w-[90%] bg-primaryGradient font-semibold text-base text-white py-2 rounded-md shadow hover:bg-blue-600 transition`}
+        >
+          {session?.user?.phone ? "Continoue" : "Verfy"}
         </button>
       </div>
       {isOTPModalOpen ? (
-        <OTPModal handleSendOtp={handleSendOtp} phone={formData?.mobile} />
+        <OTPModal
+          handleSendOtp={handleSendOtp}
+          phone={formData?.mobile}
+          setValid={setValid}
+        />
       ) : (
         ""
       )}

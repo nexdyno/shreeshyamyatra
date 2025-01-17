@@ -34,15 +34,6 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // const initializeSession = async () => {
-    //   // Retrieve and set the session token
-    //   const token = localStorage.getItem("sb-qlryhlvrtlpfbxrlumwm-auth-token");
-    //   if (token) {
-    //     dispatch(setUserSession(token));
-    //   } else {
-    //     await dispatch(anonymouslySignin());
-    //   }
-    // };
     const fetchData = async () => {
       setIsLoading(true);
       try {

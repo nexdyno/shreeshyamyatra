@@ -16,8 +16,9 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Razorpay from "razorpay";
 import Script from "next/script";
+import PaymentSkeleton from "./PaymentSkeleton";
 
-export default function PaymentBar({ formData, setStep }) {
+export default function PaymentBar({ formData, setStep, valid }) {
   const dispatch = useDispatch();
   const { bookingData } = useSelector((state) => state.data);
   const { session } = useSelector((state) => state.auth);
@@ -41,7 +42,7 @@ export default function PaymentBar({ formData, setStep }) {
   };
 
   useEffect(() => {
-    if (!formData || !bookingData) return; // Ensure dependencies exist before proceeding
+    if (!formData || !bookingData) return;
     if (!paymentTableId) {
       const { payment_table_id } = generateUniqueIds();
       setPaymentTableId(payment_table_id);
@@ -90,88 +91,6 @@ export default function PaymentBar({ formData, setStep }) {
     const differenceInMilliseconds = checkOut - checkIn;
     return differenceInMilliseconds / (1000 * 60 * 60 * 24);
   };
-
-  // const handelBooking = async () => {
-  //   setIsProcessing(true);
-  //   const { payment_table_id } = generateUniqueIds();
-  //   setGuestData((prevGuestData) => ({
-  //     ...prevGuestData,
-  //     booking_status: "confirmed",
-  //     name: formData?.name,
-  //     email: formData?.email,
-  //     contact: formData?.mobile,
-  //     payment: [payment_table_id],
-  //   }));
-  //   if (bookingData?.[0]?.is_manual_entry) {
-  //     setGuestData((prevGuestData) => ({
-  //       ...prevGuestData,
-  //       booking_status: "confirmed",
-  //     }));
-  //   }
-  //   try {
-  //     const response = await fetch("/api/payment", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         amount: bookingData?.[0]?.total_amount,
-  //         guestData,
-  //         id: bookingData[0]?.id,
-  //       }),
-  //     });
-  //     const data = await response.json();
-  //     if (response.ok) {
-  //       console.log("Order created:", data);
-  //       const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
-  //       if (!razorpayKey) {
-  //         throw new Error(
-  //           "Razorpay key is missing. Check environment variables."
-  //         );
-  //       }
-
-  //       // Call Razorpay Checkout with the order ID
-  //       const options = {
-  //         key_id: razorpayKey,
-  //         amount: guestData.total_amount * 100, // Ensure this is the correct amount
-  //         currency: "INR",
-  //         name: "Shree Shyam Yatra",
-  //         description: "Payment Booking",
-  //         order_id: data.orderId,
-  //         handler: function (response) {
-  //           console.log("Payment successful:", response);
-
-  //           // After successful payment, show toast
-  //           toast.success("Booking successfully created!");
-
-  //           // Handle further actions like updating state or navigating
-  //         },
-  //         prefill: {
-  //           name: guestData.name,
-  //           email: guestData.email,
-  //           contact: guestData.contact,
-  //         },
-  //         notes: {
-  //           address: "Khatu shyam",
-  //         },
-  //         theme: {
-  //           color: "#3399cc",
-  //         },
-  //       };
-
-  //       const rzp = new window.Razorpay(options);
-  //       rzp.open();
-  //     } else {
-  //       console.error("Error creating order:", data.error);
-  //       toast.error("Failed to create order. Please try again.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Payment failed", error);
-  //     toast.error("Payment failed. Please try again.");
-  //   } finally {
-  //     setIsProcessing(false);
-  //   }
-  // };
 
   console.log(typeof bookingData?.[0]?.is_manual_entry, "bookindData");
   const handelBooking = async () => {
@@ -269,7 +188,11 @@ export default function PaymentBar({ formData, setStep }) {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="w-full h-full px-5 py-4">
+        <PaymentSkeleton />
+      </div>
+    );
   }
   return (
     <div className="bg-white p-5 font-poppins mt-5 w-full ">
@@ -388,7 +311,10 @@ export default function PaymentBar({ formData, setStep }) {
         </button>
         <button
           onClick={handelBooking}
-          className="bg-primaryGradient text-white py-2 px-4 rounded-sm hover:bg-blue-600 transition text-base"
+          disabled={!valid}
+          className={`bg-primaryGradient text-white py-2 px-4 rounded-sm hover:bg-blue-600 transition text-base ${
+            !valid ? "opacity-50" : ""
+          }`}
         >
           {isProcessing ? "...Loading" : "Pay Now"}
         </button>

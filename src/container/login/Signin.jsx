@@ -329,7 +329,6 @@ const Signin = ({
 
   return (
     <div className="w-full max-w-md">
-      <h1>asfhaskdfhadslj</h1>
       {step === 1 && (
         <>
           {emailOrPhone ? (

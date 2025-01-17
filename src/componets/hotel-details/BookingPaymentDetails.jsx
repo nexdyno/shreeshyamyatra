@@ -150,6 +150,7 @@ export default function BookingPaymentDetails() {
     };
   };
 
+  console.log(session?.user?.id, "session?.user?.id");
   const prepareGuestData = (formData) => {
     const { id, booking_id } = generateUniqueIds();
     localStorage.setItem("my_id", booking_id);

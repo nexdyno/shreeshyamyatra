@@ -3,6 +3,7 @@
 import { useState } from "react";
 import FormComponent from "@/componets/guest-details/FormComponent";
 import PaymentBar from "@/componets/guest-details/PaymentBar";
+import { useSelector } from "react-redux";
 
 export default function GuestInformation() {
   const [formData, setFormData] = useState({
@@ -10,12 +11,15 @@ export default function GuestInformation() {
     email: "",
     mobile: "",
   });
+  const { session } = useSelector((state) => state.auth);
 
   const handleSubmit = () => {
     alert(formData, "submit form");
   };
 
   const [step, setStep] = useState(1);
+  const [isVerfy, setIsVerfy] = useState(session?.user?.phone);
+  const [valid, setValid] = useState(false);
 
   const handleContinue = (data) => {
     setFormData(data);
@@ -30,11 +34,12 @@ export default function GuestInformation() {
             onContinue={handleContinue}
             formData={formData}
             setFormData={setFormData}
+            setValid={setValid}
           />
         ) : (
           <div className="flex flex-col lg:flex-row justify-between items-start gap-10">
             <div className="w-full lg:w-[60%]">
-              <PaymentBar formData={formData} setStep={setStep} />
+              <PaymentBar formData={formData} setStep={setStep} valid={valid} />
             </div>
           </div>
         )}
@@ -47,11 +52,13 @@ export default function GuestInformation() {
               formData={formData}
               setFormData={setFormData}
               handleSubmit={handleSubmit}
+              setValid={setValid}
+              valid={valid}
             />
           </div>
 
           <div className="w-[40%]">
-            <PaymentBar formData={formData} setStep={setStep} />
+            <PaymentBar formData={formData} setStep={setStep} valid={valid} />
           </div>
         </div>
       </div>
