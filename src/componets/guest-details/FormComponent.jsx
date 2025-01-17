@@ -6,6 +6,7 @@ import OTPModal from "../common/OTPModal";
 import { useState } from "react";
 import "react-phone-input-2/lib/style.css";
 import PhoneInput from "react-phone-input-2";
+import toast from "react-hot-toast";
 
 export default function FormComponent({ onContinue, formData, setFormData }) {
   const { session, isOTPModalOpen } = useSelector((state) => state.auth);
@@ -46,18 +47,55 @@ export default function FormComponent({ onContinue, formData, setFormData }) {
   };
 
   const handlePhoneChange = (value) => {
-    setFormData({ ...formData, mobile: value });
+    const formattedValue = value.startsWith("+") ? value : `+${value}`; // Ensure the value starts with '+'
+    setFormData({ ...formData, mobile: formattedValue });
+
     if (!session?.user?.phone) {
       setErrors((prevErrors) => ({ ...prevErrors, mobile: "" }));
     }
   };
-  const handleSendOtp = () => {
+
+  const handleSendOtp = async (value) => {
     // if (validateForm()) {
-    //   dispatch(sendOtp(formData?.mobile));
-    //   dispatch(setIsOTPModalOpen());
+    //   const phone = formData?.mobile;
+    //   dispatch(sendOtp(phone));
+    //   if (!value) {
+    //     dispatch(setIsOTPModalOpen());
+    //   }
     // }
     // validateForm();
-    onContinue();
+    // onContinue();
+
+    if (validateForm()) {
+      const phone = formData?.mobile;
+      if (!phone) {
+        toast.error("Please enter a phone number.");
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/send-otp", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ phone, id: session?.user?.id }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          toast.success("OTP sent successfully. Please check your phone.");
+          if (!value) {
+            dispatch(setIsOTPModalOpen());
+          }
+        } else {
+          toast.success(data.error || "Failed to send OTP Try again");
+        }
+      } catch (error) {
+        console.error("Error sending OTP.");
+      }
+    }
   };
 
   return (
@@ -144,7 +182,7 @@ export default function FormComponent({ onContinue, formData, setFormData }) {
         <button
           type="submit"
           disabled={session?.user?.phone}
-          onClick={handleSendOtp}
+          onClick={() => handleSendOtp(false)}
           className="w-[90%] bg-primaryGradient font-semibold text-base text-white py-2 rounded-md shadow hover:bg-blue-600 transition"
         >
           Send OTP
