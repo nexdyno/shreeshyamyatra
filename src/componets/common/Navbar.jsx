@@ -253,6 +253,7 @@ import toast from "react-hot-toast";
 export default function Navbar() {
   const dispatch = useDispatch();
   const router = useRouter(); // Initialize useRouter
+  const [showLogin, setShowLogin] = useState(false);
 
   const { userData, isLoginModalOpen, session } = useSelector(
     (state) => state.auth
@@ -269,24 +270,36 @@ export default function Navbar() {
     dispatch(checkUserSession());
   }, [dispatch]);
 
+  // useEffect(() => {
+  //   if (session) {
+  //     console.log("Session data:in Navbar", session);
+
+  //     const user = session.user;
+  //     if (user) {
+  //       console.log("User metadata: in Navbar", user.user_metadata);
+  //       console.log("Is user anonymous: in Navbar", user.is_anonymous);
+
+  //       if (user.is_anonymous) {
+  //         setToken("");
+  //       } else {
+  //         setToken(session.access_token || ""); // Use access_token if available
+  //         setGuestName(user.user_metadata?.name || "Guest"); // Fallback to "Guest"
+  //       }
+  //     }
+  //   }
+  // }, [JSON.stringify(session)]);
+
   useEffect(() => {
     if (session) {
-      console.log("Session data:in Navbar", session);
-
       const user = session.user;
-      if (user) {
-        console.log("User metadata: in Navbar", user.user_metadata);
-        console.log("Is user anonymous: in Navbar", user.is_anonymous);
-
-        if (user.is_anonymous) {
-          setToken("");
-        } else {
-          setToken(session.access_token || ""); // Use access_token if available
-          setGuestName(user.user_metadata?.name || "Guest"); // Fallback to "Guest"
-        }
+      if (user && !user.is_anonymous) {
+        setToken(session.access_token || "");
+        setGuestName(user.user_metadata?.name || "Guest");
+      } else {
+        setToken("");
       }
     }
-  }, [JSON.stringify(session), userData]);
+  }, [session]); // Dependency should be session directly
 
   useEffect(() => {
     console.log("what is the path name2", routePathName);
@@ -451,7 +464,7 @@ export default function Navbar() {
             </div>
           ) : (
             <button
-              onClick={() => dispatch(setLoginIsModalOpen(true))}
+              onClick={() => setShowLogin(true)}
               className="flex items-center gap-3 bg-primaryGradient py-2 px-3 rounded-md"
             >
               <div>
@@ -464,11 +477,11 @@ export default function Navbar() {
           )}
         </div>
       </div>
-      //{" "}
-      <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => dispatch(setLoginIsModalOpen(false))}
-      />
+      {showLogin ? (
+        <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
+      ) : (
+        ""
+      )}
     </>
   );
 }

@@ -25,7 +25,7 @@ export default function MobileFooter() {
     { id: 5, label: "Profile", icon: <MdOutlinePersonOutline />, link: "/" },
   ];
   return (
-    <div className="fixed bottom-0  end-0 w-full shadow-lg bg-white border-t z-[99]">
+    <div className="fixed bottom-0  end-0 w-full shadow-lg bg-white border-t z-10 ">
       <div className="flex justify-around py-2">
         {footerItems?.map((item, index) => (
           <Link key={index} href={item?.link}>

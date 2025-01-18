@@ -10,10 +10,13 @@ import { checkUserSession, setLoginIsModalOpen } from "@/redux/authSlice";
 import { supabase } from "@/lib/supabase/supabaseClient";
 import { format, parse } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
+import LoginModal from "@/container/login/LoginModal";
 
 export default function BookingPaymentDetails() {
   const dispatch = useDispatch();
   const [isLogin, setIsLogIn] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+
   const [guestData, setGuestData] = useState(null);
   const {
     roomAndGuest,
@@ -25,7 +28,7 @@ export default function BookingPaymentDetails() {
   const { session, status, error } = useSelector((state) => state.auth);
   const [roomTag, setRoomTag] = useState(null);
 
-  console.log(selectedRoom, "selectedRoomselectedRoom");
+  console.log(matchedProperty, "matchedPropertymatchedProperty");
   const [billingData, setBillingData] = useState({
     numberOfDays: 1,
     commission: 0,
@@ -64,7 +67,7 @@ export default function BookingPaymentDetails() {
       (roomAndGuest?.extraPerson || 0) * 350 * numberOfDays;
 
     // Calculate final room price
-    const finalRoomPrice = roomPriceWIthGST * numberOfDays;
+    const finalRoomPrice = roomPriceWIthGST * numberOfDays * roomAndGuest?.room;
 
     // Calculate total price
     const totalPrice = finalRoomPrice + extraPersonPrice + commission;
@@ -140,7 +143,7 @@ export default function BookingPaymentDetails() {
         endDate: formatDate(bookingDate?.endDate),
       });
     }
-  }, [bookingDate]);
+  }, [JSON.stringify(bookingDate)]);
 
   const generateUniqueIds = () => {
     return {
@@ -154,6 +157,7 @@ export default function BookingPaymentDetails() {
   const prepareGuestData = (formData) => {
     const { id, booking_id } = generateUniqueIds();
     localStorage.setItem("my_id", booking_id);
+    const checkIsManual = matchedProperty?.is_auto ? false : true;
 
     return {
       id,
@@ -176,7 +180,7 @@ export default function BookingPaymentDetails() {
       booking_status: "processing",
       payments: [],
       paid_to_status: "unPaidFromGuest",
-      is_manual_entry: false,
+      is_manual_entry: checkIsManual,
       total_amount: billingData?.totalPrice,
       extra_guest: {
         extraPerson: roomAndGuest?.extraPerson,
@@ -208,7 +212,8 @@ export default function BookingPaymentDetails() {
       setGuestData(data); // This will trigger the useEffect
     } else {
       setIsLogIn(false);
-      dispatch(setLoginIsModalOpen(true));
+      // dispatch(setLoginIsModalOpen(true));
+      setShowLogin(true);
     }
   };
   useEffect(() => {
@@ -219,107 +224,114 @@ export default function BookingPaymentDetails() {
 
   console.log(guestData, "guest data guest data");
   return (
-    <div className="flex justify-end items-center">
-      {selectedRoom ? (
-        <div className="bg-white shadow-lg border w-full max-w-md p-5 font-poppins">
-          {/* Price Section */}
-          <div className="border-b pb-5">
-            <div className="flex justify-between items-center">
-              <p className="text-2xl font-semibold text-secondary">
-                Rs.{" "}
-                {isNaN(billingData?.roomPriceWIthGST) ||
-                !billingData?.roomPriceWIthGST
-                  ? 0
-                  : Math.round(billingData.roomPriceWIthGST)}
-              </p>
-              <div className="flex items-center space-x-2">
-                <span className="text-gray-400 line-through"></span>
-                <span className="text-red-500 text-sm font-semibold"></span>
+    <>
+      <div className="flex justify-end items-center">
+        {selectedRoom ? (
+          <div className="bg-white shadow-lg border w-full max-w-md p-5 font-poppins">
+            {/* Price Section */}
+            <div className="border-b pb-5">
+              <div className="flex justify-between items-center">
+                <p className="text-2xl font-semibold text-secondary">
+                  Rs.{" "}
+                  {isNaN(billingData?.roomPriceWIthGST) ||
+                  !billingData?.roomPriceWIthGST
+                    ? 0
+                    : Math.round(billingData.roomPriceWIthGST)}
+                </p>
+                <div className="flex items-center space-x-2">
+                  <span className="text-gray-400 line-through"></span>
+                  <span className="text-red-500 text-sm font-semibold"></span>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Booking Date Selector */}
-          <div className="border-b py-5">
-            <div className="flex items-center justify-between">
-              <DateSelector />
-              <RoomGuestSelector />
+            {/* Booking Date Selector */}
+            <div className="border-b py-5">
+              <div className="flex items-center justify-between">
+                <DateSelector />
+                <RoomGuestSelector />
+              </div>
+              <div className="mt-3 text-secondary text-sm font-semibold bg-gray-100 py-3 px-4 rounded-md">
+                {selectedRoom?.name || "Select Room"}
+              </div>
             </div>
-            <div className="mt-3 text-secondary text-sm font-semibold bg-gray-100 py-3 px-4 rounded-md">
-              {selectedRoom?.name || "Select Room"}
-            </div>
-          </div>
 
-          {/* Total Price */}
+            {/* Total Price */}
 
-          <div className="border-b py-5">
-            <div className="flex gap-2 py-1">
-              <p>Nights</p>
-              <p className="text-secondary font-semibold">
-                {Math.round(billingData?.numberOfDays)}
-              </p>
-            </div>
-            <div className="flex justify-between py-1">
-              <p>Room Price</p>
-              <p className="text-secondary font-semibold">
-                Rs {Math.round(billingData?.finalRoomPrice)}
-              </p>
-            </div>
-            <div className="flex justify-between py-1">
-              <p>Extra Guests: {roomAndGuest?.extraPerson}</p>
-              <p className="text-secondary font-semibold">
-                Rs {Math.round(billingData?.extraPersonPrice)}
-              </p>
-            </div>
-            <div className="mt-3 flex justify-between items-center">
-              <p className="font-semibold text-gray-800">Total Price</p>
-              <div className="text-right">
-                <p className="text-gray-700 text-sm space-x-4">
-                  Convenience Fee (All inclusive){" "}
-                  <span> {Math.round(billingData?.commission)}</span>
-                </p>
+            <div className="border-b py-5">
+              <div className="flex gap-2 py-1">
+                <p>Nights</p>
                 <p className="text-secondary font-semibold">
-                  Rs {Math.round(billingData?.totalPrice)}
+                  {Math.round(billingData?.numberOfDays)}
                 </p>
               </div>
+              <div className="flex justify-between py-1">
+                <p>Room Price</p>
+                <p className="text-secondary font-semibold">
+                  Rs {Math.round(billingData?.finalRoomPrice)}
+                </p>
+              </div>
+              <div className="flex justify-between py-1">
+                <p>Extra Guests: {roomAndGuest?.extraPerson}</p>
+                <p className="text-secondary font-semibold">
+                  Rs {Math.round(billingData?.extraPersonPrice)}
+                </p>
+              </div>
+              <div className="mt-3 flex justify-between items-center">
+                <p className="font-semibold text-gray-800">Total Price</p>
+                <div className="text-right">
+                  <p className="text-gray-700 text-sm space-x-4">
+                    Convenience Fee (All inclusive){" "}
+                    <span> {Math.round(billingData?.commission)}</span>
+                  </p>
+                  <p className="text-secondary font-semibold">
+                    Rs {Math.round(billingData?.totalPrice)}
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-          {/* {isLogin ? ( */}
-          <button
-            onClick={handleBook}
-            className="w-full mt-5 bg-primaryGradient text-white text-lg font-semibold py-2 rounded-sm hover:opacity-90 transition"
-          >
-            Continue to Book
-          </button>
-          {/* ) : ( */}
-          {/* <button
+            {/* {isLogin ? ( */}
+            <button
+              onClick={handleBook}
+              className="w-full mt-5 bg-primaryGradient text-white text-lg font-semibold py-2 rounded-sm hover:opacity-90 transition"
+            >
+              Continue to Book
+            </button>
+            {/* ) : ( */}
+            {/* <button
               onClick={handleBook}
               className="w-full mt-5 bg-primaryGradient text-white text-lg font-semibold py-2 rounded-sm hover:opacity-90 transition"
             >
               Continue to Book
             </button> */}
-          {/* )} */}
+            {/* )} */}
 
-          {/* Footer Section */}
-          <div className="mt-5 text-gray-600 text-sm space-y-2">
-            <p>12 people booked this hotel today</p>
-            <p className="text-blue-500 underline cursor-pointer">
-              Cancellation Policy
-            </p>
-            <p className="text-blue-500 underline cursor-pointer">
-              Follow safety measures advised at the hotel
-            </p>
-            <p className="text-gray-500">
-              By proceeding, you agree to our{" "}
-              <span className="text-blue-500 underline cursor-pointer">
-                Guest Policies
-              </span>
-            </p>
+            {/* Footer Section */}
+            <div className="mt-5 text-gray-600 text-sm space-y-2">
+              <p>12 people booked this hotel today</p>
+              <p className="text-blue-500 underline cursor-pointer">
+                Cancellation Policy
+              </p>
+              <p className="text-blue-500 underline cursor-pointer">
+                Follow safety measures advised at the hotel
+              </p>
+              <p className="text-gray-500">
+                By proceeding, you agree to our{" "}
+                <span className="text-blue-500 underline cursor-pointer">
+                  Guest Policies
+                </span>
+              </p>
+            </div>
           </div>
-        </div>
+        ) : (
+          ""
+        )}
+      </div>
+      {showLogin ? (
+        <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
       ) : (
         ""
       )}
-    </div>
+    </>
   );
 }

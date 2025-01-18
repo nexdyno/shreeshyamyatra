@@ -3,21 +3,21 @@
 import { sendOtp, setIsOTPModalOpen } from "@/redux/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import OTPModal from "../common/OTPModal";
-import { useState } from "react";
+import { use, useState } from "react";
 import "react-phone-input-2/lib/style.css";
 import PhoneInput from "react-phone-input-2";
 import toast from "react-hot-toast";
 
 export default function FormComponent({
-  onContinue,
   formData,
   setFormData,
   setValid,
   valid,
+  setStep,
 }) {
   const { session, isOTPModalOpen } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
   const validateForm = () => {
@@ -78,8 +78,8 @@ export default function FormComponent({
         toast.error("Please enter a phone number.");
         return;
       }
-
       try {
+        setIsLoading(true);
         const response = await fetch("/api/send-otp", {
           method: "POST",
           headers: {
@@ -92,19 +92,27 @@ export default function FormComponent({
 
         if (response.ok) {
           toast.success("OTP sent successfully. Please check your phone.");
+          setIsLoading(false);
           if (!value) {
             dispatch(setIsOTPModalOpen());
           }
         } else {
           toast.success(data.error || "Failed to send OTP Try again");
+          setIsLoading(false);
         }
       } catch (error) {
         console.error("Error sending OTP.");
+        setIsLoading(false);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
   const handleVerify = () => {
-    if (validateForm()) setValid(true);
+    if (validateForm()) {
+      setValid(true);
+      setStep(2);
+    }
   };
 
   return (
@@ -198,7 +206,7 @@ export default function FormComponent({
             valid ? "opacity-50" : ""
           }`}
         >
-          {!valid ? "Verify" : " Details Verified"}
+          {!valid ? (isLoading ? "Sending..." : "Verify") : "Details Verified"}
         </button>
         <button
           type="submit"
@@ -207,7 +215,11 @@ export default function FormComponent({
           }}
           className={`lg:hidden w-[90%] bg-primaryGradient font-semibold text-base text-white py-2 rounded-md shadow hover:bg-blue-600 transition`}
         >
-          {session?.user?.phone ? "Continoue" : "Verfy"}
+          {session?.user?.phone
+            ? "Continoue"
+            : isLoading
+            ? "Sending..."
+            : "Verfy"}
         </button>
       </div>
       {isOTPModalOpen ? (
@@ -215,6 +227,7 @@ export default function FormComponent({
           handleSendOtp={handleSendOtp}
           phone={formData?.mobile}
           setValid={setValid}
+          setStep={setStep}
         />
       ) : (
         ""

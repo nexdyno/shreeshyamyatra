@@ -3,8 +3,15 @@
 import { setroomAndGuest } from "@/redux/dataSlice";
 import React, { useState, useRef, useEffect } from "react";
 import toast from "react-hot-toast";
-import { MdPeopleAlt } from "react-icons/md";
+import {
+  MdDeleteOutline,
+  MdOutlineChildCare,
+  MdPeopleAlt,
+  MdPerson2,
+} from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
+import { RiDoorOpenLine } from "react-icons/ri";
+import { AiOutlinePlus } from "react-icons/ai";
 
 const RoomGuestSelector = () => {
   // const roomAndGuest = JSON.parse(localStorage.getItem("roomAndGuest"));
@@ -16,7 +23,15 @@ const RoomGuestSelector = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [rooms, setRooms] = useState(roomAndGuest?.room || 1);
   const [extraGuest, setExtraGuests] = useState(roomAndGuest?.extraPerson || 0);
+  const [child, setChild] = useState(0);
 
+  const handleChildChange = (type) => {
+    if (type === "increment") {
+      setChild((prevChild) => prevChild + 1);
+    } else if (type === "decrement") {
+      setChild((prevChild) => Math.max(0, prevChild - 1)); // Ensure it doesn't go below 0
+    }
+  };
   const popupRef = useRef(null);
 
   const togglePopup = () => setShowPopup(!showPopup);
@@ -109,7 +124,7 @@ const RoomGuestSelector = () => {
   }, [rooms, guests, dispatch]);
 
   return (
-    <div className="relative flex items-center w-full md:w-fit lg:flex font-medium p-3">
+    <div className="relative flex items-center w-full md:w-fit lg:flex font-medium px-3 pb-3 lg:p-3">
       <MdPeopleAlt size={20} className="text-primary" onClick={togglePopup} />
       <p
         className="text-sm text-gray-700 px-2 py-1 cursor-pointer text-nowrap"
@@ -123,7 +138,7 @@ const RoomGuestSelector = () => {
       {showPopup && (
         <div
           ref={popupRef}
-          className="absolute top-full left-0 mt-2 w-64 bg-white shadow-lg rounded-lg p-4 z-40 border"
+          className="hidden lg:block absolute top-full left-0 mt-2 w-64 bg-white shadow-lg rounded-lg p-4 z-40 border"
         >
           <div className="flex justify-between items-center mb-4">
             <p className="text-gray-700">Rooms</p>
@@ -160,6 +175,110 @@ const RoomGuestSelector = () => {
                 +
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showPopup && (
+        <div
+          ref={popupRef}
+          className={` fixed bottom-0  left-0 w-full bg-white shadow-lg rounded-t-lg py-4 z-[99] border transform transition-transform duration-300 ${
+            showPopup ? "translate-y-0" : "translate-y-full"
+          }`}
+        >
+          <div className="flex justify-between items-center mb-4 border-b pb-2 px-4">
+            <p className="text-base font-medium">Select rooms & guests</p>
+            <button
+              className="text-gray-500 hover:text-gray-700 transition duration-200"
+              onClick={() => setShowPopup(false)}
+              aria-label="Close Popup"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+          <div className="flex justify-between items-center font-poppins pb-4 border-b border-gray-500 px-4">
+            <div className="flex items-center gap-4 ">
+              <RiDoorOpenLine size={20} />
+              <p className="text-black font-medium">Rooms</p>
+            </div>
+            <div className="flex items-center border border-black rounded-full ">
+              <button
+                className="focus:outline-none border-r border-black py-2 px-3 "
+                onClick={() => handleRoomChange("decrement")}
+              >
+                <MdDeleteOutline className="text-red-700" />
+              </button>
+              <span className="px-5 text-black">{rooms}</span>
+              <button
+                className="focus:outline-none border-l border-black py-2 px-3"
+                onClick={() => handleRoomChange("increment")}
+              >
+                <AiOutlinePlus className="text-green-800" />
+              </button>
+            </div>
+          </div>
+          <div className="flex justify-between items-center px-4 py-4 border-b border-gray-500">
+            <div className="flex items-center gap-4">
+              <MdPerson2 size={20} />
+              <p className="text-black font-medium">Adult</p>
+            </div>
+            <div className="flex items-center border border-black rounded-full ">
+              <button
+                className="focus:outline-none border-r border-black py-2 px-3 "
+                onClick={() => handleGuestChange("decrement")}
+              >
+                <MdDeleteOutline className="text-red-700" />
+              </button>
+              <span className="px-5 text-black">{guests}</span>
+              <button
+                className="focus:outline-none border-l border-black py-2 px-3"
+                onClick={() => handleGuestChange("increment")}
+              >
+                <AiOutlinePlus className="text-green-800" />
+              </button>
+            </div>
+          </div>
+          <div className="flex justify-between items-center px-4 py-4 border-b border-gray-500">
+            <div className="flex items-center gap-4">
+              <MdOutlineChildCare size={20} />
+              <p className="text-black font-medium">Children</p>
+            </div>
+            <div className="flex items-center border border-black rounded-full">
+              <button
+                className="focus:outline-none border-r border-black py-2 px-3 "
+                onClick={() => handleChildChange("decrement")}
+              >
+                <MdDeleteOutline className="text-red-700" />
+              </button>
+              <span className="px-5 text-black">{child}</span>
+              <button
+                className="focus:outline-none border-l border-black py-2 px-3"
+                onClick={() => handleChildChange("increment")}
+              >
+                <AiOutlinePlus className="text-green-800" />
+              </button>
+            </div>
+          </div>
+          <div className="flex items-center justify-center py-3">
+            <button
+              onClick={() => setShowPopup(false)}
+              className="bg-primaryGradient text-white font-medium text-center py-2  w-[90%] rounded-full"
+            >
+              Proceed
+            </button>
           </div>
         </div>
       )}

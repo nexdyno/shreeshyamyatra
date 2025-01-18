@@ -29,7 +29,19 @@ export default function Page() {
   const pathName = usePathname();
 
   const id = useMemo(() => pathName.split("/").pop(), [pathName]);
-
+  console.log("main page is calling agagin again ");
+  console.log("main page is calling agagin again ");
+  console.log("main page is calling agagin again ");
+  console.log("main page is calling agagin again ");
+  console.log("main page is calling agagin again ");
+  console.log("main page is calling agagin again ");
+  console.log("main page is calling agagin again ");
+  console.log("main page is calling agagin again ");
+  console.log("main page is calling agagin again ");
+  console.log("main page is calling agagin again ");
+  console.log("main page is calling agagin again ");
+  console.log("main page is calling agagin again ");
+  console.log("main page is calling agagin again ");
   // Fetch property if it's not available
   useEffect(() => {
     const handleFetchProperty = async () => {

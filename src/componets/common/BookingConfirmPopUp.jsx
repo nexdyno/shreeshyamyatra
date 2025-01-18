@@ -21,6 +21,11 @@ const BookingConfirmPopUp = () => {
     };
   }, []);
 
+  const closePopup = () => {
+    dispatch(setIsConfirmOrder(false));
+    window.location.href = "/";
+  };
+
   return (
     <div className="w-full h-screen flex items-center justify-center bg-black/70 backdrop-blur-sm fixed top-0 left-0 z-50 px-5 font-poppins">
       <div
@@ -29,7 +34,7 @@ const BookingConfirmPopUp = () => {
       >
         {/* Cancel button */}
         <button
-          onClick={() => dispatch(setIsConfirmOrder(false))}
+          onClick={closePopup}
           className="w-8 h-8 rounded-full bg-[white] border border-[#E7E7E7] drop-shadow absolute -top-4 -right-4 flex items-center justify-center"
         >
           <Image

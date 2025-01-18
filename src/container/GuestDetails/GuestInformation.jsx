@@ -21,19 +21,14 @@ export default function GuestInformation() {
   const [isVerfy, setIsVerfy] = useState(session?.user?.phone);
   const [valid, setValid] = useState(false);
 
-  const handleContinue = (data) => {
-    setFormData(data);
-    setStep(2);
-  };
-
   return (
     <div className="">
       <div className="min-h-fit pb-20 lg:hidden">
         {step === 1 ? (
           <FormComponent
-            onContinue={handleContinue}
             formData={formData}
             setFormData={setFormData}
+            setStep={setStep}
             setValid={setValid}
           />
         ) : (
@@ -48,7 +43,6 @@ export default function GuestInformation() {
         <div className="border  flex items-center justify-center">
           <div className="w-[50%] border-r">
             <FormComponent
-              onContinue={handleContinue}
               formData={formData}
               setFormData={setFormData}
               handleSubmit={handleSubmit}

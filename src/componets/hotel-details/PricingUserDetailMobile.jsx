@@ -3,67 +3,32 @@
 import { useEffect, useState } from "react";
 import { useAppContext } from "@/context/AppContext";
 import { useDispatch, useSelector } from "react-redux";
-import { setTotalSummary } from "@/redux/dataSlice";
+import { bookingCreate, setTotalSummary } from "@/redux/dataSlice";
 import Link from "next/link";
+import { checkUserSession, setLoginIsModalOpen } from "@/redux/authSlice";
+import { supabase } from "@/lib/supabase/supabaseClient";
+import { format, parse } from "date-fns";
+import { v4 as uuidv4 } from "uuid";
+import toast from "react-hot-toast";
+import LoginModal from "@/container/login/LoginModal";
 
-export default function PricingUserDetailMobile({ scrollToPricing }) {
-  const { isOTPModalOpen, setIsOTPModalOpen } = useAppContext();
-
-  const [formData, setFormData] = useState({
-    fullName: "",
-    mobileNumber: "",
-    email: "",
-  });
-
-  const [errors, setErrors] = useState({});
-
-  const validate = () => {
-    const newErrors = {};
-
-    // Full Name Validation
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = "Full name is required";
-    }
-
-    // Mobile Number Validation
-    if (!formData.mobileNumber.trim()) {
-      newErrors.mobileNumber = "Mobile number is required";
-    } else if (!/^[6-9]\d{9}$/.test(formData.mobileNumber)) {
-      newErrors.mobileNumber = "Invalid mobile number";
-    }
-
-    // Email Validation
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (
-      !/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(formData.email)
-    ) {
-      newErrors.email = "Invalid email address";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setFormData({
-      ...formData,
-      [id]: value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (validate()) {
-      setIsOTPModalOpen(!isOTPModalOpen);
-    }
-  };
-
+export default function PricingUserDetailMobile() {
   const dispatch = useDispatch();
-  const { roomAndGuest, bookingDate, selectedRoom, matchedProperty } =
-    useSelector((state) => state.data);
+  const [isLogin, setIsLogIn] = useState(false);
+  const [guestData, setGuestData] = useState(null);
+  const {
+    roomAndGuest,
+    bookingDate,
+    selectedRoom,
+    matchedProperty,
+    totalSummary,
+  } = useSelector((state) => state.data);
+  const { session, isLoginModalOpen, status, error } = useSelector(
+    (state) => state.auth
+  );
+  const [roomTag, setRoomTag] = useState(null);
+
+  console.log(matchedProperty, "matchedPropertymatchedProperty");
   const [billingData, setBillingData] = useState({
     numberOfDays: 1,
     commission: 0,
@@ -102,7 +67,7 @@ export default function PricingUserDetailMobile({ scrollToPricing }) {
       (roomAndGuest?.extraPerson || 0) * 350 * numberOfDays;
 
     // Calculate final room price
-    const finalRoomPrice = roomPriceWIthGST * numberOfDays;
+    const finalRoomPrice = roomPriceWIthGST * numberOfDays * roomAndGuest?.room;
 
     // Calculate total price
     const totalPrice = finalRoomPrice + extraPersonPrice + commission;
@@ -126,9 +91,135 @@ export default function PricingUserDetailMobile({ scrollToPricing }) {
     JSON.stringify(roomAndGuest),
   ]);
 
+  useEffect(() => {
+    // Check user session on mount
+    dispatch(checkUserSession());
+
+    // Real-time auth state listener
+    const { data: authListener } = supabase.auth.onAuthStateChange(() => {
+      dispatch(checkUserSession());
+    });
+
+    return () => {
+      if (authListener?.subscription) {
+        authListener.subscription.unsubscribe();
+      }
+    };
+  }, [dispatch]);
+
+  const [formattedDates, setFormattedDates] = useState({
+    startDate: "",
+    endDate: "",
+  });
+  useEffect(() => {
+    if (selectedRoom && roomAndGuest) {
+      const { room_book } = generateUniqueIds();
+
+      setRoomTag({
+        id: room_book,
+        rate: selectedRoom?.rate,
+        room_id: selectedRoom?.id,
+        quantity: roomAndGuest?.room,
+        room_name: selectedRoom?.name,
+        special_requirements: null,
+      });
+    }
+  }, [JSON.stringify(selectedRoom), JSON.stringify(roomAndGuest)]);
+
+  useEffect(() => {
+    if (bookingDate?.startDate && bookingDate?.endDate) {
+      const formatDate = (dateString) => {
+        const parsedDate = parse(dateString, "MMM d, yyyy", new Date());
+        if (parsedDate) {
+          return format(parsedDate, "yyyy-MM-dd");
+        } else {
+          console.error(`Invalid date format: ${dateString}`);
+          return "";
+        }
+      };
+
+      setFormattedDates({
+        startDate: formatDate(bookingDate?.startDate),
+        endDate: formatDate(bookingDate?.endDate),
+      });
+    }
+  }, [JSON.stringify(bookingDate)]);
+
+  const generateUniqueIds = () => {
+    return {
+      id: uuidv4(),
+      booking_id: uuidv4(),
+      room_book: uuidv4(),
+    };
+  };
+
+  console.log(session?.user?.id, "session?.user?.id");
+  const prepareGuestData = (formData) => {
+    const { id, booking_id } = generateUniqueIds();
+    localStorage.setItem("my_id", booking_id);
+    const checkIsManual = matchedProperty?.is_auto ? false : true;
+
+    return {
+      id,
+      property_id: selectedRoom?.property_id,
+      profile_id: session?.user?.id,
+      name: session?.user_metadata?.name || "",
+      contact: session?.user?.phone || "",
+      email: session?.user?.email || "",
+      check_in_date: formattedDates.startDate,
+      check_out_date: formattedDates.endDate,
+      guest_check_in_time: matchedProperty?.check_in_time,
+      guest_check_out_time: matchedProperty?.check_out_time,
+      number_of_children: 0,
+      number_of_adults: roomAndGuest?.guest,
+      room_assigned: [roomTag],
+      bill_clear: false,
+      created_at: new Date(),
+      updated_at: new Date(),
+      booking_id,
+      booking_status: "processing",
+      payments: [],
+      paid_to_status: "unPaidFromGuest",
+      is_manual_entry: checkIsManual,
+      total_amount: billingData?.totalPrice,
+      extra_guest: {
+        extraPerson: roomAndGuest?.extraPerson,
+        extraPrice: billingData?.extraPersonPrice,
+      },
+      our_charges: billingData?.commission,
+      total_roomPrice: billingData?.finalRoomPrice,
+    };
+  };
+
+  const bookingProcess = async () => {
+    try {
+      console.log(guestData, "guest data insdide the booking create");
+      await dispatch(bookingCreate(guestData)).unwrap();
+      window.location.href = "/guest-details";
+    } catch (error) {
+      toast.error(
+        error.message ||
+          "An error occurred while booking process. Please try again."
+      );
+    }
+  };
+
   const handleBook = () => {
     dispatch(setTotalSummary(billingData));
+    if (session?.user?.email || session?.user?.phone) {
+      const data = prepareGuestData();
+      setIsLogIn(true);
+      setGuestData(data); // This will trigger the useEffect
+    } else {
+      setIsLogIn(false);
+      dispatch(setLoginIsModalOpen(true));
+    }
   };
+  useEffect(() => {
+    if (guestData) {
+      bookingProcess();
+    }
+  }, [guestData]);
 
   return (
     <>
@@ -140,20 +231,14 @@ export default function PricingUserDetailMobile({ scrollToPricing }) {
           </p>
           <div className="flex items-center justify-between text-secondary text-base font-semibold bg-gray-100 py-3 px-4 rounded-md">
             <p className=" text-secondary">
-              Rs .{Math.round(billingData?.roomPriceWIthGST)}
+              Rs.{" "}
+              {isNaN(billingData?.roomPriceWIthGST) ||
+              !billingData?.roomPriceWIthGST
+                ? 0
+                : Math.round(billingData.roomPriceWIthGST)}
             </p>{" "}
             <p> {selectedRoom?.name}</p>
           </div>
-
-          {/* Coupon Applied */}
-          {/*         
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <input type="checkbox" className="h-4 w-4 text-blue-500" />
-            <span className="text-sm">FREEDOM78 coupon applied</span>
-          </div>
-          <span className="text-green-500 font-semibold">-₹1366</span>
-        </div> */}
 
           <div className=" py-5">
             <h2 className="text-lg font-semibold mb-2">Pricing details</h2>
@@ -190,91 +275,6 @@ export default function PricingUserDetailMobile({ scrollToPricing }) {
             <hr />
           </div>
         </div>
-
-        {/* <form onSubmit={handleSubmit}>
-          <div>
-            <h2 className="text-lg font-semibold mb-4">Your booking details</h2>
-
-            <div className="mb-4">
-              <label className="text-sm text-gray-600" htmlFor="fullName">
-                Full name
-              </label>
-              <input
-                id="fullName"
-                type="text"
-                placeholder="First name and last name"
-                value={formData.fullName}
-                onChange={handleChange}
-                className={`w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-                  errors.fullName
-                    ? "border-red-500 focus:ring-red-500"
-                    : "focus:ring-blue-500"
-                }`}
-              />
-              {errors.fullName && (
-                <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <label className="text-sm text-gray-600" htmlFor="mobileNumber">
-                Mobile number
-              </label>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="border px-4 py-2 rounded-l-lg bg-gray-100 text-gray-500">
-                  +91
-                </span>
-                <input
-                  id="mobileNumber"
-                  type="text"
-                  placeholder="Enter mobile number"
-                  value={formData.mobileNumber}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-2 border rounded-r-lg focus:outline-none focus:ring-2 ${
-                    errors.mobileNumber
-                      ? "border-red-500 focus:ring-red-500"
-                      : "focus:ring-blue-500"
-                  }`}
-                />
-              </div>
-              {errors.mobileNumber && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.mobileNumber}
-                </p>
-              )}
-            </div>
-
-            <div className="mb-6">
-              <label className="text-sm text-gray-600" htmlFor="email">
-                Email address
-              </label>
-              <input
-                id="email"
-                type="email"
-                placeholder="abc@xyz.com"
-                value={formData.email}
-                onChange={handleChange}
-                className={`w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-                  errors.email
-                    ? "border-red-500 focus:ring-red-500"
-                    : "focus:ring-blue-500"
-                }`}
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="relative">
-            <button
-              type="submit"
-              className="w-full bg-primaryGradient text-white py-3 rounded-lg font-semibold hover:bg-red-600 transition"
-            >
-              Book now & pay at hotel
-            </button>
-          </div>
-        </form> */}
       </div>
 
       <div className="lg:hidden fixed bottom-14 bg-white w-full shadow-md py-2 px-3 border border-gray-300 flex items-center justify-between">
@@ -282,19 +282,20 @@ export default function PricingUserDetailMobile({ scrollToPricing }) {
           <span className="text-lg font-semibold text-primary">
             Rs {Math.round(billingData?.totalPrice)}
           </span>
-          {/* <span className="line-through text-gray-400">$1,500</span> */}
-          {/* <span className="text-orange-500 font-medium text-lg">20% OFF</span> */}
         </div>
-        <Link href="/guest-details">
-          <button
-            // onClick={scrollToPricing}
-            onClick={handleBook}
-            className="border border-blue-500 text-white bg-primaryGradient rounded-sm px-4 py-2 hover:bg-blue-100 transition"
-          >
-            Continue to Book
-          </button>
-        </Link>
+        {/* <Link href="/guest-details"> */}
+        <button
+          onClick={handleBook}
+          className="border border-blue-500 text-white bg-primaryGradient rounded-sm px-4 py-2 hover:bg-blue-100 transition"
+        >
+          Continue to Book
+        </button>
+        {/* </Link> */}
       </div>
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => dispatch(setLoginIsModalOpen(false))}
+      />
     </>
   );
 }

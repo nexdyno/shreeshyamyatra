@@ -3,7 +3,7 @@ import React, { useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 
-const OTPModal = ({ handleSendOtp, phone, setValid }) => {
+const OTPModal = ({ handleSendOtp, phone, setValid, setStep }) => {
   const dispatch = useDispatch();
   const { session } = useSelector((state) => state.auth);
   const { isOTPModalOpen } = useSelector((state) => state.auth);
@@ -53,6 +53,7 @@ const OTPModal = ({ handleSendOtp, phone, setValid }) => {
       if (response.ok) {
         toast.success("Phone number verified successfully!");
         setValid(true);
+        setStep(2);
         dispatch(setIsOTPModalOpen());
       } else {
         toast.error(data.error || "Failed to verify OTP");

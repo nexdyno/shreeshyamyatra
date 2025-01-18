@@ -33,6 +33,7 @@ export default function PaymentBar({ formData, setStep, valid }) {
     payments: [],
     paid_to_status: "paidFromGuest",
     booking_status: "pending",
+    bill_clear: true,
   });
 
   const generateUniqueIds = () => {
@@ -138,7 +139,7 @@ export default function PaymentBar({ formData, setStep, valid }) {
                 date: new Date().toISOString(),
                 payment_method: "Credit Card",
                 amount: bookingData?.[0]?.total_amount,
-                paid_to: "a4ceb3e6-e572-47d2-8bc4-21a209a972aa",
+                paid_to: "19d19b90-3b41-4f48-9fc7-b0a78255a5a4",
                 paid_from: bookingData?.[0]?.profile_id,
                 payment_type: "guestRelated",
                 razorpay_receiptId: data?.receiptId,
@@ -154,7 +155,11 @@ export default function PaymentBar({ formData, setStep, valid }) {
                 })
               ).unwrap();
               await dispatch(savePaymentDetail({ paymentdata })).unwrap();
-              toast.success("Booking successfully created!");
+              if (!bookingData?.[0]?.is_manual_entry) {
+                toast.success("Booking successfully created!");
+              } else {
+                dispatch(setIsConfirmOrder(true));
+              }
             } catch (error) {
               console.error("Error saving guest data", error);
               toast.error("Error saving guest data. Please try again.");

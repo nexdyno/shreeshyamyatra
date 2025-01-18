@@ -28,6 +28,7 @@ export default function RoomDetails({ property }) {
   const [showAll, setShowAll] = useState(false);
   const pricingRef = useRef(null);
 
+  console.log("room is call again again");
   const toggleView = () => setShowAll(!showAll);
 
   const matchRooms = useMemo(
@@ -36,10 +37,10 @@ export default function RoomDetails({ property }) {
   );
 
   useEffect(() => {
-    if (!rooms || rooms.length === 0 || rooms[0].property_id !== property.id) {
+    if (!rooms || rooms.length === 0 || !matchRooms.length) {
       dispatch(fetchRooms());
     }
-  }, []);
+  }, [JSON.stringify(rooms), matchRooms.length, dispatch]);
 
   const scrollToPricing = () => {
     if (pricingRef.current) {
@@ -65,24 +66,6 @@ export default function RoomDetails({ property }) {
             <FaStar className="text-white" />
           </div>
         </div>
-
-        {/* Room Types */}
-        {/* <div className="pt-5 lg:pt-10 flex items-start lg:items-center gap-5 md:gap-10">
-          <h1 className="text-lg md:text-xl font-semibold text-start text-secondary text-nowrap">
-            Rooms Type
-          </h1>
-          <div className="flex flex-wrap items-center gap-4">
-            <button className="text-black border border-black text-sm md:text-base rounded-full bg-transparent py-0.5 md:py-1 px-3 lg:px-4 hover:bg-black hover:text-white">
-              Basic
-            </button>
-            <button className="text-green-600 border border-green-600 text-sm md:text-base rounded-full bg-transparent py-0.5 md:py-1 px-3 lg:px-4 hover:bg-green-600 hover:text-white">
-              Classic
-            </button>
-            <button className="text-primary border border-primary text-sm md:text-base rounded-full bg-transparent py-0.5 md:py-1 px-3 lg:px-4 hover:bg-primary hover:text-white">
-              Premium
-            </button>
-          </div>
-        </div> */}
 
         {/* Amenities */}
         <div className="py-10">
@@ -117,47 +100,12 @@ export default function RoomDetails({ property }) {
         </div>
         <SelectedRoom matchRooms={matchRooms} />
         {/* Reviews Section */}
-
-        {/* <div className="w-full h-full py-3">
-          <h1 className="text-2xl font-semibold text-start text-secondary mb-4">
-            Rating And Reviews
-          </h1>
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2">
-              <IoIosPerson className="text-gray-500" size={25} />
-              <div className="flex gap-1 items-center">
-                <span className="text-lg text-gray-500">Bharti Mishra</span>
-                <span className="text-secondary text-xs">(20 Nov 2024)</span>
-              </div>
-            </div>
-            <p className="text-sm text-secondary w-[80%] text-start leading-6">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry.
-            </p>
-          </div>
-        </div> */}
       </div>
 
       {/* Right Section */}
       <div className="w-full md:hidden" ref={pricingRef}>
         <PricingUserDetailMobile scrollToPricing={scrollToPricing} />
       </div>
-
-      {/* Fixed Pricing Bar (Mobile) */}
-      {/*       
-      <div className="lg:hidden fixed bottom-14 bg-white w-full shadow-md py-2 px-3 border border-gray-300 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-lg font-semibold text-primary">$1,200</span>
-          <span className="line-through text-gray-400">$1,500</span>
-          <span className="text-orange-500 font-medium text-lg">20% OFF</span>
-        </div>
-        <button
-          onClick={scrollToPricing}
-          className="border border-blue-500 text-white bg-primaryGradient rounded-sm px-4 py-2 hover:bg-blue-100 transition"
-        >
-          Book Now
-        </button>
-      </div> */}
 
       {/* Booking Details (Desktop) */}
       <div className="w-[40%] h-full hidden lg:block">

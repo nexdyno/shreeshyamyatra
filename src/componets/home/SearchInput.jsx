@@ -28,7 +28,7 @@ const SearchInput = ({ searchValue, setSearchValue }) => {
 
   return (
     <div
-      className="flex items-center w-full lg:flex-1 border-b lg:border-r lg:border-b-0 border-gray-300 p-3"
+      className="flex items-center w-full lg:flex-1 border-b lg:border-r lg:border-b-0 border-gray-500 p-3"
       onMouseEnter={() => setIsDropdownVisible(true)}
       // onMouseLeave={() => setIsDropdownVisible(false)}
     >
