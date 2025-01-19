@@ -50,3 +50,44 @@ input[type="range"]::-moz-range-thumb {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: #555;
 }
+.swiper-button-next:after,
+.swiper-button-next:after {
+  color: black;
+  border-radius:100%;
+  font-size: 20px !important
+}
+.swiper-button-prev:after,
+.swiper-button-prev:after {
+  color: black;
+  border-radius:100%;
+  font-size: 20px !important
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(5px);
+  border-radius: 100%;
+  width: 50px;
+  height: 50px;
+  font-size: 20px !important;
+    color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* transition: background( 0.3s ease, transform 0.3s ease); */
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.1);
+    font-size: 20px !important
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  background-color: transparent;
+  padding: 0;
+    font-size: 20px !important
+}

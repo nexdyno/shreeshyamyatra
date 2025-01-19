@@ -218,9 +218,6 @@ export default function RootLayout({ children }) {
             </div>
             <Toaster position="top-right" reverseOrder={false} />
             {children}
-            <div className="md:hidden">
-              <MobileFooter />
-            </div>
             <div className="hidden md:block">
               <Footer />
             </div>

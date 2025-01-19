@@ -1,16 +1,23 @@
 "use client";
 
 import LoadingOfferForYou from "@/container/home/LoadingOfferForYou";
-import { fetchImages, fetchProperty } from "@/redux/dataSlice";
-import Image from "next/image";
+import { fetchImages, fetchProperty, setIsSearchOpen } from "@/redux/dataSlice";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import "swiper/css";
+import "swiper/css/navigation";
+import CardProperty from "@/componets/home/CardProperty";
+import SubNavbarMobile from "@/componets/hotel/SubNavbarMobile";
+import InsideNavabr from "@/componets/common/InsideNavabr";
+import MobileFooter from "@/componets/common/MobileFooter";
 
 export default function Page() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const { property, error, status } = useSelector((state) => state.data);
+  const { property, error, status, IsSearchOpen } = useSelector(
+    (state) => state.data
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,9 +39,22 @@ export default function Page() {
     }
   }, [dispatch, property]);
 
+  const image = ["/topimg.jpg", "/topimg.jpg", "/topimg.jpg", "/topimg.jpg"];
+
   return (
-    <div className="w-full min-h-screen font-poppins px-5 mt-5 lg:mt-20 lg:px-20 pb-20 lg:pb-10">
-      <div className="w-full flex items-center justify-center py-5 lg:py-10">
+    <div className="w-full min-h-screen font-poppins lg:mt-20 lg:px-20 pb-20 lg:pb-10">
+      <div className="w-full md:hidden">
+        <InsideNavabr />
+        {IsSearchOpen ? (
+          <SubNavbarMobile
+            IsSearchOpen={IsSearchOpen}
+            onClose={() => dispatch(setIsSearchOpen(false))}
+          />
+        ) : (
+          ""
+        )}
+      </div>
+      <div className="w-full flex items-center justify-center pb-5 lg:py-10">
         <h1 className="font-semibold tracking-wide text-2xl lg:text-5xl">
           All Hotels
         </h1>
@@ -42,36 +62,17 @@ export default function Page() {
       {isLoading ? (
         <LoadingOfferForYou />
       ) : (
-        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full px-5 mt-5 ">
           {property?.map((item) => (
             <Link key={item.id} href={`/hotel/hotel-details/${item?.id}`}>
-              <div className="border border-gray-300 rounded-lg overflow-hidden transition duration-300 p-5 flex flex-col h-full">
-                <div className="relative h-40 w-full mb-4">
-                  <Image
-                    src={item.logo_url || "/assets/home/default-image.svg"}
-                    alt={item.name}
-                    layout="fill"
-                    objectFit="cover"
-                    className="rounded-t-lg"
-                  />
-                </div>
-                <div className="flex-grow flex flex-col justify-between">
-                  <div>
-                    <h2 className="text-lg font-bold mb-2">{item.name}</h2>
-                    <p className="text-sm text-gray-600">{item.address}</p>
-                    <p className="text-sm text-gray-600 mb-4">
-                      {item.description}
-                    </p>
-                  </div>
-                  <button className="mt-4 bg-transparent border border-gray-800 hover:border-none text-gray-800 py-2 px-4 rounded-sm hover:bg-gray-800 hover:text-white transition duration-300 w-full font-semibold">
-                    View Details
-                  </button>
-                </div>
-              </div>
+              <CardProperty image={image} item={item} />
             </Link>
           ))}
         </div>
       )}
+      <div className="md:hidden">
+        <MobileFooter />
+      </div>
     </div>
   );
 }

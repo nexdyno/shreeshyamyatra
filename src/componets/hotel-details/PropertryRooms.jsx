@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 
-export default function RoomCard({ matchRooms }) {
+export default function PropertryRooms({ matchRooms }) {
   const [filterRoom, setFilterRoom] = useState(null);
   const [avlRoom, setAvlRoom] = useState([]); // Available rooms with quantities
 

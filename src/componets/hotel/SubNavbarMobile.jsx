@@ -1,8 +1,6 @@
 import React from "react";
-import SearchbarMobile from "../common/SearchbarMobile";
-import DateSelector from "../home/DateSelector";
-import RoomGuestSelector from "../home/RoomGuestSelector";
 import { RxCross2 } from "react-icons/rx";
+import SearchComponent from "../home/SearchComponent";
 
 export default function SubNavbarMobile({ onClose, IsSearchOpen }) {
   return (
@@ -23,7 +21,7 @@ export default function SubNavbarMobile({ onClose, IsSearchOpen }) {
     // </div>
 
     <div
-      className={`fixed top-0 left-0 w-full bg-white min-h-fit transition-transform duration-300 ease-in-out ${
+      className={`fixed top-0 left-0 w-full h-screen bg-white transition-transform duration-300 ease-in-out ${
         IsSearchOpen ? "translate-y-0" : "-translate-y-full"
       } lg:hidden px-5 pt-3 shadow-lg z-50`}
     >
@@ -38,16 +36,14 @@ export default function SubNavbarMobile({ onClose, IsSearchOpen }) {
       </div>
 
       {/* Main Content */}
-      <div className="flex flex-col gap-4">
-        {/* Searchbar */}
+      {/* <div className=" flex flex-col gap-4">
         <SearchbarMobile />
-
-        {/* Date and Room/Guest Selectors */}
-        <div className="border-b pb-2">
+        <div className="w-full pb-2 space-y-2 border-b border-black">
           <DateSelector />
           <RoomGuestSelector />
         </div>
-      </div>
+      </div> */}
+      <SearchComponent />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import MobileFooter from "@/componets/common/MobileFooter";
 import Navbar from "@/componets/common/Navbar";
 import BannerOffer from "@/componets/home/BannerOffer";
 import Footer from "@/container/home/Footer";
@@ -59,7 +60,7 @@ export default function Home() {
   }, [dispatch]);
 
   return (
-    <div>
+    <div className="mb-16 lg:mb-0">
       <div className="lg:hidden">
         <Navbar />
       </div>
@@ -67,6 +68,9 @@ export default function Home() {
       {/* <RecommendedRooms /> */}
       <BannerOffer />
       <OfferForYou property={property} isLoading={isLoading} />
+      <div className="md:hidden">
+        <MobileFooter />
+      </div>
     </div>
   );
 }

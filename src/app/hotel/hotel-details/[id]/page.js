@@ -16,8 +16,10 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { anonymouslySignin, setUserSession } from "@/redux/authSlice";
 import { initializeSession } from "@/lib/helperFunctions/sessionChecker";
 import InsideNavabr from "@/componets/common/InsideNavabr";
+import { IoArrowBack } from "react-icons/io5";
 
 export default function Page() {
+  const [isVisible, setIsVisible] = useState(false);
   const dispatch = useDispatch();
   const { property, matchedProperty, error, IsSearchOpen } = useSelector(
     (state) => state.data
@@ -29,19 +31,6 @@ export default function Page() {
   const pathName = usePathname();
 
   const id = useMemo(() => pathName.split("/").pop(), [pathName]);
-  console.log("main page is calling agagin again ");
-  console.log("main page is calling agagin again ");
-  console.log("main page is calling agagin again ");
-  console.log("main page is calling agagin again ");
-  console.log("main page is calling agagin again ");
-  console.log("main page is calling agagin again ");
-  console.log("main page is calling agagin again ");
-  console.log("main page is calling agagin again ");
-  console.log("main page is calling agagin again ");
-  console.log("main page is calling agagin again ");
-  console.log("main page is calling agagin again ");
-  console.log("main page is calling agagin again ");
-  console.log("main page is calling agagin again ");
   // Fetch property if it's not available
   useEffect(() => {
     const handleFetchProperty = async () => {
@@ -76,18 +65,37 @@ export default function Page() {
     setRoutePathName(pathName);
   }, [pathName, setRoutePathName]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      // Adjust the scroll threshold as needed
+      if (scrollTop > 50) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
-    <div className=" pt-32 lg:pt-20">
-      <div className="fixed md:hidden top-0 pt-3 left-0 w-full z-20 bg-white">
+    <div className="lg:pt-20">
+      <div
+        className={`fixed md:hidden top-0 pt-3 left-0 w-full z-50 bg-white transition-transform duration-500 ease-in-out ${
+          isVisible ? "translate-y-0" : "-translate-y-full"
+        }`}
+      >
         <InsideNavabr />
         {IsSearchOpen ? (
           <SubNavbarMobile
             IsSearchOpen={IsSearchOpen}
             onClose={() => dispatch(setIsSearchOpen(false))}
           />
-        ) : (
-          ""
-        )}
+        ) : null}
       </div>
       <div>
         {isLoading ? (
@@ -104,6 +112,7 @@ export default function Page() {
           <p className="text-center text-red-500">Property not found</p> // Show "Property not found" if no match
         )}
       </div>
+      <div></div>
     </div>
   );
 }

@@ -1,77 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import "swiper/css/autoplay";
-import { Autoplay } from "swiper/modules";
-
-// export default function PhotoGallery() {
-//   const images = [
-//     "/assets/home/image.svg",
-//     "/assets/home/image1.svg",
-//     "/assets/home/image2.svg",
-//     "/assets/home/image1.svg",
-//     "/assets/home/image.svg",
-//   ];
-
-//   return (
-//     <div className="w-full">
-//       <div className="w-full min-h-[30vh] flex gap-2 pb-5 ">
-//         {/* Swiper Section */}
-//         <div className="relative w-full lg:w-[50%] h-full">
-//           <Swiper
-//             spaceBetween={0}
-//             centeredSlides={true}
-//             autoplay={{
-//               delay: 2000,
-//               disableOnInteraction: false,
-//             }}
-//             modules={[Autoplay]}
-//             loop={true}
-//             className="h-full"
-//           >
-//             {images.map((src, index) => (
-//               <SwiperSlide key={index}>
-//                 <div className="relative w-full h-[30vh] md:h-[60vh]">
-//                   <Image
-//                     src={src}
-//                     alt={`Main Room Image ${index + 1}`}
-//                     layout="fill"
-//                     objectFit="cover"
-//                     className=""
-//                   />
-//                 </div>
-//               </SwiperSlide>
-//             ))}
-//           </Swiper>
-//         </div>
-//         <div className="w-[50%] grid grid-rows-2 gap-5 ">
-//           <div className="relative w-full">
-//             <Image
-//               src="/assets/home/image1.svg"
-//               alt="image"
-//               layout="fill"
-//               objectFit="cover"
-//               className=""
-//             />
-//           </div>
-//           <div className="relative w-full ">
-//             <Image
-//               src="/assets/home/image2.svg"
-//               alt="image"
-//               layout="fill"
-//               objectFit="cover"
-//               className=""
-//             />
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
+import "swiper/css/navigation";
+import { Navigation, Autoplay } from "swiper/modules";
+import { IoArrowBack } from "react-icons/io5";
 
 export default function PhotoGallery({ propertyWiseImages }) {
   // Filter the images to only include non-rejected ones
@@ -80,53 +15,48 @@ export default function PhotoGallery({ propertyWiseImages }) {
   // );
 
   // Ensure matchRooms is an array
- const images = typeof propertyWiseImages === "object" && propertyWiseImages !== null ? [propertyWiseImages] : [];
+  const [currentIndex, setCurrentIndex] = useState(0);
 
- const validImages = images?.filter((image) => !image.is_rejected);
+  const images =
+    typeof propertyWiseImages === "object" && propertyWiseImages !== null
+      ? [propertyWiseImages]
+      : [];
+
+  const validImages = images?.filter((image) => !image.is_rejected);
+  const image = ["/topimg.jpg", "/topimg.jpg", "/topimg.jpg", "/topimg.jpg"];
 
   return (
     <div className="w-full">
-      <div className="w-full min-h-[30vh] flex gap-2 pb-5">
-        {/* Swiper Section */}
-        <div className="relative w-full lg:w-[50%] h-full">
-          <Swiper
-            spaceBetween={0}
-            centeredSlides={true}
-            autoplay={{
-              delay: 2000,
-              disableOnInteraction: false,
-            }}
-            modules={[Autoplay]}
-            loop={true}
-            className="h-full"
-          >
-            {validImages?.map((image, index) => (
-              <SwiperSlide key={image.id}>
-                <div className="relative w-full h-[30vh] md:h-[60vh]">
-                  <Image
-                    src={image.image_url}
-                    alt={`Property Image ${index + 1}`}
-                    layout="fill"
-                    objectFit="cover"
-                  />
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
+      <div className="relative h-64 lg:h-48 w-full mb-4">
+        <button
+          onClick={() => window.history.back()}
+          className="absolute top-4 left-4 z-10 bg-white text-black p-2 rounded-full shadow-md hover:bg-black/70"
+        >
+          <IoArrowBack />
+        </button>
 
-        {/* Static Images or Additional Images */}
-        <div className="w-[50%] grid grid-rows-2 gap-5">
-          {validImages?.slice(0, 2).map((image, index) => (
-            <div className="relative w-full h-full" key={image.id}>
+        <Swiper
+          modules={[Navigation, Autoplay]}
+          navigation
+          autoplay={{ delay: 4000, disableOnInteraction: false }}
+          loop
+          className="w-full h-full"
+          onSlideChange={(swiper) => setCurrentIndex(swiper.realIndex)}
+        >
+          {image.map((imgSrc, index) => (
+            <SwiperSlide key={index}>
               <Image
-                src={image.image_url}
-                alt={`Additional Image ${index + 1}`}
+                src={imgSrc}
+                alt={`Slide ${index + 1}`}
                 layout="fill"
                 objectFit="cover"
+                className="rounded-t-lg"
               />
-            </div>
+            </SwiperSlide>
           ))}
+        </Swiper>
+        <div className="absolute bottom-2 left-1/2 z-10 text-center text-white bg-black/50 px-3 py-1 rounded">
+          {`${currentIndex + 1} / ${image.length}`}
         </div>
       </div>
     </div>

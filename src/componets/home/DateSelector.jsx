@@ -9,7 +9,7 @@ import "react-date-range/dist/theme/default.css"; // Ensure these are imported
 import { useDispatch, useSelector } from "react-redux";
 import { setBookingDate } from "@/redux/dataSlice";
 
-const DateSelector = () => {
+const DateSelector = ({ type }) => {
   const dispatch = useDispatch();
   // const [bookingDate, setBookingDateLocal] = useState(null);
 
@@ -76,7 +76,11 @@ const DateSelector = () => {
     bookingDate?.endDate || format(dateRange[0].endDate, "EEE, d MMM yyyy");
 
   return (
-    <div className="flex items-center w-full lg:flex-1 border-b lg:border-r lg:border-b-0 border-gray-500 relative font-medium px-2 z-20">
+    <div
+      className={`flex items-center w-full lg:flex-1 ${
+        type === "no-border" ? "border-none" : "border-b"
+      }  lg:border-r lg:border-b-0 border-gray-500 relative font-medium px-2 z-20`}
+    >
       <FiCalendar size={20} className="text-primary" />
       <div
         onClick={() => setShowCalendar(!showCalendar)}

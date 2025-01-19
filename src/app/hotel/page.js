@@ -1,6 +1,7 @@
 "use client";
 
 import FilterAndSort from "@/componets/common/FilterAndSort";
+import MobileFooter from "@/componets/common/MobileFooter";
 import ShowHotels from "@/container/hotels/ShowHotels";
 import { useAppContext } from "@/context/AppContext";
 import { initializeSession } from "@/lib/helperFunctions/sessionChecker";
@@ -42,6 +43,9 @@ export default function Page() {
 
       {/* <ShowHotels data={property} status={status} error={error} /> */}
       <ShowHotels data={rooms} status={status} error={error} />
+      <div className="md:hidden">
+        <MobileFooter />
+      </div>
     </div>
   );
 }
