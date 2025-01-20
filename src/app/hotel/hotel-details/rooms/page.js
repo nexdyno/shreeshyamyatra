@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 export default function Page() {
   const dispatch = useDispatch();
   const [localMatchedProperty, setLocalMatchedProperty] = useState("");
-  const { rooms, property, error, IsSearchOpen } = useSelector(
+  const { rooms, property, error, IsSearchOpen, allImages } = useSelector(
     (state) => state.data
   );
 
@@ -37,6 +37,9 @@ export default function Page() {
     }
   }, [rooms, property, localMatchedProperty, dispatch]);
 
+  const propertyWiseImages = allImages?.filter(
+    (image) => image.property_id === localMatchedProperty
+  );
   useEffect(() => {
     if (stableProperty.length > 0) {
       const foundProperty = stableProperty.find(
@@ -48,7 +51,7 @@ export default function Page() {
 
   const matchRooms = useMemo(
     () => rooms.filter((room) => room?.property_id === localMatchedProperty),
-    [rooms, localMatchedProperty]
+    [rooms, localMatchedProperty, propertyWiseImages]
   );
 
   console.log(matchRooms, "matchRooms");
@@ -66,7 +69,10 @@ export default function Page() {
           />
         ) : null}
       </div>
-      <PropertryRooms matchRooms={matchRooms} />
+      <PropertryRooms
+        matchRooms={matchRooms}
+        propertyWiseImages={propertyWiseImages}
+      />
     </div>
   );
 }

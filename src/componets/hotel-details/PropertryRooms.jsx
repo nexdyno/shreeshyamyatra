@@ -14,7 +14,7 @@ import RoomGuestSelector from "../home/RoomGuestSelector";
 import { IoFitnessOutline } from "react-icons/io5";
 import { MdPool, MdSpa, MdTv, MdWifi } from "react-icons/md";
 
-export default function PropertryRooms({ matchRooms }) {
+export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
   const [filterRoom, setFilterRoom] = useState(null);
   const [avlRoom, setAvlRoom] = useState([]);
   const [showAll, setShowAll] = useState(false);
@@ -91,7 +91,15 @@ export default function PropertryRooms({ matchRooms }) {
       )
     );
   };
-  console.log(avlRoom, "avlRoom avlRoom");
+  const getImageUrlByRoomId = (roomId) => {
+    // Iterate through the data to find matching room_id
+    for (const item of propertyWiseImages) {
+      if (item.room_ids_tagged.includes(roomId)) {
+        return item.image_url;
+      }
+    }
+    return null;
+  };
 
   return (
     <div>
@@ -100,15 +108,15 @@ export default function PropertryRooms({ matchRooms }) {
         <div className="space-y-6">
           {avlRoom?.map((room) => (
             <div
-              key={room.id}
+              key={room?.id}
               className={`flex flex-col md:flex-row border rounded-lg hover:shadow-md px-8 bg-white cursor-pointer`}
               onClick={() => handleRoomSelect(room)} // Select room on click
             >
               {/* Image Section */}
               <div className="relative lg:w-full w-[80%] h-36 lg:h-48  overflow-hidden rounded-md shadow-md">
                 <Image
-                  src={room.image || "/topimg.jpg"} // Fallback image
-                  alt={`${room.name} Image`}
+                  src={getImageUrlByRoomId(room?.id) || "/topimg.jpg"} // Fallback image
+                  alt={`${room?.name} Image`}
                   layout="fill"
                   objectFit="cover"
                 />
