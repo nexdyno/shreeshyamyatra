@@ -28,7 +28,10 @@ export default function HotelDetails({ property }) {
         <PhotoGallery propertyWiseImages={propertyWiseImages} />
       </div>
       <div className="min-h-[70vh]">
-        <RoomDetails property={property} />
+        <RoomDetails
+          property={property}
+          propertyWiseImages={propertyWiseImages}
+        />
       </div>
     </section>
   );

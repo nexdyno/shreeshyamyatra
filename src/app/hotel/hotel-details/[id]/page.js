@@ -4,6 +4,7 @@ import SubNavbarMobile from "@/componets/hotel/SubNavbarMobile";
 import HotelDetails from "@/container/hotel-details/HotelDetails";
 import { useAppContext } from "@/context/AppContext";
 import {
+  fetchImages,
   fetchProperty,
   setIsSearchOpen,
   setMatchedProperty,
@@ -21,9 +22,8 @@ import { IoArrowBack } from "react-icons/io5";
 export default function Page() {
   const [isVisible, setIsVisible] = useState(false);
   const dispatch = useDispatch();
-  const { property, matchedProperty, error, IsSearchOpen } = useSelector(
-    (state) => state.data
-  );
+  const { property, matchedProperty, error, IsSearchOpen, allImages } =
+    useSelector((state) => state.data);
   const { sessionFromLocal } = useSelector((state) => state.auth);
 
   const [isLoading, setIsLoading] = useState(true); // Set isLoading to true initially
@@ -36,6 +36,7 @@ export default function Page() {
     const handleFetchProperty = async () => {
       try {
         await dispatch(fetchProperty()).unwrap();
+        await dispatch(fetchImages()).unwrap();
       } catch (err) {
         console.error("Error while fetching the data", err);
       } finally {

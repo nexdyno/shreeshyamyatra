@@ -39,7 +39,6 @@ export default function PricingUserDetailMobile() {
   });
 
   const calculateBillingData = () => {
-    // Calculate number of days
     const startDate = new Date(bookingDate?.startDate);
     const endDate = new Date(bookingDate?.endDate);
     const numberOfDays =
@@ -92,10 +91,8 @@ export default function PricingUserDetailMobile() {
   ]);
 
   useEffect(() => {
-    // Check user session on mount
     dispatch(checkUserSession());
 
-    // Real-time auth state listener
     const { data: authListener } = supabase.auth.onAuthStateChange(() => {
       dispatch(checkUserSession());
     });

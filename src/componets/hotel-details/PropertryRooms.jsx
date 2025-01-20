@@ -13,6 +13,7 @@ import DateSelector from "../home/DateSelector";
 import RoomGuestSelector from "../home/RoomGuestSelector";
 import { IoFitnessOutline } from "react-icons/io5";
 import { MdPool, MdSpa, MdTv, MdWifi } from "react-icons/md";
+import Amenities from "../common/Amenities";
 
 export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
   const [filterRoom, setFilterRoom] = useState(null);
@@ -126,13 +127,13 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
               <div className="flex-1 md:pl-6 mt-4 md:mt-0">
                 {/* Room Name */}
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-xl font-semibold font-poppins">
+                  <h3 className="text-lg font-semibold font-poppins">
                     {room?.name}
                     {/* {OneRoom?.id === room.id && (
                       <FaCheckCircle className="text-green-500 ml-2" />
                     )} */}
                   </h3>
-                  <p className="text-base font-bold text-black font-poppins">
+                  <p className="text-base font-semibold text-black font-poppins">
                     ₹ {room.rate} /
                     <span className="text-gray-700 font-medium text-xs">
                       {" "}
@@ -148,7 +149,7 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
                 </p>
 
                 {/* Amenities */}
-                <div className="py-2">
+                {/* <div className="py-2">
                   <h1 className="text-lg lg:text-2xl font-semibold text-start text-black">
                     Amenities
                   </h1>
@@ -162,38 +163,37 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
                         className="flex gap-2 text-2xl items-center"
                       >
                         <div className="text-black">
-                          {/* Placeholder icons for now */}
-                          {facility === "parking" && <IoFitnessOutline />}{" "}
-                          {/* Gym */}
-                          {facility === "cctv" && <MdWifi />} {/* WiFi */}
-                          {facility === "spa" && <MdSpa />} {/* Spa */}
-                          {facility === "tv" && <MdTv />} {/* TV */}
+                          {facility === "parking" && <IoFitnessOutline />}
+                          {facility === "cctv" && <MdWifi />}
+                          {facility === "spa" && <MdSpa />}
+                          {facility === "tv" && <MdTv />}
                           {facility === "swimmingPool" && <MdPool />}{" "}
-                          {/* Swimming Pool */}
                         </div>
                         <p className="text-sm text-black">{facility}</p>
                       </div>
                     ))}
                   </div>
-                  <div className=" flex items-center justify-between">
-                    <button
-                      onClick={toggleView}
-                      className="mt-2 text-black text-sm font-semibold tracking-wide underline"
-                    >
-                      {showAll ? "View Less" : "View More"}
-                    </button>
-                    <button
-                      // onClick={toggleView}
-                      className={`mt-2 rounded-full  px-5 py-2 font-poppins text-sm font-medium tracking-wide ${
-                        selectedRoom?.id === room.id
-                          ? " bg-green-100 text-green-700 border border-green-700"
-                          : "bg-black text-white"
-                      }`}
-                    >
-                      {selectedRoom?.id === room.id ? " ✔️ Selected" : "Select"}
-                    </button>
-                  </div>
+                
+                </div> */}
+                <div className=" flex items-center justify-between">
+                  <button
+                    onClick={toggleView}
+                    className="mt-2 text-black text-sm font-semibold tracking-wide underline"
+                  >
+                    {showAll ? "View Less" : "View More"}
+                  </button>
+                  <button
+                    // onClick={toggleView}
+                    className={`mt-2 rounded-full  px-5 py-2 font-poppins text-sm font-medium tracking-wide ${
+                      selectedRoom?.id === room.id
+                        ? " bg-green-100 text-green-700 border border-green-700"
+                        : "bg-black text-white"
+                    }`}
+                  >
+                    {selectedRoom?.id === room.id ? " ✔️ Selected" : "Select"}
+                  </button>
                 </div>
+                <Amenities amenities={room?.amenities} />
               </div>
             </div>
           ))}

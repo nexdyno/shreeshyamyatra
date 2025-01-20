@@ -3,20 +3,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import { BsTvFill } from "react-icons/bs";
-import { FaStar } from "react-icons/fa";
-import { IoIosPerson } from "react-icons/io";
-import { IoBed, IoFitnessOutline } from "react-icons/io5";
-import {
-  MdBackupTable,
-  MdLocationPin,
-  MdPool,
-  MdSpa,
-  MdTv,
-  MdWater,
-  MdWifi,
-} from "react-icons/md";
-import BookingPaymentDetails from "./BookingPaymentDetails";
 import PricingUserDetailMobile from "./PricingUserDetailMobile";
 import { fetchRooms } from "@/redux/dataSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,12 +11,91 @@ import DateSelector from "../home/DateSelector";
 import RoomGuestSelector from "../home/RoomGuestSelector";
 import { format, parse } from "date-fns";
 import Link from "next/link";
+import Amenities from "../common/Amenities";
+import PropertyRules from "../common/PropertyRules";
+import { MdLocationPin } from "react-icons/md";
+import { calculateBillingData } from "@/lib/helperFunctions/calculationHelper";
+import BookingPaymentDetails from "./BookingPaymentDetails";
+import PropertryRooms from "./PropertryRooms";
 
-export default function RoomDetails({ property }) {
+export default function RoomDetails({ property, propertyWiseImages }) {
+  const propertyRules = [
+    {
+      heading: "Cancellation Policy",
+      description:
+        "Cancellations made up to 48 hours before check-in are free of charge. For cancellations within 48 hours, 50% of the booking amount will be charged. No refunds are provided for same-day cancellations or no-shows.",
+    },
+    {
+      heading: "Occupancy",
+      description:
+        "Each room accommodates a maximum of 2 adults and 2 children under 12 years. Additional guests will be charged $20 per person per night.",
+    },
+    {
+      heading: "Pets",
+      description:
+        "Pets are not allowed on the property, except for service animals. Guests traveling with service animals must notify the property in advance.",
+    },
+    {
+      heading: "Smoking",
+      description:
+        "Smoking is strictly prohibited indoors. A $200 cleaning fee will be charged if smoking occurs inside the property.",
+    },
+    {
+      heading: "Noise Policy",
+      description:
+        "Quiet hours are from 10:00 PM to 7:00 AM. Parties and loud music are not permitted.",
+    },
+    {
+      heading: "Damage Policy",
+      description:
+        "Guests are responsible for any damages caused to the property during their stay. A refundable security deposit of $100 is required at check-in.",
+    },
+    {
+      heading: "Parking",
+      description:
+        "One parking spot is included per reservation. Additional vehicles may incur a $10 daily fee.",
+    },
+    {
+      heading: "Amenities Usage",
+      description:
+        "The pool, gym, and other amenities are available from 7:00 AM to 9:00 PM. Guests are required to follow the posted rules for these areas.",
+    },
+    {
+      heading: "ID and Payment",
+      description:
+        "Guests must present a valid government-issued photo ID at check-in. Full payment is required at the time of booking.",
+    },
+    {
+      heading: "Housekeeping",
+      description:
+        "Daily housekeeping is included. Additional cleaning services can be requested for a fee.",
+    },
+    {
+      heading: "Prohibited Activities",
+      description:
+        "Illegal activities, including drug use, are strictly prohibited. Firearms and hazardous materials are not allowed on the property.",
+    },
+    {
+      heading: "Children",
+      description:
+        "Children must be supervised by an adult at all times. Cribs and highchairs are available upon request.",
+    },
+    {
+      heading: "Internet Usage",
+      description:
+        "Complimentary Wi-Fi is available throughout the property. Guests are expected to use the internet responsibly and refrain from illegal downloads.",
+    },
+    {
+      heading: "Accessibility",
+      description:
+        "The property is wheelchair accessible. Guests with special needs are encouraged to inform the property in advance for necessary arrangements.",
+    },
+  ];
+
+  const [PriceValues, setPriceValues] = useState(null);
   const dispatch = useDispatch();
-  const { rooms, bookingDate, roomAndGuest } = useSelector(
-    (state) => state.data
-  );
+  const { rooms, roomAndGuest, bookingDate, selectedRoom, matchedProperty } =
+    useSelector((state) => state.data);
   const formatTime = (time) => {
     const parsedTime = parse(time, "HH:mm:ss", new Date());
     return format(parsedTime, "h a"); // Format as `11 AM` or `10 PM`
@@ -57,6 +122,31 @@ export default function RoomDetails({ property }) {
       pricingRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  // useEffect(() => {
+  //   const fetchBillingData = async () => {
+  //     if (roomAndGuest && bookingDate && selectedRoom && matchedProperty) {
+  //       try {
+  //         // Call the helper function and await its result
+  //         const values = await calculateBillingData(
+  //           roomAndGuest,
+  //           bookingDate,
+  //           selectedRoom,
+  //           matchedProperty
+  //         );
+  //         setPriceValues(values);
+  //       } catch (error) {
+  //         console.error("Error calculating billing data:", error);
+  //       }
+  //     }
+  //   };
+
+  //   fetchBillingData(); // Call the async function
+  // }, [
+  //   JSON.stringify(bookingDate),
+  //   JSON.stringify(selectedRoom),
+  //   JSON.stringify(roomAndGuest),
+  // ]);
 
   return (
     <div className="h-full w-full font-poppins flex flex-col lg:flex-row gap-10 pb-20 lg:pb-0 lg:px-0">
@@ -98,38 +188,16 @@ export default function RoomDetails({ property }) {
         </div>
 
         {/* Amenities */}
-        <div className="py-10">
-          <h1 className="text-lg lg:text-2xl font-semibold text-start text-black">
-            Amenities
-          </h1>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-5 py-5 items-center ">
-            {(showAll
-              ? property?.facilities
-              : property?.facilities?.slice(0, 6)
-            )?.map((facility, index) => (
-              <div key={index} className="flex gap-2 text-2xl items-center">
-                <div className="text-black">
-                  {/* Placeholder icons for now */}
-                  {facility === "parking" && <IoFitnessOutline />} {/* Gym */}
-                  {facility === "cctv" && <MdWifi />} {/* WiFi */}
-                  {facility === "spa" && <MdSpa />} {/* Spa */}
-                  {facility === "tv" && <MdTv />} {/* TV */}
-                  {facility === "swimmingPool" && <MdPool />}{" "}
-                  {/* Swimming Pool */}
-                </div>
-                <p className="text-sm text-black">{facility}</p>
-              </div>
-            ))}
-          </div>
-          <button
-            onClick={toggleView}
-            className="mt-2 text-black text-base font-semibold tracking-wide underline"
-          >
-            {showAll ? "View Less" : "View More"}
-          </button>
+        <div className="pt-4">
+          <Amenities amenities={property?.facilities} />
+          <PropertyRules Rules={propertyRules} />
         </div>
-        {/* <SelectedRoom matchRooms={matchRooms} /> */}
-        {/* Reviews Section */}
+        <div className="hidden lg:block">
+          <PropertryRooms
+            matchRooms={matchRooms}
+            propertyWiseImages={propertyWiseImages}
+          />
+        </div>
       </div>
       <div className="lg:hidden fixed bottom-0 bg-white w-full shadow-md py-2 px-3 border-t border-b border-gray-300 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -148,7 +216,7 @@ export default function RoomDetails({ property }) {
       </div> */}
 
       {/* Booking Details (Desktop) */}
-      <div className="w-[40%] h-full hidden lg:block">
+      <div className="w-[40%] h-full  hidden lg:block ">
         <BookingPaymentDetails matchRooms={matchRooms} />
       </div>
     </div>

@@ -222,10 +222,9 @@ export default function BookingPaymentDetails() {
     }
   }, [guestData]);
 
-  console.log(guestData, "guest data guest data");
   return (
     <>
-      <div className="flex justify-end items-center">
+      <div className="w-full h-full flex justify-end items-center">
         {selectedRoom ? (
           <div className="bg-white shadow-lg border w-full max-w-md p-5 font-poppins">
             {/* Price Section */}
