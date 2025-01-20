@@ -11,12 +11,13 @@ export default function InsideNavabr() {
   const { bookingDate, roomAndGuest, IsSearchOpen } = useSelector(
     (state) => state.data
   );
+
   const handleBack = () => {
     if (typeof window !== "undefined") {
       if (window.history.length > 1) {
         window.history.back();
       } else {
-        window.location.href = "/"; // Replace '/' with your desired fallback page
+        window.location.href = "/";
       }
     }
   };

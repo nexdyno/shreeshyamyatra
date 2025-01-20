@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
-import { Navigation, Autoplay } from "swiper/modules";
+import { Navigation } from "swiper/modules";
 import { IoArrowBack } from "react-icons/io5";
 
 export default function PhotoGallery({ propertyWiseImages }) {
@@ -19,11 +19,17 @@ export default function PhotoGallery({ propertyWiseImages }) {
 
   const images =
     typeof propertyWiseImages === "object" && propertyWiseImages !== null
-      ? [propertyWiseImages]
+      ? Array.isArray(propertyWiseImages)
+        ? propertyWiseImages
+        : [propertyWiseImages]
       : [];
 
-  const validImages = images?.filter((image) => !image.is_rejected);
-  const image = ["/topimg.jpg", "/topimg.jpg", "/topimg.jpg", "/topimg.jpg"];
+  // Filter out the valid images
+  const validImages = images
+    .filter((image) => !image.is_rejected) // Filter out rejected images
+    .sort((a, b) => (b.is_cover_photo ? 1 : 0) - (a.is_cover_photo ? 1 : 0)); // Sort by `is_cover_photo`
+
+  // const image = ["/topimg.jpg", "/topimg.jpg", "/topimg.jpg", "/topimg.jpg"];
 
   return (
     <div className="w-full">
@@ -36,17 +42,20 @@ export default function PhotoGallery({ propertyWiseImages }) {
         </button>
 
         <Swiper
-          modules={[Navigation, Autoplay]}
-          navigation
-          autoplay={{ delay: 4000, disableOnInteraction: false }}
+          modules={[Navigation]}
+          navigation={{
+            nextEl: null,
+            prevEl: null,
+          }}
+          // autoplay={{ delay: 4000, disableOnInteraction: false }}
           loop
           className="w-full h-full"
           onSlideChange={(swiper) => setCurrentIndex(swiper.realIndex)}
         >
-          {image.map((imgSrc, index) => (
+          {validImages?.map((imgSrc, index) => (
             <SwiperSlide key={index}>
               <Image
-                src={imgSrc}
+                src={imgSrc?.image_url}
                 alt={`Slide ${index + 1}`}
                 layout="fill"
                 objectFit="cover"
@@ -56,7 +65,7 @@ export default function PhotoGallery({ propertyWiseImages }) {
           ))}
         </Swiper>
         <div className="absolute bottom-2 left-1/2 z-10 text-center text-white bg-black/50 px-3 py-1 rounded">
-          {`${currentIndex + 1} / ${image.length}`}
+          {`${currentIndex + 1 || 1} / ${validImages?.length}`}
         </div>
       </div>
     </div>

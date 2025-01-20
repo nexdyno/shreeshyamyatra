@@ -10,9 +10,11 @@ export default function HotelDetails({ property }) {
   const { allImages } = useSelector((state) => state.data);
 
   // Find images specific to the current property
-  const propertyWiseImages = allImages?.find(
+  const propertyWiseImages = allImages?.filter(
     (image) => image.property_id === property.id
   );
+  console.log(propertyWiseImages, "proper wise images");
+  console.log(allImages, "allImages allImages");
   useEffect(() => {
     // Only dispatch fetchImages if allImages is empty or if propertyWiseImages is not found
     if (!allImages?.length || !propertyWiseImages) {

@@ -4,6 +4,7 @@ import InsideNavabr from "@/componets/common/InsideNavabr";
 import PropertryRooms from "@/componets/hotel-details/PropertryRooms";
 import SubNavbarMobile from "@/componets/hotel/SubNavbarMobile";
 import {
+  fetchImages,
   fetchProperty,
   fetchRooms,
   setIsSearchOpen,
@@ -32,6 +33,7 @@ export default function Page() {
     if (!rooms || rooms.length === 0 || !property || property.length === 0) {
       dispatch(fetchRooms());
       dispatch(fetchProperty());
+      dispatch(fetchImages());
     }
   }, [rooms, property, localMatchedProperty, dispatch]);
 
@@ -52,7 +54,7 @@ export default function Page() {
   console.log(matchRooms, "matchRooms");
   console.log(localMatchedProperty, "localMatchedProperty");
   return (
-    <div className="w-full">
+    <div className="w-full mt-32 lg:mt-0">
       <div
         className={`fixed md:hidden top-0 pt-3 left-0 w-full z-50 bg-white transition-transform duration-500 ease-in-out`}
       >

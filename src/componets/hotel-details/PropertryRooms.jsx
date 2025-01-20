@@ -9,10 +9,16 @@ import {
   FaCouch,
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
+import DateSelector from "../home/DateSelector";
+import RoomGuestSelector from "../home/RoomGuestSelector";
+import { IoFitnessOutline } from "react-icons/io5";
+import { MdPool, MdSpa, MdTv, MdWifi } from "react-icons/md";
 
 export default function PropertryRooms({ matchRooms }) {
   const [filterRoom, setFilterRoom] = useState(null);
-  const [avlRoom, setAvlRoom] = useState([]); // Available rooms with quantities
+  const [avlRoom, setAvlRoom] = useState([]);
+  const [showAll, setShowAll] = useState(false);
+  const toggleView = () => setShowAll(!showAll);
 
   const dispatch = useDispatch();
   const { OneRoom, selectedRoom, busyRoom, bookingDate } = useSelector(
@@ -51,7 +57,7 @@ export default function PropertryRooms({ matchRooms }) {
 
         return { ...room, available_quantity: availableRooms };
       })
-      .filter((room) => room.available_quantity > 0); // Only include rooms with available quantity
+      .filter((room) => room.available_quantity > 0);
   };
 
   useEffect(() => {
@@ -89,21 +95,19 @@ export default function PropertryRooms({ matchRooms }) {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4">All Rooms</h2>
+      <h2 className="text-2xl font-semibold mb-4 hidden lg:block">All Rooms</h2>
       {avlRoom.length !== 0 ? (
         <div className="space-y-6">
           {avlRoom?.map((room) => (
             <div
               key={room.id}
-              className={`flex flex-col md:flex-row border rounded-lg hover:shadow-md p-4 bg-white cursor-pointer ${
-                selectedRoom?.id === room.id ? "border-primary bg-blue-100" : "" // Highlight selected room
-              }`}
+              className={`flex flex-col md:flex-row border rounded-lg hover:shadow-md px-8 bg-white cursor-pointer`}
               onClick={() => handleRoomSelect(room)} // Select room on click
             >
               {/* Image Section */}
-              <div className="relative w-full md:w-1/3 h-48 md:h-auto overflow-hidden rounded-md shadow-md">
+              <div className="relative lg:w-full w-[80%] h-36 lg:h-48  overflow-hidden rounded-md shadow-md">
                 <Image
-                  src={room.image || "/assets/home/image1.svg"} // Fallback image
+                  src={room.image || "/topimg.jpg"} // Fallback image
                   alt={`${room.name} Image`}
                   layout="fill"
                   objectFit="cover"
@@ -113,49 +117,73 @@ export default function PropertryRooms({ matchRooms }) {
               {/* Details Section */}
               <div className="flex-1 md:pl-6 mt-4 md:mt-0">
                 {/* Room Name */}
-                <div className="flex items-center mb-2">
-                  <h3 className="text-xl font-semibold">
-                    {room.name}
-                    {OneRoom?.id === room.id && (
-                      <FaCheckCircle className="text-green-500 ml-2" /> // Green check if selected
-                    )}
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-xl font-semibold font-poppins">
+                    {room?.name}
+                    {/* {OneRoom?.id === room.id && (
+                      <FaCheckCircle className="text-green-500 ml-2" />
+                    )} */}
                   </h3>
+                  <p className="text-base font-bold text-black font-poppins">
+                    ₹ {room.rate} /
+                    <span className="text-gray-700 font-medium text-xs">
+                      {" "}
+                      per night{" "}
+                    </span>
+                  </p>
                 </div>
 
                 {/* Room Details */}
-                <p className="text-sm text-gray-500">
-                  <p>Available Quantity: {room.available_quantity}</p>
-                </p>
-                <p className="text-base text-gray-500">
-                  Rate: ₹{room.rate} / night
+                <p className="text-black font-normal text-sm">
+                  {room?.description ||
+                    "A luxurious room with modern amenities and a great view"}
                 </p>
 
                 {/* Amenities */}
-                <div className="mt-3">
-                  <h4 className="text-sm font-semibold mb-2">Amenities:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    <div className="flex items-center gap-1 text-gray-600">
-                      <FaSnowflake />
-                      <span>AC</span>
-                    </div>
-
-                    <div className="flex items-center gap-1 text-gray-600">
-                      <FaWifi />
-                      <span>WiFi</span>
-                    </div>
-
-                    <div className="flex items-center gap-1 text-gray-600">
-                      <span>Microwave</span>
-                    </div>
-
-                    <div className="flex items-center gap-1 text-gray-600">
-                      <span>Hair Dryer</span>
-                    </div>
-
-                    <div className="flex items-center gap-1 text-gray-600">
-                      <FaCouch />
-                      <span>Sofa</span>
-                    </div>
+                <div className="py-2">
+                  <h1 className="text-lg lg:text-2xl font-semibold text-start text-black">
+                    Amenities
+                  </h1>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 py-2 items-center ">
+                    {(showAll
+                      ? room?.amenities
+                      : room?.amenities?.slice(0, 6)
+                    )?.map((facility, index) => (
+                      <div
+                        key={index}
+                        className="flex gap-2 text-2xl items-center"
+                      >
+                        <div className="text-black">
+                          {/* Placeholder icons for now */}
+                          {facility === "parking" && <IoFitnessOutline />}{" "}
+                          {/* Gym */}
+                          {facility === "cctv" && <MdWifi />} {/* WiFi */}
+                          {facility === "spa" && <MdSpa />} {/* Spa */}
+                          {facility === "tv" && <MdTv />} {/* TV */}
+                          {facility === "swimmingPool" && <MdPool />}{" "}
+                          {/* Swimming Pool */}
+                        </div>
+                        <p className="text-sm text-black">{facility}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className=" flex items-center justify-between">
+                    <button
+                      onClick={toggleView}
+                      className="mt-2 text-black text-sm font-semibold tracking-wide underline"
+                    >
+                      {showAll ? "View Less" : "View More"}
+                    </button>
+                    <button
+                      // onClick={toggleView}
+                      className={`mt-2 rounded-full  px-5 py-2 font-poppins text-sm font-medium tracking-wide ${
+                        selectedRoom?.id === room.id
+                          ? " bg-green-100 text-green-700 border border-green-700"
+                          : "bg-black text-white"
+                      }`}
+                    >
+                      {selectedRoom?.id === room.id ? " ✔️ Selected" : "Select"}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -164,7 +192,19 @@ export default function PropertryRooms({ matchRooms }) {
         </div>
       ) : (
         <h1 className="text-2xl py-5 font-semibold text-center font-poppins text-black">
-          No Rooms are Available for the Selected date
+          {bookingDate ? (
+            "No Rooms are Available for the Selected date"
+          ) : (
+            <>
+              <div className="hidden">
+                <DateSelector />
+                <RoomGuestSelector />
+              </div>
+              <p className="text-2xl py-5 font-semibold text-center font-poppins text-black">
+                No Rooms are Available
+              </p>
+            </>
+          )}
         </h1>
       )}
     </div>
