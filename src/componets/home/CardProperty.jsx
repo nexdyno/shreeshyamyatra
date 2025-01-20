@@ -6,6 +6,14 @@ import "swiper/css/navigation";
 import { Navigation, Autoplay } from "swiper/modules";
 
 export default function CardProperty({ image, item }) {
+  const ArrayDefault = [
+    { image_url: "/assets/logo.svg" },
+    { image_url: "/assets/logo.svg" },
+  ];
+
+  // Determine which images to use, fallback to ArrayDefault if image is not provided
+  const imagesToUse = image && image.length > 0 ? image : ArrayDefault;
+
   return (
     <div className="overflow-hidden transition duration-300 flex flex-col h-full">
       <div className="relative h-40 lg:h-48 w-full mb-4">
@@ -16,10 +24,10 @@ export default function CardProperty({ image, item }) {
           loop
           className="w-full h-full"
         >
-          {image.map((imgSrc, index) => (
+          {imagesToUse.map((imgSrc, index) => (
             <SwiperSlide key={index}>
               <Image
-                src={imgSrc}
+                src={imgSrc?.image_url}
                 alt={`Slide ${index + 1}`}
                 layout="fill"
                 objectFit="cover"

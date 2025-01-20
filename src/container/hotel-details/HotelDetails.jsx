@@ -11,7 +11,7 @@ export default function HotelDetails({ property }) {
 
   // Find images specific to the current property
   const propertyWiseImages = allImages?.filter(
-    (image) => image.property_id === property.id
+    (image) => image.property_id === property?.id
   );
 
   useEffect(() => {

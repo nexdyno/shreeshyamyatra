@@ -15,7 +15,7 @@ import MobileFooter from "@/componets/common/MobileFooter";
 export default function Page() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const { property, error, status, IsSearchOpen } = useSelector(
+  const { property, error, status, IsSearchOpen, allImages } = useSelector(
     (state) => state.data
   );
 
@@ -39,6 +39,10 @@ export default function Page() {
     }
   }, [dispatch, property]);
 
+  const getValidImages = (propertyId) =>
+    (Array.isArray(allImages) ? allImages : [])
+      .filter((image) => image.property_id === propertyId && !image.is_rejected)
+      .sort((a, b) => (b.is_cover_photo ? 1 : 0) - (a.is_cover_photo ? 1 : 0));
   const image = ["/topimg.jpg", "/topimg.jpg", "/topimg.jpg", "/topimg.jpg"];
 
   return (
@@ -65,7 +69,7 @@ export default function Page() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full px-5 mt-5 ">
           {property?.map((item) => (
             <Link key={item.id} href={`/hotel/hotel-details/${item?.id}`}>
-              <CardProperty image={image} item={item} />
+              <CardProperty image={getValidImages(item?.id)} item={item} />
             </Link>
           ))}
         </div>
