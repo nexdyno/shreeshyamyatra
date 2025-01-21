@@ -203,30 +203,34 @@ export const userSignIn = createAsyncThunk(
 //     }
 //   }
 // );
-
 export const logoutUser = createAsyncThunk(
   "auth/logoutUser",
   async (_, { rejectWithValue }) => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+
+      // Trigger success toast if logout is successful
+      toast.success("Logged out successfully");
       return true;
     } catch (err) {
+      // Trigger error toast if logout fails
+      toast.error("Logout failed. Please try again.");
       return rejectWithValue(err.message);
     }
   }
 );
-
 export const googleAuth = createAsyncThunk(
   "auth/googleAuth",
-  async (_, { rejectWithValue }) => {
+  async (currentPath, { rejectWithValue }) => {
     try {
       // const { data, error } = await supabase.auth.linkIdentity({
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
+
         options: {
-          redirectTo:
-            process.env.NEXT_PUBLIC_REDIRECT_URL || "http://localhost:3000",
+          // redirectTo: process.env.NEXT_PUBLIC_REDIRECT_URL || currentPath,
+          redirectTo: currentPath,
         },
       });
 

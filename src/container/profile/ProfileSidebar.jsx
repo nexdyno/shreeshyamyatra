@@ -1,69 +1,98 @@
 "use client";
-
 import Image from "next/image";
-import React from "react";
-import { IoIosArrowForward } from "react-icons/io";
-import { IoCubeOutline } from "react-icons/io5";
-import { MdLogout } from "react-icons/md";
+import Link from "next/link";
+import { useState } from "react";
+import { FaUserCircle } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
-import { IoPersonCircleOutline } from "react-icons/io5";
+const ProfileSidebar = ({ onClose, type, setType }) => {
+  const { session } = useSelector((state) => state.auth);
 
-const data = [
-  {
-    icon: IoPersonCircleOutline,
-    text: "Profile Information",
-    link: "profile",
-  },
-  {
-    icon: IoCubeOutline,
-    text: "My Bookings",
-    link: "booking",
-  },
+  // Menu items for logged-in users
+  const loggedInMenuItems = [
+    { icon: "👤", name: "Profile", link: "#" },
+    { icon: "📅", name: "Bookings", link: "#" },
+    { icon: "📜", name: "Guest policy", link: "#" },
+    { icon: "🏠", name: "Property policy", link: "#" },
+    { icon: "❌", name: "Cancellation policy", link: "#" },
+    { icon: "⚖️", name: "Terms and Conditions", link: "#" },
+    { icon: "🔒", name: "Privacy and Policy", link: "#" },
+    { icon: "ℹ️", name: "About Us", link: "#" },
+    { icon: "🤝", name: "Partner with Shree Shyam Yatra", link: "#" },
+    { icon: "📞", name: "Call us", link: "#" },
+    { icon: "🚪", name: "Log Out", link: "#" },
+  ];
 
-  {
-    icon: MdLogout,
-    text: "Logout",
-    link: "",
-  },
-];
+  // Menu items for non-logged-in users
+  const notLoggedInMenuItems = [
+    { icon: "🔑", name: "Log in or create an account", link: "#" },
+    { icon: "📜", name: "Guest policy", link: "#" },
+    { icon: "🏠", name: "Property policy", link: "#" },
+    { icon: "❌", name: "Cancellation policy", link: "#" },
+    { icon: "⚖️", name: "Terms and Conditions", link: "#" },
+    { icon: "🔒", name: "Privacy and Policy", link: "#" },
+    { icon: "ℹ️", name: "About Us", link: "#" },
+    { icon: "🤝", name: "Partner with Shree Shyam Yatra", link: "#" },
+    { icon: "📞", name: "Call us", link: "#" },
+  ];
 
-export default function ProfileSidebar({ activeTab, setActiveTab }) {
   return (
-    <div className="w-full h-full font-nunito lg:pl-20 px-5 lg:px-0">
-      <div className="w-full lg:w-64 h-full flex flex-col items-start gap-5">
-        <div className="bg-white w-full border rounded-md  flex items-center cursor-pointer hover:bg-[#FFE1E0]">
-          <Image
-            src="/assets/profile.png"
-            alt="profile"
-            height={95}
-            width={95}
-            className="rounded-full"
-          />
-          <div className="space-y-1">
-            <p className="text-sm text-black font-medium">Hii,</p>
-            <p className="font-semibold text-lg">Hasmuddin</p>
+    <div
+      className={`fixed top-0 right-0 h-full w-full lg:w-64 bg-white shadow-lg transform font-poppins  ${
+        type === "" ? "translate-x-0" : "translate-x-full"
+      } transition-transform duration-300 ease-in-out`}
+    >
+      {/* Fixed Header */}
+      <div className="py-1 flex items-center justify-between border-b">
+        <div className="flex flex-col lg:flex-row justify-start items-start pl-2">
+          <div className="relative py-2 px-2 lg:px-5 lg:w-[15%]">
+            <Link href="/">
+              <Image
+                src="/assets/logo.svg"
+                alt="logo"
+                height={80}
+                width={100}
+                className=""
+              />
+            </Link>
           </div>
+          <h2 className="text-xl font-semibold mb-4">My Yatra Partner</h2>
         </div>
-        <div className=" w-full border rounded-md cursor-pointer">
-          {data.map((item, index) => (
-            <div
-              key={index}
-              onClick={() => setActiveTab(item.link)}
-              className={`px-4 hover:bg-[#FFE1E0] `}
-            >
-              <div className="flex items-center justify-between py-5 border-b">
-                <div className="flex items-center gap-2 ">
-                  <item.icon size={22} />
-                  <p className="text-lg  text-black font-nunito text-nowrap">
-                    {item.text}
-                  </p>
-                </div>
-                <IoIosArrowForward size={20} />
-              </div>
+        {session?.user?.phone ||
+          (session?.user.email && (
+            <div className="flex flex-col items-center gap-2 pr-2">
+              <FaUserCircle size={40} className="text-primary" />
+              <p className="text-sm font-semibold text-gray-700">
+                Welcome, Guest
+              </p>
             </div>
           ))}
-        </div>
+        <button
+          className="text-gray-500 hover:text-gray-800 hidden lg:block"
+          onClick={onClose}
+        >
+          ✕
+        </button>
+      </div>
+
+      {/* Scrollable Content */}
+      <div className=" h-[calc(100%-190px)] overflow-y-auto mb-20">
+        {(session?.user?.phone || session?.user.email
+          ? loggedInMenuItems
+          : notLoggedInMenuItems
+        ).map((item, index) => (
+          <div
+            key={index}
+            onClick={() => setType(item?.name)}
+            className="px-4 py-3 flex items-center gap-4 border-b hover:bg-gray-100"
+          >
+            <span>{item.icon}</span>
+            <div className="hover:text-blue-500">{item.name}</div>
+          </div>
+        ))}
       </div>
     </div>
   );
-}
+};
+
+export default ProfileSidebar;

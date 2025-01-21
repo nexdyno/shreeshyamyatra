@@ -268,7 +268,7 @@ export default function Navbar() {
 
   useEffect(() => {
     dispatch(checkUserSession());
-  }, [dispatch]);
+  }, []);
 
   // useEffect(() => {
   //   if (session) {
@@ -299,7 +299,7 @@ export default function Navbar() {
         setToken("");
       }
     }
-  }, [session]); // Dependency should be session directly
+  }, [JSON.stringify(session)]); // Dependency should be session directly
 
   useEffect(() => {
     console.log("what is the path name2", routePathName);

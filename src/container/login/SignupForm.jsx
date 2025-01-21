@@ -130,7 +130,8 @@ const SignupForm = ({
   //   }
   // };
   const handleGoogleLogin = async () => {
-    dispatch(googleAuth());
+    const currentPath = window.location.href; // or use router.asPath for path only
+    dispatch(googleAuth(currentPath));
   };
 
   const handleSubmit = async () => {

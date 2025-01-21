@@ -1,8 +1,13 @@
+import MobileFooter from "@/componets/common/MobileFooter";
+import Navbar from "@/componets/common/Navbar";
 import React from "react";
 
 const AboutPage = () => {
   return (
     <>
+      <div className="lg:hidden">
+        <Navbar />
+      </div>
       <main className="min-h-screen mt-20 bg-gradient-to-b from-blue-100 to-white">
         {/* Hero Section */}
         <section className="relative py-20 bg-blue-700 text-white text-center">
@@ -87,6 +92,7 @@ const AboutPage = () => {
           </div>
         </section>
       </main>
+      <MobileFooter />
     </>
   );
 };

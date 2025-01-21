@@ -1,12 +1,25 @@
 "use client";
 import React, { useState } from "react";
+import { IoMdArrowBack } from "react-icons/io";
+import { useSelector } from "react-redux";
 
-export default function ProfileForm({ initialData, onSave, onCancel }) {
-  const [formData, setFormData] = useState(initialData);
+export default function ProfileForm({ setType }) {
+  const { session } = useSelector((state) => state.auth);
 
+  const [formData, setFormData] = useState({
+    name: session?.user?.name || "",
+    email: session?.user?.email || "",
+    mobileNumber: session?.user?.phone || "",
+  });
   return (
     <div className="w-full bg-white p-8 rounded-sm lg:border font-poppins lg:border-gray-500">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Edit Profile</h2>
+      <div className="flex items-center justify-between mb-8 ">
+        <div onClick={() => setType("")}>
+          <IoMdArrowBack size={30} />
+        </div>
+
+        <h2 className="text-lg font-bold  text-gray-800">Edit Profile</h2>
+      </div>
       <form className="space-y-5">
         <div>
           <label className="block text-sm font-medium mb-2 text-gray-700">
@@ -48,10 +61,7 @@ export default function ProfileForm({ initialData, onSave, onCancel }) {
         <div className="flex justify-end gap-4 mt-6">
           <button
             type="button"
-            onClick={() => {
-              setFormData(initialData);
-              onCancel();
-            }}
+            onClick={() => setType("")}
             className="px-4 py-2 border rounded-sm  bg-transparent border-gray-700 text-gray-800 hover:bg-black hover:text-white"
           >
             Cancel

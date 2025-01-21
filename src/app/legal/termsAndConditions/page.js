@@ -1,9 +1,13 @@
 import React from "react";
 import Head from "next/head";
+import MobileFooter from "@/componets/common/MobileFooter";
 
 const TermsAndConditions = () => {
   return (
     <>
+      <div className="lg:hidden">
+        <Navbar />
+      </div>
       <Head>
         <title>Terms and Conditions - Shree Shyam Yatra</title>
         <meta
@@ -145,6 +149,7 @@ const TermsAndConditions = () => {
           </div>
         </div>
       </main>
+      <MobileFooter />
     </>
   );
 };
