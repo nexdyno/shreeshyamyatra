@@ -41,7 +41,7 @@ export default function MobileFooter() {
 
     {
       id: 5,
-      label: "My Account",
+      label: "Account",
       icon: <FaUserCircle size={22} />,
       link: "/profile",
     },

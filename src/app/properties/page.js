@@ -46,7 +46,7 @@ export default function Page() {
   const image = ["/topimg.jpg", "/topimg.jpg", "/topimg.jpg", "/topimg.jpg"];
 
   return (
-    <div className="w-full min-h-screen font-poppins lg:mt-20 lg:px-20 pb-20 lg:pb-10">
+    <div className="w-full min-h-screen font-poppins lg:mt-28 lg:px-20 pb-20 lg:pb-10">
       <div className="w-full md:hidden">
         <InsideNavabr />
         {IsSearchOpen ? (
@@ -58,19 +58,16 @@ export default function Page() {
           ""
         )}
       </div>
-      <div className="w-full flex items-center justify-center pb-5 lg:py-10">
-        <h1 className="font-semibold tracking-wide text-2xl lg:text-5xl">
-          All Hotels
-        </h1>
-      </div>
       {isLoading ? (
         <LoadingOfferForYou />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full px-5 mt-5 ">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full px-2 mt-5 ">
           {property?.map((item) => (
-            <Link key={item.id} href={`/hotel/hotel-details/${item?.id}`}>
+            // <Link key={item.id} href={`/hotel/hotel-details/${item?.id}`}>
+            <div className="shadow-md border border-gray-400 p-5 rounded-md">
               <CardProperty image={getValidImages(item?.id)} item={item} />
-            </Link>
+            </div>
+            // </Link>
           ))}
         </div>
       )}

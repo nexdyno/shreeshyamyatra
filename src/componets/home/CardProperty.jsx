@@ -5,6 +5,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation, Autoplay } from "swiper/modules";
 import Amenities from "../common/Amenities";
+import Link from "next/link";
 
 export default function CardProperty({ image, item }) {
   const ArrayDefault = [
@@ -55,14 +56,19 @@ export default function CardProperty({ image, item }) {
               </p>
             ))}
           </div> */}
+
           <Amenities amenities={item?.facilities} />
-          <p className="text-base text-primary font-semibold py-4">
-            Starting from Rs. 499
+          <p className="text-base text-black font-semibold mt-2">
+            <span className=""> Starting from Rs.</span>
+            <span>{item?.min_room_price}</span>
           </p>
         </div>
-        <button className="mt-4 bg-primaryGradient hover:border-none text-white py-2 px-4 rounded-sm hover:bg-gray-800 hover:text-white transition duration-300 w-full font-semibold">
-          Book now
-        </button>
+
+        <Link href={`/hotel/hotel-details/${item?.id}`}>
+          <button className="mt-2 bg-primaryGradient hover:border-none text-white py-2 px-4 rounded-sm hover:bg-gray-800 hover:text-white transition duration-300 w-full font-semibold">
+            Select Rooms
+          </button>
+        </Link>
       </div>
     </div>
   );

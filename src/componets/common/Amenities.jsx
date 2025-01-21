@@ -1,6 +1,48 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { FaWifi } from "react-icons/fa";
+import {
+  FaDesktop,
+  FaPumpSoap,
+  FaShower,
+  FaShuttleVan,
+  FaWifi,
+} from "react-icons/fa";
+import { IoIosBed, IoIosRestaurant } from "react-icons/io";
+import {
+  MdBalcony,
+  MdCancelScheduleSend,
+  MdLiveTv,
+  MdLocalLaundryService,
+  MdOutlineBathroom,
+  MdOutlineCoffeeMaker,
+  MdOutlineGrass,
+  MdSingleBed,
+  MdTempleHindu,
+} from "react-icons/md";
+import { LuCctv, LuCircleParking } from "react-icons/lu";
+import { BiFridge, BiSolidHot } from "react-icons/bi";
+import {
+  TbClothesRack,
+  TbIroning,
+  TbMicrowave,
+  TbPhotoSpark,
+  TbPicnicTable,
+} from "react-icons/tb";
+import { RiChargingPile2Fill, RiSofaLine } from "react-icons/ri";
+import { PiBathtub, PiSolarRoof, PiToiletLight } from "react-icons/pi";
+import {
+  GiElevator,
+  GiKitchenScale,
+  GiLift,
+  GiSlippers,
+  GiTheaterCurtains,
+} from "react-icons/gi";
+import { IoFastFood, IoTvOutline, IoWaterSharp } from "react-icons/io5";
+import { AiFillSafetyCertificate } from "react-icons/ai";
+import { SiDovecot, SiSpringsecurity } from "react-icons/si";
+import { FaBottleWater, FaMattressPillow } from "react-icons/fa6";
+import { GrLounge } from "react-icons/gr";
+import { CiDeliveryTruck } from "react-icons/ci";
 
 const Amenities = ({ amenities }) => {
   // Define default visibility for amenities
@@ -16,55 +58,102 @@ const Amenities = ({ amenities }) => {
   };
   // Icons mapping based on amenities
   const icons = {
+    cctv: <LuCctv />,
     wifi: <FaWifi />,
-    doubleBed: <FaWifi />,
-    singleBed: <FaWifi />,
-    shower: <FaWifi />,
-    parking: <FaWifi />,
-    tv: <FaWifi />,
-    fridge: <FaWifi />,
-    microwave: <FaWifi />,
-    restaurant: <FaWifi />,
-    geyser: <FaWifi />,
-    iron: <FaWifi />,
-    coffeeMaker: <FaWifi />,
-    desk: <FaWifi />,
-    sofa: <FaWifi />,
-    bathtub: <FaWifi />,
-    workTable: <FaWifi />,
-    slippers: <FaWifi />,
-    toiletries: <FaWifi />,
-    freeWater: <FaWifi />,
-    balcony: <FaWifi />,
-    kitchen: <FaWifi />,
-    safe: <FaWifi />,
-    cot: <FaWifi />,
-    clothesRack: <FaWifi />,
-    curtains: <FaWifi />,
-    chargingPoints: <FaWifi />,
-    attachBathroom: <FaWifi />,
-    parking: <FaWifi />,
-    hotWater: <FaWifi />,
-    cctv: <FaWifi />,
-    drinkingWater: <FaWifi />,
-    lcdTv: <FaWifi />,
-    lift: <FaWifi />,
-    attachedToilet: <FaWifi />,
-    cancellationAvailable: <FaWifi />,
-    extraMattressAvailable: <FaWifi />,
+    doubleBed: <IoIosBed />,
+    singleBed: <MdSingleBed />,
+    shower: <FaShower />,
+    parking: <LuCircleParking />,
+    tv: <MdLiveTv />,
+    fridge: <BiFridge />,
+    microwave: <TbMicrowave />,
+    restaurant: <IoIosRestaurant />,
+    geyser: <BiSolidHot />,
+    iron: <TbIroning />,
+    coffeeMaker: <MdOutlineCoffeeMaker />,
+    desk: <FaDesktop />,
+    sofa: <RiSofaLine />,
+    bathtub: <PiBathtub />,
+    workTable: <TbPicnicTable />,
+    slippers: <GiSlippers />,
+    toiletries: <FaPumpSoap />,
+    freeWater: <IoWaterSharp />,
+    balcony: <MdBalcony />,
+    kitchen: <GiKitchenScale />,
+    safe: <AiFillSafetyCertificate />,
+    cot: <SiDovecot />,
+    clothesRack: <TbClothesRack />,
+    curtains: <GiTheaterCurtains />,
+    chargingPoints: <RiChargingPile2Fill />,
+    attachBathroom: <MdOutlineBathroom />,
+    hotWater: <BiSolidHot />,
+    drinkingWater: <FaBottleWater />,
+    lcdTv: <IoTvOutline />,
+    lift: <GiLift />,
+    attachedToilet: <PiToiletLight />,
+    cancellationAvailable: <MdCancelScheduleSend />,
+    extraMattressAvailable: <FaMattressPillow />,
     wifi: <FaWifi />,
-    elevator: <FaWifi />,
-    security: <FaWifi />,
-    laundryService: <FaWifi />,
-    shuttleService: <FaWifi />,
-    garden: <FaWifi />,
-    terrace: <FaWifi />,
-    temple: <FaWifi />,
-    lounge: <FaWifi />,
-    groceryDelivery: <FaWifi />,
-    food: <FaWifi />,
-    lawn: <FaWifi />,
+    elevator: <GiElevator />,
+    security: <SiSpringsecurity />,
+    laundryService: <MdLocalLaundryService />,
+    shuttleService: <FaShuttleVan />,
+    garden: <TbPhotoSpark />,
+    terrace: <PiSolarRoof />,
+    temple: <MdTempleHindu />,
+    lounge: <GrLounge />,
+    groceryDelivery: <CiDeliveryTruck />,
+    food: <IoFastFood />,
+    lawn: <MdOutlineGrass />,
   };
+
+  // const icons = {
+  //   wifi: "📶",
+  //   doubleBed: "🛏️",
+  //   singleBed: "🛋️",
+  //   shower: "🚿",
+  //   parking: "🅿️",
+  //   tv: "📺",
+  //   fridge: "🧊",
+  //   microwave: "🍴",
+  //   restaurant: "🍽️",
+  //   geyser: "🔥",
+  //   iron: "🧼",
+  //   coffeeMaker: "☕",
+  //   desk: "💻",
+  //   sofa: "🛋️",
+  //   bathtub: "🛁",
+  //   workTable: "📝",
+  //   slippers: "🥿",
+  //   toiletries: "🧴",
+  //   freeWater: "💧",
+  //   balcony: "🌅",
+  //   kitchen: "🍳",
+  //   safe: "🔒",
+  //   cot: "🛌",
+  //   clothesRack: "👕",
+  //   curtains: "🪟",
+  //   chargingPoints: "🔌",
+  //   attachBathroom: "🚽",
+  //   hotWater: "💦",
+  //   drinkingWater: "🥤",
+  //   lcdTv: "📺",
+  //   lift: "⬆️",
+  //   attachedToilet: "🚻",
+  //   cancellationAvailable: "❌",
+  //   extraMattressAvailable: "🛏️",
+  //   elevator: "🏢",
+  //   security: "🛡️",
+  //   laundryService: "🧺",
+  //   shuttleService: "🚌",
+  //   garden: "🌳",
+  //   terrace: "🏞️",
+  //   temple: "⛩️",
+  //   lounge: "🛋️",
+  //   groceryDelivery: "🚚",
+  //   food: "🍔",
+  //   lawn: "🌱",
+  // };
 
   // Divide amenities into visible and hidden
   useEffect(() => {
@@ -87,19 +176,38 @@ const Amenities = ({ amenities }) => {
 
   return (
     <div className="" onClick={() => setShowAll(false)}>
-      <h3 className="text-lg font-semibold mb-2">Amenities</h3>
-      <div className="space-y-2">
+      <h3 className="text-base font-semibold mb-2">Amenities</h3>
+      <div className=" lg:hidden grid grid-cols-2 space-y-1">
         {visibleAmenities.map((amenity, index) => (
           <div key={index} className="flex items-center space-x-2 text-nowrap">
-            <span>{icons[amenity.toLowerCase()] || "N/A"}</span>
-            <span>{amenity.replace(/([A-Z])/g, " $1").toLowerCase()}</span>
+            <span className="mr-2">{icons[amenity] || "-"}</span>
+            <span className="text-sm">
+              {amenity
+                .replace(/([A-Z])/g, " $1") // Add space before uppercase letters
+                .toLowerCase() // Convert the entire string to lowercase
+                .replace(/\b\w/g, (char) => char.toUpperCase())}{" "}
+              {/* Capitalize first letter of each word */}
+            </span>{" "}
           </div>
         ))}
       </div>
-
+      <div className="hidden lg:grid grid-cols-2 space-y-1">
+        {(showAll ? amenities : visibleAmenities).map((amenity, index) => (
+          <div key={index} className="flex items-center space-x-2 text-nowrap">
+            <span className="mr-2">{icons[amenity] || "-"}</span>
+            <span className="text-sm">
+              {amenity
+                .replace(/([A-Z])/g, " $1") // Add space before uppercase letters
+                .toLowerCase() // Convert the entire string to lowercase
+                .replace(/\b\w/g, (char) => char.toUpperCase())}{" "}
+              {/* Capitalize first letter of each word */}
+            </span>{" "}
+          </div>
+        ))}
+      </div>
       <div
         ref={popupRef}
-        className={`fixed bottom-0 left-0 w-full bg-white shadow-lg rounded-t-lg py-4 px-4 z-[99] border transform transition-transform duration-300 max-h-[60vh] overflow-y-auto ${
+        className={` lg:hidden fixed bottom-0 left-0 w-full bg-white shadow-lg rounded-t-lg py-4 px-4 z-[99] border transform transition-transform duration-300 max-h-[60vh] overflow-y-auto ${
           showAll ? "translate-y-0" : "translate-y-full"
         }`}
       >
@@ -129,19 +237,27 @@ const Amenities = ({ amenities }) => {
         <div className="flex flex-col gap-4 ">
           {hiddenAmenities.map((amenity, index) => (
             <div key={index} className="flex items-center space-x-2">
-              <span>{icons[amenity.toLowerCase()] || "N/A"}</span>
-              <span>{amenity.replace(/([A-Z])/g, " $1").toLowerCase()}</span>
+              <span className="mr-2 text-base font-semibold">
+                {icons[amenity] || ""}
+              </span>
+              <span className="text-sm font-semibold">
+                {amenity
+                  .replace(/([A-Z])/g, " $1") // Add space before uppercase letters
+                  .toLowerCase() // Convert the entire string to lowercase
+                  .replace(/\b\w/g, (char) => char.toUpperCase())}{" "}
+              </span>
             </div>
           ))}
         </div>
       </div>
-
-      <button
-        onClick={handleami}
-        className="mt-2 py-2 text-sm text-black underline rounded-md transition duration-300 font-semibold"
-      >
-        {showAll ? "Show Less Amenities" : "View More Amenities"}
-      </button>
+      {amenities?.length > 4 && (
+        <button
+          onClick={handleami}
+          className="mt-2 py-2 text-sm text-black underline rounded-md transition duration-300 font-semibold"
+        >
+          {showAll ? "Show Less Amenities" : "View More Amenities"}
+        </button>
+      )}
     </div>
   );
 };

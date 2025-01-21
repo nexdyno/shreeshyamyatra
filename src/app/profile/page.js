@@ -130,6 +130,9 @@ export default function page() {
   const privacyPolicy = () => {
     window.location.href = "/legal/privacyPolicy";
   };
+  const termOfUse = () => {
+    window.location.href = "/legal/termsOfUse";
+  };
   const about = () => {
     window.location.href = "/about";
   };
@@ -147,10 +150,17 @@ export default function page() {
       )}
       {type === "Profile" && <ProfileForm setType={setType} />}
       {type === "Log in or create an account" && (
-        <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
+        <LoginModal
+          isOpen={showLogin}
+          onClose={() => {
+            setShowLogin(false);
+            setType("");
+          }}
+        />
       )}
       {type === "Bookings" && <BookingCard setType={setType} />}
       {type === "Guest policy" && privacyPolicy()}
+      {type === "Term of Use" && termOfUse()}
       {type === "Property policy" && privacyPolicy()}
       {type === "Cancellation policy" && privacyPolicy()}
       {type === "Partner with Shree Shyam Yatra" && privacyPolicy()}
@@ -159,7 +169,9 @@ export default function page() {
       {type === "Log Out" && signOutUser()}
       {type === "Terms and Conditions" && termAndConditon()}
       {type === "Privacy and Policy" && privacyPolicy()}
-      <MobileFooter />
+      <div className="md:hidden">
+        <MobileFooter />
+      </div>
     </div>
   );
 }

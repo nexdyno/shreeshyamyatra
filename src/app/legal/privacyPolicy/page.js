@@ -5,7 +5,7 @@ import React from "react";
 const PrivacyPolicy = () => {
   return (
     <>
-      <div className="lg:hidden">
+      <div className="md:hidden">
         <Navbar />
       </div>
       <main className="min-h-screen bg-gray-50 py-16 px-4">
@@ -103,7 +103,9 @@ const PrivacyPolicy = () => {
           </p>
         </div>
       </main>
-      <MobileFooter />
+      <div className="md:hidden">
+        <MobileFooter />
+      </div>
     </>
   );
 };

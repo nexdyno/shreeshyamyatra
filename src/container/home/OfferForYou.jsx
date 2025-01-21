@@ -26,7 +26,9 @@ export default function OfferForYou({ property, isLoading }) {
             <div className="flex sm:flex-wrap md:grid-cols-3 lg:grid lg:grid-cols-3 gap-6 overflow-x-auto w-full">
               {property.slice(0, 6)?.map((item) => (
                 <Link key={item.id} href={`/hotel/hotel-details/${item?.id}`}>
-                  <CardRecommended item={item} />
+                  <div className=" shadow-md rounded-md ">
+                    <CardRecommended item={item} />
+                  </div>
                 </Link>
               ))}
             </div>

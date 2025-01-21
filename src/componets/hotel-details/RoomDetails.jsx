@@ -151,9 +151,9 @@ export default function RoomDetails({ property, propertyWiseImages }) {
   return (
     <div className="h-full w-full font-poppins flex flex-col lg:flex-row gap-10 pb-20 lg:pb-0 lg:px-0">
       {/* Left Section */}
-      <div className="w-full lg:w-[60%] h-full lg:px-5 overflow-y-auto px-5 ">
-        <div className="flex flex-col gap-4 items-start lg:flex-row lg:items-center justify-between">
-          <div className="text-start space-y-2">
+      <div className="w-full lg:w-[60%] h-full  overflow-y-auto px-5 ">
+        <div className="flex flex-col gap-4 items-start lg:flex-row lg:items-center justify-between lg:pr-10">
+          <div className="text-start space-y-2 lg:space-y-0">
             <h1 className="text-black text-2xl font-semibold">
               {property.name}
             </h1>
@@ -161,13 +161,15 @@ export default function RoomDetails({ property, propertyWiseImages }) {
               <div>
                 <MdLocationPin className="text-primary" />
               </div>
-              <p className="text-sm text-black py-2">{property.address}</p>
+              <p className="text-sm text-black py-2 lg:text-base lg:font-medium">
+                {property?.address}
+              </p>
             </div>
 
-            <div className=" flex items-center gap-4 font-semibold text-sm w-fit -ml-2  rounded-md">
+            <div className=" flex items-center gap-4 font-semibold text-sm w-fit -ml-2 lg:ml-0 rounded-md">
               <DateSelector type="no-border" />
             </div>
-            <div className=" flex items-center gap-1 font-semibold text-sm w-fit -ml-2 rounded-md">
+            <div className=" flex items-center gap-1 font-semibold text-sm w-fit -ml-2 lg:ml-0 rounded-md">
               <RoomGuestSelector />
             </div>
             <div className="flex flex-col gap-2">
@@ -190,6 +192,9 @@ export default function RoomDetails({ property, propertyWiseImages }) {
         {/* Amenities */}
         <div className="pt-4">
           <Amenities amenities={property?.facilities} />
+          <div className="flex gap-2 items-center">
+            <p className="text-sm text-black py-2">{property?.description}</p>
+          </div>
           <PropertyRules Rules={propertyRules} />
         </div>
         <div className="hidden lg:block">
@@ -199,10 +204,10 @@ export default function RoomDetails({ property, propertyWiseImages }) {
           />
         </div>
       </div>
-      <div className="lg:hidden fixed bottom-0 bg-white w-full shadow-md py-2 px-3 border-t border-b border-gray-300 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="lg:hidden fixed bottom-0 bg-white w-full shadow-md py-2 px-3 border-t border-b border-gray-300 flex items-end justify-end">
+        {/* <div className="flex items-center gap-2">
           <span className="text-lg font-semibold text-primary">Rs 1000</span>
-        </div>
+        </div> */}
         <Link href="/hotel/hotel-details/rooms">
           <button className="border border-blue-500 text-white bg-primaryGradient rounded-full px-4 py-2 hover:bg-blue-100 transition">
             Select rooms

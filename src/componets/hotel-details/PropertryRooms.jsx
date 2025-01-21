@@ -22,9 +22,8 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
   const toggleView = () => setShowAll(!showAll);
 
   const dispatch = useDispatch();
-  const { OneRoom, selectedRoom, busyRoom, bookingDate } = useSelector(
-    (state) => state.data
-  ); // Selected room
+  const { OneRoom, selectedRoom, busyRoom, bookingDate, matchedProperty } =
+    useSelector((state) => state.data); // Selected room
 
   const getAvailableRooms = () => {
     if (!bookingDate || !matchRooms || matchRooms.length === 0) return []; // Early exit if dependencies are missing
@@ -102,19 +101,24 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
     return null;
   };
 
+  const RoomPriceWithGST = (roomRate, gst) => {
+    const gstAmount = (gst / 100) * roomRate;
+    return roomRate + gstAmount;
+  };
+
   return (
-    <div>
+    <div className="font-poppins mb-28">
       <h2 className="text-2xl font-semibold mb-4 hidden lg:block">All Rooms</h2>
       {avlRoom.length !== 0 ? (
-        <div className="space-y-6">
+        <div className="space-y-6 px-3 lg:space-y-0 lg:px-0 lg:grid lg:grid-cols-2 lg:gap-5">
           {avlRoom?.map((room) => (
             <div
               key={room?.id}
-              className={`flex flex-col md:flex-row border rounded-lg hover:shadow-md px-8 bg-white cursor-pointer`}
+              className={`flex flex-col  rounded-lg shadow-md  bg-white cursor-pointer border border-gray-300 p-5 `}
               onClick={() => handleRoomSelect(room)} // Select room on click
             >
               {/* Image Section */}
-              <div className="relative lg:w-full w-[80%] h-36 lg:h-48  overflow-hidden rounded-md shadow-md">
+              <div className="relative lg:w-full w-full h-36 lg:h-48  overflow-hidden rounded-md shadow-md">
                 <Image
                   src={getImageUrlByRoomId(room?.id) || "/topimg.jpg"} // Fallback image
                   alt={`${room?.name} Image`}
@@ -124,7 +128,7 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
               </div>
 
               {/* Details Section */}
-              <div className="flex-1 md:pl-6 mt-4 md:mt-0">
+              <div className="flex-1 mt-4">
                 {/* Room Name */}
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-lg font-semibold font-poppins">
@@ -134,7 +138,7 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
                     )} */}
                   </h3>
                   <p className="text-base font-semibold text-black font-poppins">
-                    ₹ {room.rate} /
+                    ₹ {RoomPriceWithGST(room?.rate, matchedProperty?.gst)} /
                     <span className="text-gray-700 font-medium text-xs">
                       {" "}
                       per night{" "}
@@ -148,33 +152,6 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
                     "A luxurious room with modern amenities and a great view"}
                 </p>
 
-                {/* Amenities */}
-                {/* <div className="py-2">
-                  <h1 className="text-lg lg:text-2xl font-semibold text-start text-black">
-                    Amenities
-                  </h1>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 py-2 items-center ">
-                    {(showAll
-                      ? room?.amenities
-                      : room?.amenities?.slice(0, 6)
-                    )?.map((facility, index) => (
-                      <div
-                        key={index}
-                        className="flex gap-2 text-2xl items-center"
-                      >
-                        <div className="text-black">
-                          {facility === "parking" && <IoFitnessOutline />}
-                          {facility === "cctv" && <MdWifi />}
-                          {facility === "spa" && <MdSpa />}
-                          {facility === "tv" && <MdTv />}
-                          {facility === "swimmingPool" && <MdPool />}{" "}
-                        </div>
-                        <p className="text-sm text-black">{facility}</p>
-                      </div>
-                    ))}
-                  </div>
-                
-                </div> */}
                 <div className=" flex items-center justify-between">
                   <button
                     onClick={toggleView}
@@ -190,7 +167,7 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
                         : "bg-black text-white"
                     }`}
                   >
-                    {selectedRoom?.id === room.id ? " ✔️ Selected" : "Select"}
+                    {selectedRoom?.id === room.id ? "  Selected" : "Select"}
                   </button>
                 </div>
                 <Amenities amenities={room?.amenities} />
