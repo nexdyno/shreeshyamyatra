@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation, Autoplay } from "swiper/modules";
+import Amenities from "../common/Amenities";
 
 export default function CardProperty({ image, item }) {
   const ArrayDefault = [
@@ -13,7 +14,10 @@ export default function CardProperty({ image, item }) {
 
   // Determine which images to use, fallback to ArrayDefault if image is not provided
   const imagesToUse = image && image.length > 0 ? image : ArrayDefault;
-
+  const truncateText = (text, limit) => {
+    if (!text) return "";
+    return text.length > limit ? text.substring(0, limit) + "..." : text;
+  };
   return (
     <div className="overflow-hidden transition duration-300 flex flex-col h-full">
       <div className="relative h-40 lg:h-48 w-full mb-4">
@@ -40,15 +44,18 @@ export default function CardProperty({ image, item }) {
       <div className="flex-grow flex flex-col justify-between">
         <div>
           <h2 className="text-lg font-bold mb-2">{item?.name}</h2>
-          <p className="text-sm text-gray-800">{item?.address}</p>
-          <p className="text-sm text-gray-600 mb-4">{item?.description}</p>
-          <div className="flex overflow-hidden gap-2 flex-wrap">
+          <p className="text-sm text-gray-800 mb-2 ">{item?.address}</p>
+          {/* <p className="text-sm text-gray-600 mb-4">
+            {truncateText(item?.description, 100)}
+          </p> */}
+          {/* <div className="flex overflow-hidden gap-2 flex-wrap">
             {item?.facilities?.map((ami, i) => (
               <p key={i} className="text-sm text-gray-600">
                 {ami}
               </p>
             ))}
-          </div>
+          </div> */}
+          <Amenities amenities={item?.facilities} />
           <p className="text-base text-primary font-semibold py-4">
             Starting from Rs. 499
           </p>

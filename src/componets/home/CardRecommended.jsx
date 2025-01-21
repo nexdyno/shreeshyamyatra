@@ -10,6 +10,7 @@ export default function CardRecommended({ item }) {
     <div
       className=" rounded-lg overflow-hidden transition duration-300 flex-shrink-0 w-52 
                   h-[40vh] lg:h-[50vh] lg:w-full  cursor-pointer"
+      style={{}}
     >
       <div className="relative h-28 lg:h-48 w-full">
         <Image
@@ -21,7 +22,7 @@ export default function CardRecommended({ item }) {
           className="rounded-t-lg"
         />
       </div>
-      <div className="flex-grow flex flex-col justify-between  h-[40%]   overflow-hidden">
+      <div className="flex-grow flex flex-col justify-between  h-[50%]   overflow-hidden">
         <div>
           <h2 className="text-lg font-semibold lg:font-bold mb-2 lg:mt-4">
             {item.name}
@@ -31,7 +32,7 @@ export default function CardRecommended({ item }) {
           </p>
         </div>
       </div>
-      <button className="text-black font-semibold font-poppins underline py-4 lg:py-0">
+      <button className="text-black font-semibold font-poppins underline  lg:py-0">
         View All Details
       </button>
     </div>

@@ -1,6 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import MobileFooter from "@/componets/common/MobileFooter";
+import Navbar from "@/componets/common/Navbar";
 
 const TermsAndConditions = () => {
   return (

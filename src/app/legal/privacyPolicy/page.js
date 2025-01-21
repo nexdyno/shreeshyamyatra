@@ -1,4 +1,5 @@
 import MobileFooter from "@/componets/common/MobileFooter";
+import Navbar from "@/componets/common/Navbar";
 import React from "react";
 
 const PrivacyPolicy = () => {
