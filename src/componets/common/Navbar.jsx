@@ -249,11 +249,14 @@ import {
   setLoginIsModalOpen,
 } from "@/redux/authSlice";
 import toast from "react-hot-toast";
+import BookingCard from "@/container/profile/BookingCard";
+import BookingSidebar from "@/container/profile/BookingSidebar";
 
 export default function Navbar() {
   const dispatch = useDispatch();
   const router = useRouter(); // Initialize useRouter
   const [showLogin, setShowLogin] = useState(false);
+  const [type, setType] = useState("");
 
   const { userData, isLoginModalOpen, session } = useSelector(
     (state) => state.auth
@@ -366,7 +369,7 @@ export default function Navbar() {
   return (
     <>
       <div
-        className={`w-full min-h-[10vh] flex justify-around md:justify-between items-center border border-gray-400 md:px-2 lg:px-10 font-poppins bg-white fixed top-0 left-0 right-0 z-30 transition-shadow duration-300 ${
+        className={`w-full h-[12vh] flex justify-around md:justify-between items-center border border-gray-400 md:px-2 lg:px-10 font-poppins bg-white fixed top-0 left-0 right-0 z-30 transition-shadow duration-300 ${
           isScrolled ? "shadow-lg" : ""
         }`}
       >
@@ -440,8 +443,11 @@ export default function Navbar() {
                   onMouseLeave={() => setIsDropdownOpen(false)}
                 >
                   <ul className="py-2">
-                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <Link href="/bookings">My Bookings</Link>
+                    <li
+                      onClick={() => setType("booking")}
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      My Bookings
                     </li>
                     <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                       <Link href="/profile">My Profile</Link>
@@ -482,6 +488,7 @@ export default function Navbar() {
       ) : (
         ""
       )}
+      <BookingSidebar type={type} closeSidebar={() => setType("")} />
     </>
   );
 }

@@ -42,8 +42,8 @@ export default function BookingCard({ setType }) {
   ];
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6 w-full max-w-md mx-auto font-poppins mb-16 lg:mb-0">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 w-full   mx-auto font-poppins mb-16 lg:mb-20 lg:overflow-y-auto">
+      <div className="flex items-center justify-between mb-8 lg:hidden">
         <div onClick={() => setType("")}>
           <IoMdArrowBack size={30} />
         </div>
@@ -55,7 +55,7 @@ export default function BookingCard({ setType }) {
       {bookings.map((booking) => (
         <div
           key={booking.id}
-          className="p-6 sm:p-8 lg:p-10 bg-white rounded-lg shadow-sm border border-gray-500 space-y-4"
+          className="p-6 bg-white rounded-lg shadow-sm border border-gray-500 space-y-4"
         >
           {/* Header */}
           <div className="flex justify-between items-center">
