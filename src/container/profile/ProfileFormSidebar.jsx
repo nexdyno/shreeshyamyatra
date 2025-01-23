@@ -1,16 +1,9 @@
-"use client";
-
 import React, { useState } from "react";
 import BookingCard from "./BookingCard";
 import { RxCross2 } from "react-icons/rx";
-import Invoice from "./Invoice";
-import { useSelector } from "react-redux";
+import ProfileForm from "./ProfileForm";
 
-const BookingSidebar = ({ type, closeSidebar }) => {
-  const [showInvoice, setShowInvoice] = useState(false);
-  const { userAllBooking } = useSelector((state) => state.data);
-
-  console.log(userAllBooking, "user all bookings");
+const ProfileFormSidebar = ({ type, closeSidebar }) => {
   return (
     <>
       {/* Background overlay */}
@@ -27,29 +20,19 @@ const BookingSidebar = ({ type, closeSidebar }) => {
           type === "" ? "translate-x-full" : "translate-x-0"
         } transition-transform duration-300 ease-in-out custom-scrollbar overflow-y-auto`}
       >
-        <div className="flex items-center justify-between px-5 mt-5 mb-3">
-          <h2 className="text-xl font-bold text-gray-800">
-            All Bookings Details
-          </h2>
+        <div className="flex items-end justify-end px-5 mt-5 mb-3">
           <button
             className=" text-gray-600 hover:text-gray-800"
-            onClick={() => {
-              {
-                showInvoice ? setShowInvoice(false) : closeSidebar();
-              }
-            }}
+            onClick={closeSidebar}
           >
             <RxCross2 size={30} />
           </button>
         </div>
-        {showInvoice ? (
-          <Invoice />
-        ) : (
-          <BookingCard setShowInvoice={setShowInvoice} />
-        )}
+
+        <ProfileForm />
       </div>
     </>
   );
 };
 
-export default BookingSidebar;
+export default ProfileFormSidebar;

@@ -14,7 +14,13 @@ export default function page() {
   useEffect(() => {
     dispatch(checkUserSession());
   }, [dispatch]);
-  console.log(session, "session");
+
+  // useEffect(() => {
+  //   if (!session?.user?.email && !session?.user?.phone) {
+  //     window.location.href = "/";
+  //   }
+  // }, [JSON.stringify(session)]);
+
   return (
     <>
       <div className="lg:mt-20 lg:px-40">

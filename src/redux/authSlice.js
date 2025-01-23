@@ -52,157 +52,6 @@ export const userSignIn = createAsyncThunk(
   }
 );
 
-// export const verifyOtp = createAsyncThunk(
-//   "auth/verifyOtp",
-//   async ({ phone, token }, { rejectWithValue }) => {
-//     try {
-//       // Verify the OTP
-//       const { data, error } = await supabase.auth.verifyOtp({
-//         phone,
-//         token,
-//         type: "sms",
-//       });
-
-//       if (error) throw new Error(error.message);
-
-//       if (data?.user) {
-//         const { user } = data;
-
-//         // Update the anonymous user to a real user with a phone number
-//         const { error: updateError } = await supabase.auth.updateUser({
-//           phone: phone,
-//         });
-
-//         if (updateError) {
-//           console.error(
-//             "Error updating user information:",
-//             updateError.message
-//           );
-//           throw updateError;
-//         }
-
-//         // Check if user exists in the `profiles` table
-//         const { data: userRecord, error: userFetchError } = await supabase
-//           .from("profiles")
-//           .select("*")
-//           .eq("id", user.id)
-//           .single();
-
-//         if (userFetchError && userFetchError.code !== "PGRST116") {
-//           // Log errors other than "Row not found" (code PGRST116)
-//           console.error("Error fetching user record:", userFetchError.message);
-//           throw userFetchError;
-//         }
-
-//         if (!userRecord) {
-//           // Insert new user record if not found
-//           const { error: insertError } = await supabase
-//             .from("profiles")
-//             .insert({
-//               id: user.id,
-//               phone: user.phone,
-//               created_at: new Date(),
-//             });
-
-//           if (insertError) {
-//             console.error(
-//               "Error inserting new user record:",
-//               insertError.message
-//             );
-//             throw insertError;
-//           }
-//         }
-
-//         return {
-//           id: user.id,
-//           phone: user.phone,
-//           ...userRecord, // Include any other relevant fields from the profiles table
-//         };
-//       } else {
-//         throw new Error("No user details found after OTP verification");
-//       }
-//     } catch (err) {
-//       console.error("Error during OTP verification:", err.message);
-//       return rejectWithValue(err.message);
-//     }
-//   }
-// );
-
-// export const verifyOtp = createAsyncThunk(
-//   "auth/verifyOtp",
-//   async ({ phone, token }, { rejectWithValue }) => {
-//     try {
-//       // Verify the OTP
-//       const { data, error } = await supabase.auth.verifyOtp({
-//         phone,
-//         token,
-//         type: "sms",
-//       });
-
-//       if (error) throw new Error(error.message);
-
-//       if (data?.user) {
-//         const { user } = data;
-
-//         // Update the anonymous user to a real user with a phone number
-//         const { error: updateError } = await supabase.auth.updateUser({
-//           phone: phone,
-//         });
-
-//         if (updateError) {
-//           console.error(
-//             "Error updating user information:",
-//             updateError.message
-//           );
-//           throw updateError;
-//         }
-
-//         // Check if user exists in the `profiles` table
-//         const { data: userRecord, error: userFetchError } = await supabase
-//           .from("profiles")
-//           .select("*")
-//           .eq("id", user.id)
-//           .single();
-
-//         if (userFetchError && userFetchError.code !== "PGRST116") {
-//           // Log errors other than "Row not found" (code PGRST116)
-//           console.error("Error fetching user record:", userFetchError.message);
-//           throw userFetchError;
-//         }
-
-//         if (!userRecord) {
-//           // Insert new user record if not found
-//           const { error: insertError } = await supabase
-//             .from("profiles")
-//             .insert({
-//               id: user.id,
-//               phone: user.phone,
-//               created_at: new Date(),
-//             });
-
-//           if (insertError) {
-//             console.error(
-//               "Error inserting new user record:",
-//               insertError.message
-//             );
-//             throw insertError;
-//           }
-//         }
-
-//         return {
-//           id: user.id,
-//           phone: user.phone,
-//           ...userRecord, // Include any other relevant fields from the profiles table
-//         };
-//       } else {
-//         throw new Error("No user details found after OTP verification");
-//       }
-//     } catch (err) {
-//       console.error("Error during OTP verification:", err.message);
-//       return rejectWithValue(err.message);
-//     }
-//   }
-// );
 export const logoutUser = createAsyncThunk(
   "auth/logoutUser",
   async (_, { rejectWithValue }) => {
@@ -245,18 +94,6 @@ export const googleAuth = createAsyncThunk(
     }
   }
 );
-// export const sendOtp = createAsyncThunk(
-//   "auth/sendOtp",
-//   async (phone, { rejectWithValue }) => {
-//     try {
-//       const { data, error } = await supabase.auth.updateUser({ phone });
-//       if (error) throw error;
-//       return { message: "OTP sent successfully", phone };
-//     } catch (err) {
-//       return rejectWithValue(err.message);
-//     }
-//   }
-// );
 
 export const sendOtp = createAsyncThunk(
   "auth/sendOtp",
@@ -312,17 +149,6 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // .addCase(verifyOtp.pending, (state) => {
-      //   state.status = "loading";
-      // })
-      // .addCase(verifyOtp.fulfilled, (state, action) => {
-      //   state.status = "succeeded";
-      //   state.userData = action.payload; // Save user data in state
-      // })
-      // .addCase(verifyOtp.rejected, (state, action) => {
-      //   state.status = "failed";
-      //   state.error = action.payload;
-      // })
 
       .addCase(sendOtp.pending, (state) => {
         state.status = "loading";

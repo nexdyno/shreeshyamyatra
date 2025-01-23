@@ -61,6 +61,37 @@ export const bookingCreate = createAsyncThunk(
     return data;
   }
 );
+export const fetchAllBookingById = createAsyncThunk(
+  "data/fetchAllBookingById",
+  async (id, { rejectWithValue }) => {
+    try {
+      console.log(id, "this in fetch booking id ");
+      // Fetch data from the Supabase "guests" table
+      const { data, error } = await supabase
+        .from("guests")
+        .select("*")
+        .eq("profile_id", id);
+
+      if (error) {
+        // Handle Supabase errors
+        throw new Error(
+          error.message || "Error fetching booking data from the database"
+        );
+      }
+
+      // if (!data || data.length === 0) {
+      //   // Handle no data scenario
+      //   throw new Error("No bookings found for the given user ID");
+      // }
+
+      return data; // Return the fetched data
+    } catch (err) {
+      // Pass error message to the rejectWithValue for Redux
+      return rejectWithValue(err.message || "Failed to fetch booking data");
+    }
+  }
+);
+
 export const fetchBookingData = createAsyncThunk(
   "data/fetchBookingData",
   async (id, { rejectWithValue }) => {
@@ -141,6 +172,7 @@ const dataSlice = createSlice({
     guestData: null,
     paymentdata: null,
     bookingData: null,
+    userAllBooking: null,
     IsSearchOpen: false,
     isConfirmOrder: false,
     totalSummary: null,
@@ -246,6 +278,18 @@ const dataSlice = createSlice({
         state.bookingData = action.payload;
       })
       .addCase(fetchBookingData.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchAllBookingById.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(fetchAllBookingById.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.userAllBooking = action.payload;
+      })
+      .addCase(fetchAllBookingById.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })

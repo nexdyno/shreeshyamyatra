@@ -12,9 +12,9 @@ export default function ProfileForm({ setType }) {
     mobileNumber: session?.user?.phone || "",
   });
   return (
-    <div className="w-full bg-white p-8 rounded-sm lg:border font-poppins lg:border-gray-500">
+    <div className="w-full bg-white p-8 rounded-sm font-poppins ">
       <div className="flex items-center justify-between mb-8 ">
-        <div onClick={() => setType("")}>
+        <div className="lg:hidden" onClick={() => setType("")}>
           <IoMdArrowBack size={30} />
         </div>
 

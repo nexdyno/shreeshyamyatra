@@ -264,6 +264,33 @@ export default function Page() {
       bookingProcess();
     }
   }, [guestData]);
+
+  const [isMobile, setIsMobile] = useState(false);
+  const [checked, setChecked] = useState(false); // To ensure no flickering on initial load
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Check if the screen size is less than 1024px (Tailwind's lg breakpoint)
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    handleResize(); // Initial screen size check
+    setChecked(true); // Mark that the check has been performed
+    window.addEventListener("resize", handleResize); // Add listener for resizing
+
+    return () => window.removeEventListener("resize", handleResize); // Cleanup
+  }, []);
+
+  useEffect(() => {
+    if (checked && !isMobile) {
+      // If the screen size is too large, trigger the 404 page
+      notFound();
+    }
+  }, [checked, isMobile]);
+
+  if (!checked || !isMobile) {
+    return null; // Avoid rendering while checking screen size
+  }
   return (
     <div className="w-full mt-32 lg:mt-0">
       <div

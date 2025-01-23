@@ -1,7 +1,7 @@
 import React from "react";
 import { IoMdArrowBack } from "react-icons/io";
 
-export default function BookingCard({ setType }) {
+export default function BookingCard({ setType, setShowInvoice }) {
   const bookings = [
     {
       id: 1,
@@ -99,7 +99,10 @@ export default function BookingCard({ setType }) {
               <strong>Time Duration:</strong> {booking.time}
             </p>
           </div>
-          <div className="flex justify-end items-center cursor-pointer">
+          <div
+            onClick={() => setShowInvoice(true)}
+            className="flex justify-end items-center cursor-pointer"
+          >
             <span
               className={`px-4 py-1 rounded-full text-base sm:text-lg font-medium border border-black hover:bg-primaryGradient hover:text-white hover:border-none`}
             >

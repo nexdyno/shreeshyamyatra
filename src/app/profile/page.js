@@ -109,6 +109,7 @@ import BookingCard from "@/container/profile/BookingCard";
 import ProfileForm from "@/container/profile/ProfileForm";
 import ProfileSidebar from "@/container/profile/ProfileSidebar";
 import { checkUserSession, logoutUser } from "@/redux/authSlice";
+import { notFound } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
@@ -141,6 +142,33 @@ export default function page() {
     setType("");
     setShowLogin(true);
   };
+
+  const [isMobile, setIsMobile] = useState(false);
+  const [checked, setChecked] = useState(false); // To ensure no flickering on initial load
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Check if the screen size is less than 1024px (Tailwind's lg breakpoint)
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    handleResize(); // Initial screen size check
+    setChecked(true); // Mark that the check has been performed
+    window.addEventListener("resize", handleResize); // Add listener for resizing
+
+    return () => window.removeEventListener("resize", handleResize); // Cleanup
+  }, []);
+
+  useEffect(() => {
+    if (checked && !isMobile) {
+      // If the screen size is too large, trigger the 404 page
+      notFound();
+    }
+  }, [checked, isMobile]);
+
+  if (!checked || !isMobile) {
+    return null; // Avoid rendering while checking screen size
+  }
   return (
     <div className="w-full h-full">
       {type === "" && (

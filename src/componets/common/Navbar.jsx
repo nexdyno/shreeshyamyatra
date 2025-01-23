@@ -251,6 +251,9 @@ import {
 import toast from "react-hot-toast";
 import BookingCard from "@/container/profile/BookingCard";
 import BookingSidebar from "@/container/profile/BookingSidebar";
+import ProfileForm from "@/container/profile/ProfileForm";
+import ProfileFormSidebar from "@/container/profile/ProfileFormSidebar";
+import { fetchAllBookingById } from "@/redux/dataSlice";
 
 export default function Navbar() {
   const dispatch = useDispatch();
@@ -366,10 +369,27 @@ export default function Navbar() {
     window.location.href = "/profile"; // Example redirect
   };
 
+  const handleUserAllBooking = async () => {
+    try {
+      const id = session?.user?.id;
+
+      // if (!id) {
+      //   throw new Error("User ID is not available in the session");
+      // }
+      console.log(session, "let chekc the session");
+      console.log(id, "session user id");
+
+      // Dispatch the Redux action to fetch bookings
+      await dispatch(fetchAllBookingById(id)).unwrap();
+    } catch (error) {
+      console.error("Error fetching user bookings:", error.message || error);
+    }
+  };
+
   return (
     <>
       <div
-        className={`w-full h-[12vh] flex justify-around md:justify-between items-center border border-gray-400 md:px-2 lg:px-10 font-poppins bg-white fixed top-0 left-0 right-0 z-30 transition-shadow duration-300 ${
+        className={`w-full min-h-[12vh] flex justify-around md:justify-between items-center border border-gray-400 md:px-2 lg:px-10 font-poppins bg-white fixed top-0 left-0 right-0 z-30 transition-shadow duration-300 ${
           isScrolled ? "shadow-lg" : ""
         }`}
       >
@@ -444,13 +464,19 @@ export default function Navbar() {
                 >
                   <ul className="py-2">
                     <li
-                      onClick={() => setType("booking")}
+                      onClick={() => {
+                        setType("booking");
+                        handleUserAllBooking();
+                      }}
                       className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                     >
                       My Bookings
                     </li>
-                    <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <Link href="/profile">My Profile</Link>
+                    <li
+                      onClick={() => setType("profileform")}
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      My Profile
                     </li>
                     <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                       <span>Call Us: 0124-6201611</span>
@@ -488,7 +514,12 @@ export default function Navbar() {
       ) : (
         ""
       )}
-      <BookingSidebar type={type} closeSidebar={() => setType("")} />
+      {type === "booking" && (
+        <BookingSidebar type={type} closeSidebar={() => setType("")} />
+      )}
+      {type === "profileform" && (
+        <ProfileFormSidebar type={type} closeSidebar={() => setType("")} />
+      )}
     </>
   );
 }
