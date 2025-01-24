@@ -1,13 +1,9 @@
 import React from "react";
 import { FaWhatsapp } from "react-icons/fa"; // Importing the WhatsApp icon
-import { uselocationContext } from "../context/StatesContext";
 
 const WhatsAppIcon = () => {
-  const { selectedPlace } = uselocationContext();
-
   const handleWhatsAppRedirect = () => {
     let phoneNumber = 8130679338;
-    window.open(`https://wa.me/${phoneNumber}`, "_blank");
   };
 
   return (

@@ -11,6 +11,7 @@ import { supabase } from "@/lib/supabase/supabaseClient";
 import { format, parse } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 import LoginModal from "@/container/login/LoginModal";
+import Loader from "../common/Loader";
 
 export default function BookingPaymentDetails() {
   const dispatch = useDispatch();
@@ -294,7 +295,7 @@ export default function BookingPaymentDetails() {
               onClick={handleBook}
               className="w-full mt-5 bg-primaryGradient text-white text-lg font-semibold py-2 rounded-sm hover:opacity-90 transition"
             >
-              {isLoading ? "Loaing..." : "Continue to Book"}
+              {isLoading ? <Loader /> : "Continue to Book"}
             </button>
             {/* ) : ( */}
             {/* <button
