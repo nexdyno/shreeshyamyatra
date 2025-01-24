@@ -6,6 +6,7 @@ import { useAppContext } from "@/context/AppContext";
 import {
   fetchImages,
   fetchProperty,
+  fetchPropertyEvent,
   setIsSearchOpen,
   setMatchedProperty,
 } from "@/redux/dataSlice";
@@ -22,8 +23,14 @@ import { IoArrowBack } from "react-icons/io5";
 export default function Page() {
   const [isVisible, setIsVisible] = useState(false);
   const dispatch = useDispatch();
-  const { property, matchedProperty, error, IsSearchOpen, allImages } =
-    useSelector((state) => state.data);
+  const {
+    property,
+    propertyEvent,
+    matchedProperty,
+    error,
+    IsSearchOpen,
+    allImages,
+  } = useSelector((state) => state.data);
   const { sessionFromLocal } = useSelector((state) => state.auth);
 
   const [isLoading, setIsLoading] = useState(true); // Set isLoading to true initially
@@ -37,6 +44,7 @@ export default function Page() {
       try {
         await dispatch(fetchProperty()).unwrap();
         await dispatch(fetchImages()).unwrap();
+        await dispatch(fetchPropertyEvent().unwrap());
       } catch (err) {
         console.error("Error while fetching the data", err);
       } finally {
@@ -52,7 +60,7 @@ export default function Page() {
     if (!sessionFromLocal) {
       initializeSession(dispatch);
     }
-  }, [property, dispatch]);
+  }, [property, propertyEvent, dispatch]);
 
   // Use memoized property to prevent unnecessary re-renders
   const stableProperty = useMemo(() => property || [], [property]);

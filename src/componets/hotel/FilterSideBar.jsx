@@ -37,9 +37,7 @@ export default function FilterSideBar() {
   ];
 
   // Function to handle checkbox click
-  const handleCheckboxClick = (type) => {
-    console.log(type); // Logs the `type` of the clicked checkbox
-  };
+  const handleCheckboxClick = (type) => {};
 
   return (
     <section className="w-full h-full py-5">

@@ -8,13 +8,6 @@ export const calculateBillingData = (
   selectedRoom,
   matchedProperty
 ) => {
-  console.log(
-    roomAndGuest,
-    bookingDate,
-    selectedRoom,
-    matchedProperty,
-    "data chekerrrrrrrrr"
-  );
   const startDate = new Date(bookingDate?.startDate);
   const endDate = new Date(bookingDate?.endDate);
   const numberOfDays =

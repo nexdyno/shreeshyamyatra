@@ -9,6 +9,7 @@ const OTPModal = ({ handleSendOtp, phone, setValid, setStep }) => {
   const { isOTPModalOpen } = useSelector((state) => state.auth);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (index, value) => {
     if (!isNaN(value) && value.length <= 1) {
@@ -40,6 +41,7 @@ const OTPModal = ({ handleSendOtp, phone, setValid, setStep }) => {
     }
 
     try {
+      setIsLoading(true);
       const response = await fetch("/api/verify-otp", {
         method: "POST",
         headers: {
@@ -52,41 +54,19 @@ const OTPModal = ({ handleSendOtp, phone, setValid, setStep }) => {
 
       if (response.ok) {
         toast.success("Phone number verified successfully!");
+        setIsLoading(false);
         setValid(true);
         setStep(2);
-        dispatch(setIsOTPModalOpen());
+        dispatch(setIsOTPModalOpen(false));
       } else {
         toast.error(data.error || "Failed to verify OTP");
       }
     } catch (error) {
       toast.error("Error verifying OTP.");
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  // const handleVerify = async () => {
-  //   const token = otp.join("").trim(); // Trim any extra spaces
-  //   if (token.length !== 6) {
-  //     toast.error("Please enter a valid 6-digit OTP.");
-  //     return;
-  //   }
-  //   const formattedPhone = phone.startsWith("+") ? phone : `+${phone}`;
-
-  //   try {
-  //     const response = await dispatch(
-  //       verifyOtp({ phone: formattedPhone, token })
-  //     ).unwrap();
-  //     console.log("OTP Verified Successfully:", response);
-  //     toast.success("OTP Verified Successfully!");
-  //     dispatch(setIsOTPModalOpen()); // Close modal on success
-  //   } catch (error) {
-  //     console.error("OTP Verification Failed:", error);
-  //     if (error === "otp_expired") {
-  //       toast.error("OTP has expired. Please request a new OTP.");
-  //     } else {
-  //       toast.error(error || "Failed to verify OTP.");
-  //     }
-  //   }
-  // };
 
   if (!isOTPModalOpen) return null;
 
@@ -118,9 +98,10 @@ const OTPModal = ({ handleSendOtp, phone, setValid, setStep }) => {
         {/* Submit Button */}
         <button
           onClick={handleVerify}
+          disabled={isLoading}
           className="bg-primaryGradient text-white py-2 px-6 rounded-md"
         >
-          Verify
+          {isLoading ? "Loading..." : "Verify"}
         </button>
 
         {/* Resend Code */}
@@ -147,103 +128,3 @@ const OTPModal = ({ handleSendOtp, phone, setValid, setStep }) => {
 };
 
 export default OTPModal;
-
-// import { setIsOTPModalOpen, verifyOtp } from "@/redux/authSlice";
-// import React, { useState } from "react";
-// import toast from "react-hot-toast";
-// import { useDispatch, useSelector } from "react-redux";
-
-// const OTPModal = ({ handleSendOtp, phone }) => {
-//   const dispatch = useDispatch();
-//   const { isOTPModalOpen } = useSelector((state) => state.auth);
-//   const [otp, setOtp] = useState("");
-
-//   const handleChange = (e) => {
-//     const value = e.target.value;
-//     if (/^\d*$/.test(value) && value.length <= 6) {
-//       setOtp(value);
-//     }
-//   };
-
-//   const handleVerify = async () => {
-//     const token = otp.trim(); // Trim any extra spaces
-//     if (token.length !== 6) {
-//       toast.error("Please enter a valid 6-digit OTP.");
-//       return;
-//     }
-//     try {
-//       const response = await dispatch(
-//         verifyOtp({
-//           phone, // Ensure proper formatting
-//           token,
-//         })
-//       ).unwrap();
-//       console.log("OTP Verified Successfully:", response);
-//       toast.success("OTP Verified Successfully!");
-
-//       dispatch(setIsOTPModalOpen()); // Close modal on success
-//     } catch (error) {
-//       console.error("OTP Verification Failed:", error);
-//       if (error === "otp_expired") {
-//         toast.error("OTP has expired. Please request a new OTP.");
-//       } else {
-//         toast.error(error || "Failed to verify OTP.");
-//       }
-//     }
-//   };
-
-//   if (!isOTPModalOpen) return null;
-
-//   return (
-//     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-//       <div className="bg-[#182532] p-10 rounded-md shadow-lg text-center text-white w-11/12 sm:w-2/3 md:w-1/3 relative">
-//         <h2 className="text-2xl mb-4 font-bold">Enter Verification Code</h2>
-//         <p className="mb-4 text-sm">
-//           We have sent a verification code to this +91 {phone}. Please enter the
-//           verification code below.
-//         </p>
-
-//         {/* Single OTP Input Field */}
-//         <div className="mb-6">
-//           <input
-//             type="text"
-//             value={otp}
-//             onChange={handleChange}
-//             maxLength="6"
-//             placeholder="Enter OTP"
-//             className="w-full h-12 text-center text-xl bg-gray-700 border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-primary"
-//           />
-//         </div>
-
-//         {/* Submit Button */}
-//         <button
-//           onClick={handleVerify}
-//           className="bg-primaryGradient text-white py-2 px-6 rounded-md"
-//         >
-//           Verify
-//         </button>
-
-//         {/* Resend Code */}
-//         <p className="mt-4 text-sm">
-//           Didn’t get the code?{" "}
-//           <button
-//             onClick={() => handleSendOtp(true)}
-//             className="text-primary underline"
-//           >
-//             Resend code
-//           </button>
-//         </p>
-
-//         {/* Close Button */}
-//         <button
-//           onClick={() => dispatch(setIsOTPModalOpen())}
-//           className="absolute top-3 right-3 text-gray-400 hover:text-white text-lg"
-//         >
-//           &times;
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default OTPModal;

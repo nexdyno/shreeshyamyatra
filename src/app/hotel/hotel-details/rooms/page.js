@@ -197,7 +197,6 @@ export default function Page() {
     };
   };
 
-  console.log(session?.user?.id, "session?.user?.id");
   const prepareGuestData = (formData) => {
     const { id, booking_id } = generateUniqueIds();
     localStorage.setItem("my_id", booking_id);
@@ -237,7 +236,6 @@ export default function Page() {
 
   const bookingProcess = async () => {
     try {
-      console.log(guestData, "guest data insdide the booking create");
       await dispatch(bookingCreate(guestData)).unwrap();
       window.location.href = "/guest-details";
     } catch (error) {

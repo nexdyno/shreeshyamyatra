@@ -48,7 +48,7 @@ const RoomGuestSelectorDesktop = ({
           </button>
         </div>
       </div>
-      <div className="flex justify-between items-center">
+      {/* <div className="flex justify-between items-center">
         <p className="text-gray-700">Children</p>
         <div className="flex items-center">
           <button
@@ -65,7 +65,7 @@ const RoomGuestSelectorDesktop = ({
             +
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

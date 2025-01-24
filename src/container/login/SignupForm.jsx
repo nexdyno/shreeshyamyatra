@@ -120,15 +120,6 @@ const SignupForm = ({
     if (step > 1) setStep(step - 1);
   };
 
-  // const handleGoogleLogin = async () => {
-  //   const { data, error } = await googleAuth();
-  //   if (data) {
-  //     alert("Login successful!");
-  //   }
-  //   if (error) {
-  //     alert("Login failed: " + error.message);
-  //   }
-  // };
   const handleGoogleLogin = async () => {
     const currentPath = window.location.href; // or use router.asPath for path only
     dispatch(googleAuth(currentPath));
@@ -158,7 +149,7 @@ const SignupForm = ({
       return;
     }
     const data = email === "email" ? { email, password } : { phone, password };
-    console.log("Submitted Data:", data);
+
     alert(data);
 
     try {
@@ -221,8 +212,6 @@ const SignupForm = ({
       setError("Please enter a valid email or phone number.");
     }
   };
-
-  console.log("signup uppppppppppp modal");
 
   return (
     <div className="w-full max-w-md">

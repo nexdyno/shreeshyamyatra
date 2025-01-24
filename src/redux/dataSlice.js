@@ -6,17 +6,31 @@ export const fetchProfiles = createAsyncThunk(
   async () => {
     const { data, error } = await supabase.from("profiles").select("*");
     if (error) throw error;
-    console.log(data, "fetchProfiles");
+
+    return data;
+  }
+);
+export const fetchProperty = createAsyncThunk(
+  "data/fetchProperty",
+  async () => {
+    const { data, error } = await supabase
+      .from("property")
+      .select("*")
+      .eq("is_enabled", true)
+      .eq("is_verified", true)
+      .not("user_id", "is", null);
+
+    if (error) throw error;
+
     return data;
   }
 );
 
-export const fetchProperty = createAsyncThunk(
-  "data/fetchProperty",
+export const fetchPropertyEvent = createAsyncThunk(
+  "data/fetchPropertyEvent",
   async () => {
-    const { data, error } = await supabase.from("property").select("*");
+    const { data, error } = await supabase.from("property_events").select("*");
     if (error) throw error;
-    console.log(data, "fetchProperty");
     return data;
   }
 );
@@ -24,7 +38,7 @@ export const fetchProperty = createAsyncThunk(
 export const fetchRooms = createAsyncThunk("data/fetchRooms", async () => {
   const { data, error } = await supabase.from("rooms").select("*");
   if (error) throw error;
-  console.log(data, "fetchRooms");
+
   return data;
 });
 export const fetchRoomsBusy = createAsyncThunk(
@@ -32,7 +46,7 @@ export const fetchRoomsBusy = createAsyncThunk(
   async () => {
     const { data, error } = await supabase.from("room_busy").select("*");
     if (error) throw error;
-    console.log(data, "room_busy room_busyroom_busy");
+
     return data;
   }
 );
@@ -40,14 +54,13 @@ export const fetchRoomsBusy = createAsyncThunk(
 export const fetchImages = createAsyncThunk("data/fetchImages", async () => {
   const { data, error } = await supabase.from("property_images").select("*");
   if (error) throw error;
-  console.log(data, "fetchImages");
+
   return data;
 });
 
 export const bookingCreate = createAsyncThunk(
   "data/bookingCreate",
   async (guestData, { rejectWithValue }) => {
-    console.log(guestData, "guestData in redux");
     const { data, error } = await supabase
       .from("guests")
       .insert(guestData)
@@ -57,7 +70,7 @@ export const bookingCreate = createAsyncThunk(
       console.error("Supabase error:", error);
       return rejectWithValue(error.message);
     }
-    console.log("Booking data:", data);
+
     return data;
   }
 );
@@ -65,7 +78,6 @@ export const fetchAllBookingById = createAsyncThunk(
   "data/fetchAllBookingById",
   async (id, { rejectWithValue }) => {
     try {
-      console.log(id, "this in fetch booking id ");
       // Fetch data from the Supabase "guests" table
       const { data, error } = await supabase
         .from("guests")
@@ -118,7 +130,6 @@ export const fetchBookingData = createAsyncThunk(
 export const saveGuestData = createAsyncThunk(
   "data/saveGuestData",
   async ({ guestData, id }, { rejectWithValue }) => {
-    console.log(guestData, id, "guestdata saveGuestData");
     try {
       const { data, error } = await supabase
         .from("guests") // Table name in Supabase
@@ -140,8 +151,6 @@ export const savePaymentDetail = createAsyncThunk(
   "data/savePaymentDetail",
   async ({ paymentdata }, { rejectWithValue }) => {
     try {
-      console.log(paymentdata, "paymentdata , paymentdata");
-
       const { data, error } = await supabase
         .from("payments")
         .insert(paymentdata)
@@ -169,6 +178,7 @@ const dataSlice = createSlice({
     rooms: [],
     busyRoom: [],
     allImages: [],
+    propertyEvent: [],
     guestData: null,
     paymentdata: null,
     bookingData: null,
@@ -302,6 +312,18 @@ const dataSlice = createSlice({
         state.property = action.payload;
       })
       .addCase(fetchProperty.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchPropertyEvent.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(fetchPropertyEvent.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.propertyEvent = action.payload;
+      })
+      .addCase(fetchPropertyEvent.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })

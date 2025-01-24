@@ -48,12 +48,10 @@ const Signin = ({
   useEffect(() => {
     dispatch(checkUserSession());
     if (status === "succeeded" && userData) {
-      console.log("Verified user data:", userData);
       // Perform any additional actions, such as redirecting
     }
   }, []);
 
-  console.log("singin innnnnnn  modal");
   const handleNext = async () => {
     if (emailOrPhone) {
       if (!validateEmail(email)) {
@@ -152,8 +150,6 @@ const Signin = ({
     if (error) return; // Prevent submission if there are errors
 
     const data = emailOrPhone ? { email, password } : { phone, password };
-
-    console.log("Submitted Data:", data);
 
     dispatch(userSignIn(data));
     // dispatch(userSignIn({ email, password }));

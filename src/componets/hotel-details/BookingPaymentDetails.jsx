@@ -27,8 +27,8 @@ export default function BookingPaymentDetails() {
   } = useSelector((state) => state.data);
   const { session, status, error } = useSelector((state) => state.auth);
   const [roomTag, setRoomTag] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  console.log(matchedProperty, "matchedPropertymatchedProperty");
   const [billingData, setBillingData] = useState({
     numberOfDays: 1,
     commission: 0,
@@ -153,7 +153,6 @@ export default function BookingPaymentDetails() {
     };
   };
 
-  console.log(session?.user?.id, "session?.user?.id");
   const prepareGuestData = (formData) => {
     const { id, booking_id } = generateUniqueIds();
     localStorage.setItem("my_id", booking_id);
@@ -193,8 +192,9 @@ export default function BookingPaymentDetails() {
 
   const bookingProcess = async () => {
     try {
-      console.log(guestData, "guest data insdide the booking create");
+      setIsLoading(true);
       await dispatch(bookingCreate(guestData)).unwrap();
+      setIsLoading(false);
       window.location.href = "/guest-details";
     } catch (error) {
       toast.error(
@@ -294,7 +294,7 @@ export default function BookingPaymentDetails() {
               onClick={handleBook}
               className="w-full mt-5 bg-primaryGradient text-white text-lg font-semibold py-2 rounded-sm hover:opacity-90 transition"
             >
-              Continue to Book
+              {isLoading ? "Loaing..." : "Continue to Book"}
             </button>
             {/* ) : ( */}
             {/* <button

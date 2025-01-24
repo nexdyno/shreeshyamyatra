@@ -2,18 +2,14 @@
 
 import MobileFooter from "@/componets/common/MobileFooter";
 import Navbar from "@/componets/common/Navbar";
+import PhoneIcon from "@/componets/common/PhoneIcon";
+import WhatsAppIcon from "@/componets/common/WhatsAppIcon";
 import BannerOffer from "@/componets/home/BannerOffer";
-import Footer from "@/container/home/Footer";
 import OfferForYou from "@/container/home/OfferForYou";
-import RecommendedRooms from "@/container/home/RecommendedRooms";
 import TopBanner from "@/container/home/TopBanner";
 import { useAppContext } from "@/context/AppContext";
 import { initializeSession } from "@/lib/helperFunctions/sessionChecker";
-import {
-  anonymouslySignin,
-  checkUserSession,
-  setUserSession,
-} from "@/redux/authSlice";
+
 import {
   fetchImages,
   fetchProfiles,
@@ -45,7 +41,6 @@ export default function Home() {
         console.error("Error in fetching data:", err);
       } finally {
         setIsLoading(false);
-        console.log("Data fetching completed");
       }
     };
 
@@ -71,6 +66,8 @@ export default function Home() {
       <div className="md:hidden">
         <MobileFooter />
       </div>
+      <PhoneIcon />
+      <WhatsAppIcon />
     </div>
   );
 }

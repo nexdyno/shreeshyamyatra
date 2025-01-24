@@ -10,7 +10,6 @@ const BookingSidebar = ({ type, closeSidebar }) => {
   const [showInvoice, setShowInvoice] = useState(false);
   const { userAllBooking } = useSelector((state) => state.data);
 
-  console.log(userAllBooking, "user all bookings");
   return (
     <>
       {/* Background overlay */}

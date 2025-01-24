@@ -311,22 +311,17 @@ import { setroomAndGuest } from "@/redux/dataSlice";
 import RoomGuestSelectorMobile from "./RoomGuestSelectorMobile";
 import RoomGuestSelectorDesktop from "./RoomGuestSelectorDesktop";
 import { MdPeopleAlt } from "react-icons/md";
+import toast from "react-hot-toast";
 
 const RoomGuestSelector = () => {
-  // const dispatch = useDispatch();
-  // const { roomAndGuest, selectedRoom } = useSelector((state) => state.data);
-  // const [guests, setGuests] = useState(roomAndGuest?.guest || 2);
-  // const [rooms, setRooms] = useState(roomAndGuest?.room || 1);
-  // const [child, setChild] = useState(0);
-  // const [showPopup, setShowPopup] = useState(false);
-  // const [isDesktop, setIsDektop] = useState(false);
   const dispatch = useDispatch();
   const { roomAndGuest, selectedRoom } = useSelector((state) => state.data);
+
   const [guests, setGuests] = useState(roomAndGuest?.guest || 2);
   const [showPopup, setShowPopup] = useState(false);
   const [rooms, setRooms] = useState(roomAndGuest?.room || 1);
   const [extraGuest, setExtraGuests] = useState(roomAndGuest?.extraPerson || 0);
-  const [child, setChild] = useState(0);
+  // const [child, setChild] = useState(0);
   const [isDesktop, setIsDektop] = useState(false);
 
   useEffect(() => {
@@ -350,18 +345,25 @@ const RoomGuestSelector = () => {
       setRooms(rooms + 1);
 
       // Adjust extra guests based on the new room count
-      const baseGuests = (rooms + 1) * selectedRoom?.max_occupancy;
+      const baseGuests = (rooms + 1) * selectedRoom?.base_adults;
       if (guests > baseGuests) {
+        console.log("those");
         setExtraGuests(guests - baseGuests);
       } else {
         setExtraGuests(0);
       }
     } else if (type === "decrement" && rooms > 1) {
-      if (guests > (rooms - 1) * selectedRoom?.max_occupancy + 1) {
-        setGuests((rooms - 1) * selectedRoom?.max_occupancy + 1);
-        setExtraGuests(guests - (rooms - 1) * selectedRoom?.max_occupancy);
-      } else if (guests > (rooms - 1) * selectedRoom?.max_occupancy) {
-        setExtraGuests(guests - (rooms - 1) * selectedRoom?.max_occupancy);
+      console.log("this");
+      if (guests > (rooms - 1) * selectedRoom?.max_adults) {
+        console.log("thissssssss");
+        setGuests((rooms - 1) * selectedRoom?.max_adults);
+        setExtraGuests(
+          (rooms - 1) * selectedRoom?.max_adults -
+            (rooms - 1) * selectedRoom?.base_adults
+        );
+      } else if (guests > (rooms - 1) * selectedRoom?.base_adults) {
+        console.log("that");
+        setExtraGuests(guests - (rooms - 1) * selectedRoom?.base_adults);
       } else {
         setExtraGuests(0);
       }
@@ -370,26 +372,29 @@ const RoomGuestSelector = () => {
   };
 
   const handleGuestChange = (type) => {
-    const baseGuests = rooms * selectedRoom?.max_occupancy;
-    const maxGuests = rooms * selectedRoom?.max_occupancy + rooms;
+    const baseGuests = rooms * selectedRoom?.base_adults; // Total base guests allowed for all rooms
+    const maxGuests = rooms * selectedRoom?.max_adults; // Total max guests allowed for all rooms
 
     if (type === "increment") {
-      if (guests < baseGuests) {
+      if (guests < maxGuests) {
         setGuests(guests + 1);
-        setExtraGuests(0); // No extra guests if within base limit
-      } else if (guests < maxGuests) {
-        const newExtraGuests = guests + 1 - baseGuests;
-        alert(
-          `Adding guest ${newExtraGuests} beyond the free limit will incur an extra charge of ₹350.`
-        );
-        setGuests(guests + 1);
-        setExtraGuests(newExtraGuests);
+
+        if (guests + 1 > baseGuests) {
+          const newExtraGuests = guests + 1 - baseGuests;
+          setExtraGuests(newExtraGuests);
+          alert(
+            `Adding guest ${newExtraGuests} beyond the free limit will incur an extra charge of ₹350 per guest.`
+          );
+        }
       } else {
-        alert("Add more rooms to accommodate more guests.");
+        toast.error("Add more rooms to accommodate more guests.");
       }
     } else if (type === "decrement" && guests > 1) {
       if (guests > baseGuests) {
-        setExtraGuests(extraGuest - 1);
+        console.log(guests, "inside the decrement ");
+        const newExtraGuests = guests - baseGuests;
+
+        setExtraGuests(newExtraGuests);
       } else {
         setExtraGuests(0); // Reset extra guests if within base limit
       }
@@ -397,16 +402,18 @@ const RoomGuestSelector = () => {
     }
   };
 
-  const handleChildChange = (type) => {
-    if (type === "increment") {
-      setChild((prevChild) => prevChild + 1);
-    } else if (type === "decrement") {
-      setChild((prevChild) => Math.max(0, prevChild - 1)); // Ensure it doesn't go below 0
-    }
-  };
+  // const handleChildChange = (type) => {
+  //   if (type === "increment") {
+  //     setChild((prevChild) => prevChild + 1);
+  //   } else if (type === "decrement") {
+  //     setChild((prevChild) => Math.max(0, prevChild - 1)); // Ensure it doesn't go below 0
+  //   }
+  // };
 
   useEffect(() => {
-    dispatch(setroomAndGuest({ room: rooms, guest: guests }));
+    dispatch(
+      setroomAndGuest({ room: rooms, guest: guests, guestExtra: extraGuest })
+    );
   }, [rooms, guests]);
 
   return (
@@ -428,19 +435,19 @@ const RoomGuestSelector = () => {
             <RoomGuestSelectorDesktop
               rooms={rooms}
               guests={guests}
-              child={child}
+              // child={child}
               handleRoomChange={handleRoomChange}
               handleGuestChange={handleGuestChange}
-              handleChildChange={handleChildChange}
+              // handleChildChange={handleChildChange}
             />
           ) : (
             <RoomGuestSelectorMobile
               rooms={rooms}
               guests={guests}
-              child={child}
+              // child={child}
               handleRoomChange={handleRoomChange}
               handleGuestChange={handleGuestChange}
-              handleChildChange={handleChildChange}
+              // handleChildChange={handleChildChange}
               setShowPopup={setShowPopup}
             />
           )}

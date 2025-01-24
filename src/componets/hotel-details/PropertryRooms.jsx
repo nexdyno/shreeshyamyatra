@@ -1,4 +1,8 @@
-import { fetchRoomsBusy, setSelectedRoom } from "@/redux/dataSlice";
+import {
+  fetchPropertyEvent,
+  fetchRoomsBusy,
+  setSelectedRoom,
+} from "@/redux/dataSlice";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import {
@@ -22,8 +26,16 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
   const toggleView = () => setShowAll(!showAll);
 
   const dispatch = useDispatch();
-  const { OneRoom, selectedRoom, busyRoom, bookingDate, matchedProperty } =
-    useSelector((state) => state.data); // Selected room
+  const {
+    OneRoom,
+    selectedRoom,
+    busyRoom,
+    bookingDate,
+    matchedProperty,
+    propertyEvent,
+  } = useSelector((state) => state.data); // Selected room
+
+  console.log(selectedRoom, "select room price");
 
   const getAvailableRooms = () => {
     if (!bookingDate || !matchRooms || matchRooms.length === 0) return []; // Early exit if dependencies are missing
@@ -60,19 +72,48 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
       .filter((room) => room.available_quantity > 0);
   };
 
+  const updateRoomRates = (rooms) => {
+    const start = new Date(bookingDate.startDate);
+    const end = new Date(bookingDate.endDate);
+    rooms.forEach((room) => {
+      // Check if there's an event that matches the room and date range
+      const matchingEvent = propertyEvent.find((event) => {
+        const eventStart = new Date(event.start_date);
+        const eventEnd = new Date(event.end_date);
+        return (
+          event.room_id === room.id &&
+          ((start >= eventStart && start <= eventEnd) ||
+            (end >= eventStart && end <= eventEnd) ||
+            (start <= eventStart && end >= eventEnd)) // Overlap check
+        );
+      });
+
+      // If a matching event is found, update the room rate
+      if (matchingEvent) {
+        room.rate = matchingEvent.updated_price;
+      }
+    });
+
+    return rooms;
+  };
+
   useEffect(() => {
     // Dispatch the action to fetch busy rooms
     dispatch(fetchRoomsBusy());
+    dispatch(fetchPropertyEvent());
   }, [dispatch]);
 
   useEffect(() => {
     if (busyRoom && busyRoom.length >= 0) {
       const result = getAvailableRooms();
-
-      setFilterRoom(result);
-      setAvlRoom(result); // Set initial available rooms state
+      const data = updateRoomRates(result);
+      setFilterRoom(data);
+      setAvlRoom(data); // Set initial available rooms state
     }
   }, [JSON.stringify(bookingDate), busyRoom, matchRooms]);
+
+  console.log(avlRoom, "avl rooms");
+  console.log(propertyEvent, "propertyEvent rooms price");
 
   useEffect(() => {
     if (!selectedRoom && avlRoom.length > 0) {

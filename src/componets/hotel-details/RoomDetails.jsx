@@ -103,7 +103,6 @@ export default function RoomDetails({ property, propertyWiseImages }) {
   const [showAll, setShowAll] = useState(false);
   const pricingRef = useRef(null);
 
-  console.log(property, "room is call again again");
   const toggleView = () => setShowAll(!showAll);
 
   const matchRooms = useMemo(

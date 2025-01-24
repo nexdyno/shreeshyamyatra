@@ -83,7 +83,8 @@ const RoomGuestSelectorMobile = ({
           </button>
         </div>
       </div>
-      <div className="flex justify-between items-center px-4 py-4 border-b border-gray-500">
+
+      {/* <div className="flex justify-between items-center px-4 py-4 border-b border-gray-500">
         <div className="flex items-center gap-4">
           <MdOutlineChildCare size={20} />
           <p className="text-black font-medium">Children</p>
@@ -104,6 +105,7 @@ const RoomGuestSelectorMobile = ({
           </button>
         </div>
       </div>
+       */}
       <div className="flex items-center justify-center py-3">
         <button
           onClick={() => setShowPopup(false)}

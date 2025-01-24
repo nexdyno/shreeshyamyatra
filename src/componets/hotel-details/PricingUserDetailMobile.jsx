@@ -28,7 +28,6 @@ export default function PricingUserDetailMobile() {
   );
   const [roomTag, setRoomTag] = useState(null);
 
-  console.log(matchedProperty, "matchedPropertymatchedProperty");
   const [billingData, setBillingData] = useState({
     numberOfDays: 1,
     commission: 0,
@@ -150,7 +149,6 @@ export default function PricingUserDetailMobile() {
     };
   };
 
-  console.log(session?.user?.id, "session?.user?.id");
   const prepareGuestData = (formData) => {
     const { id, booking_id } = generateUniqueIds();
     localStorage.setItem("my_id", booking_id);
@@ -190,7 +188,6 @@ export default function PricingUserDetailMobile() {
 
   const bookingProcess = async () => {
     try {
-      console.log(guestData, "guest data insdide the booking create");
       await dispatch(bookingCreate(guestData)).unwrap();
       window.location.href = "/guest-details";
     } catch (error) {

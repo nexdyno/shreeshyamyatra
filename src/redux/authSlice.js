@@ -197,26 +197,24 @@ const authSlice = createSlice({
         state.status = "loading";
       })
       .addCase(newUserSignUp.fulfilled, (state, action) => {
-        console.log(action.payload, "user data paylaod");
         state.status = "succeeded";
         state.userData = action.payload;
       })
       .addCase(newUserSignUp.rejected, (state, action) => {
         state.status = "failed";
-        console.log(action.payload, "user data paylaod failed");
+
         state.error = action.payload; // Storing the error in the 'error' field
       })
       .addCase(userSignIn.pending, (state) => {
         state.status = "loading";
       })
       .addCase(userSignIn.fulfilled, (state, action) => {
-        console.log(action.payload, "user data userSignIn paylaod");
         state.status = "succeeded";
         state.userData = action.payload;
       })
       .addCase(userSignIn.rejected, (state, action) => {
         state.status = "failed";
-        console.log(action.payload, "user data paylaod userSignIn  failed");
+
         state.error = action.payload; // Storing the error in the 'error' field
       })
       .addCase(checkUserSession.pending, (state) => {

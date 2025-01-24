@@ -26,10 +26,8 @@ export default function Page() {
         await dispatch(fetchProperty()).unwrap();
         await dispatch(fetchImages()).unwrap();
       } catch (err) {
-        console.error("Error in fetching data:", err);
       } finally {
         setIsLoading(false);
-        console.log("Data fetching completed");
       }
     };
 

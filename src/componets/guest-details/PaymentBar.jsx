@@ -57,15 +57,13 @@ export default function PaymentBar({ formData, setStep, valid }) {
         payments: [paymentTableId],
       };
 
-      if (bookingData[0]?.is_manual_entry) {
+      if (!bookingData[0]?.is_manual_entry) {
         updatedGuestData.booking_status = "confirmed";
       }
 
       return updatedGuestData;
     });
   }, [bookingData, formData]);
-
-  console.log(guestData, paymentTableId, "aadfasdfasd");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,7 +72,6 @@ export default function PaymentBar({ formData, setStep, valid }) {
         if (!id) {
           throw new Error("Booking ID not found in local storage");
         }
-        console.log(id, "id from localStorage");
         await dispatch(fetchBookingData(id)).unwrap();
       } catch (error) {
         console.error("Error while fetching booking data:", error);
@@ -93,7 +90,6 @@ export default function PaymentBar({ formData, setStep, valid }) {
     return differenceInMilliseconds / (1000 * 60 * 60 * 24);
   };
 
-  console.log(typeof bookingData?.[0]?.is_manual_entry, "bookindData");
   const handelBooking = async () => {
     setIsProcessing(true);
 
@@ -113,7 +109,6 @@ export default function PaymentBar({ formData, setStep, valid }) {
       const data = await response.json();
 
       if (response.ok) {
-        console.log("Order created:", data);
         const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
         if (!razorpayKey) {
           throw new Error(
@@ -130,8 +125,6 @@ export default function PaymentBar({ formData, setStep, valid }) {
           description: "Payment Booking",
           order_id: data.orderId,
           handler: async function (response) {
-            console.log("Payment successful:", response);
-
             // Dispatch Redux action to save guest data directly to Supabase
             try {
               const paymentdata = {
