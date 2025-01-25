@@ -32,7 +32,7 @@ const SearchComponent = () => {
           <DateSelector />
           <RoomGuestSelector />
           <div className="w-auto px-3 hidden lg:block">
-            <Link href={{ pathname: "/hotel", query: { search: searchValue } }}>
+            <Link href="/properties">
               <button className="w-full bg-primaryGradient lg:w-auto py-2 px-6 lg:py-3 text-white text-sm transition flex items-center justify-center gap-2 font-medium rounded">
                 <IoIosSearch size={20} className="text-white" />
                 <span>Search</span>
@@ -41,7 +41,7 @@ const SearchComponent = () => {
           </div>
         </div>
         <div className="w-full lg:w-auto  mt-5  lg:hidden">
-          <Link href={{ pathname: "/hotel", query: { search: searchValue } }}>
+          <Link href="/properties">
             <button className="w-full bg-primaryGradient lg:w-auto py-2 px-6 lg:py-3 text-white text-sm transition flex items-center justify-center gap-2 font-medium rounded-full">
               <span className="text-base ">Search</span>
             </button>

@@ -1,71 +1,95 @@
+// // components/SearchInput.jsx
+// import React from "react";
+// import { useState, useEffect } from "react";
+// import { IoLocationSharp } from "react-icons/io5";
+// import { useDispatch, useSelector } from "react-redux";
+// import Link from "next/link";
+// import { fetchProperty, setSearchValue } from "@/redux/dataSlice";
+
+// const SearchInput = () => {
+//   const dispatch = useDispatch();
+//   const { property, searchValue } = useSelector((state) => state.data);
+//   const [redirect, setRedirect] = useState(false);
+
+//   const handleKeyDown = (e) => {
+//     if (e.key === "Enter" && searchValue.trim() !== "") {
+//       setRedirect(true);
+//     }
+//   };
+
+//   useEffect(() => {
+//     dispatch(fetchProperty());
+//   }, []);
+
+//   return (
+//     <div className="flex items-center w-full lg:flex-1 border-b lg:border-r lg:border-b-0 border-gray-500 p-3">
+//       <IoLocationSharp size={20} className="text-primary" />
+//       <input
+//         type="text"
+//         placeholder="Search by city, hotel"
+//         value={searchValue} // Bind input value to state
+//         onChange={(e) => dispatch(setSearchValue(e.target.value))} // Update state on input change
+//         onKeyDown={handleKeyDown}
+//         className="text-sm px-5 py-1 w-full focus:outline-none font-medium"
+//       />
+//       {redirect && (
+//         <Link
+//           href={`/properties?query=${encodeURIComponent(searchValue)}`}
+//           replace
+//         ></Link>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default SearchInput;
+
 // components/SearchInput.jsx
-import React from "react";
-import { useState, useEffect } from "react";
+
+"use client";
+import React, { useEffect, useState } from "react";
 import { IoLocationSharp } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
+import { fetchProperty, setSearchValue } from "@/redux/dataSlice";
 import Link from "next/link";
-import { fetchProperty } from "@/redux/dataSlice";
 
-const SearchInput = ({ searchValue, setSearchValue }) => {
+const SearchInput = () => {
   const dispatch = useDispatch();
-  const { property } = useSelector((state) => state.data);
+  const [inputValue, setInputValue] = useState(""); // Local state for the input value
 
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-
+  // const handleKeyDown = (e) => {
+  //   if (e.key === "Enter" && inputValue.trim() !== "") {
+  //     window.location.href = "/properties";
+  //   }
+  // };
+  useEffect(() => {
+    // Initialize input value from localStorage
+    const storedValue = localStorage.getItem("searchValue") || "";
+    setInputValue(storedValue); // Set initial value in state
+  }, []);
+  const handleInputChange = (e) => {
+    const newValue = e.target.value;
+    setInputValue(newValue); // Update local state
+    dispatch(setSearchValue(newValue)); // Dispatch Redux action
+    localStorage.setItem("searchValue", newValue); // Update localStorage
+  };
   useEffect(() => {
     dispatch(fetchProperty());
-  }, []);
-
-  // Filter properties based on searchValue
-  const filteredProperties = property?.filter((p) =>
-    p.name.toLowerCase().includes(searchValue.toLowerCase())
-  );
-
-  const handleItemClick = (value) => {
-    setSearchValue(value); // Set input value to the clicked item's value
-    setIsDropdownVisible(false); // Close dropdown
-  };
+  }, [dispatch]);
 
   return (
-    <div
-      className="flex items-center w-full lg:flex-1 border-b lg:border-r lg:border-b-0 border-gray-500 p-3"
-      onMouseEnter={() => setIsDropdownVisible(true)}
-      // onMouseLeave={() => setIsDropdownVisible(false)}
-    >
+    <div className="flex items-center w-full lg:flex-1 border-b lg:border-r lg:border-b-0 border-gray-500 p-3">
       <IoLocationSharp size={20} className="text-primary" />
+      {/* <Link href="/properties"> */}
       <input
         type="text"
         placeholder="Search by city, hotel"
-        value={searchValue} // Bind input value to state
-        onChange={(e) => setSearchValue(e.target.value)} // Update state on input change
+        value={inputValue}
+        onChange={handleInputChange}
+        // onKeyDown={handleKeyDown}
         className="text-sm px-5 py-1 w-full focus:outline-none font-medium"
       />
-      {/* Dropdown */}
-      {isDropdownVisible && (
-        <div
-          className="absolute top-full left-0 w-full bg-white border border-gray-300 shadow-lg rounded-md mt-2"
-          onMouseEnter={() => setIsDropdownVisible(true)}
-          onMouseLeave={() => setIsDropdownVisible(false)}
-        >
-          <ul>
-            {filteredProperties.length > 0 ? (
-              filteredProperties.map((item) => (
-                <Link key={item?.id} href={`/hotel/hotel-details/${item?.id}`}>
-                  <li
-                    className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => handleItemClick(item.name)} // Handle click to set input value
-                  >
-                    <IoLocationSharp size={20} className="text-primary" />
-                    <span> {item.name}</span>
-                  </li>
-                </Link>
-              ))
-            ) : (
-              <li className="px-4 py-2 text-gray-500">No results found</li>
-            )}
-          </ul>
-        </div>
-      )}
+      {/* </Link> */}
     </div>
   );
 };

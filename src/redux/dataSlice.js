@@ -179,6 +179,7 @@ const dataSlice = createSlice({
     busyRoom: [],
     allImages: [],
     propertyEvent: [],
+    searchValue: "",
     guestData: null,
     paymentdata: null,
     bookingData: null,
@@ -196,6 +197,10 @@ const dataSlice = createSlice({
   },
   reducers: {
     // Reducer to set matchedProperty
+    setSearchValue: (state, action) => {
+      state.searchValue = action.payload;
+      localStorage.setItem("searchValue", action.payload);
+    },
     setMatchedProperty: (state, action) => {
       state.matchedProperty = action.payload;
       localStorage.setItem("matchedProperty", JSON.stringify(action.payload));
@@ -375,5 +380,6 @@ export const {
   setTotalSummary,
   setIsConfirmOrder,
   setIsSearchOpen,
+  setSearchValue,
 } = dataSlice.actions;
 export default dataSlice.reducer;

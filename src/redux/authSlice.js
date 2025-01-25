@@ -72,6 +72,7 @@ export const logoutUser = createAsyncThunk(
 export const googleAuth = createAsyncThunk(
   "auth/googleAuth",
   async (currentPath, { rejectWithValue }) => {
+    console.log(currentPath, "current path inside the google auth");
     try {
       // const { data, error } = await supabase.auth.linkIdentity({
       const { data, error } = await supabase.auth.signInWithOAuth({

@@ -15,9 +15,10 @@ import MobileFooter from "@/componets/common/MobileFooter";
 export default function Page() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const { property, error, status, IsSearchOpen, allImages } = useSelector(
+  const { property, IsSearchOpen, allImages, searchValue } = useSelector(
     (state) => state.data
   );
+  const [filteredProperties, setFilteredProperties] = useState(property);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,11 +38,23 @@ export default function Page() {
     }
   }, [dispatch, property]);
 
+  const filterProperties = (value) => {
+    return value
+      ? property?.filter(
+          (item) => item.name.toLowerCase().includes(value.toLowerCase()) // Filter by name
+        )
+      : property; // If query is empty, show all properties
+  };
+  useEffect(() => {
+    const value = localStorage.getItem("searchValue");
+    const filtered = filterProperties(value);
+    setFilteredProperties(filtered);
+  }, [property, searchValue]);
+
   const getValidImages = (propertyId) =>
     (Array.isArray(allImages) ? allImages : [])
       .filter((image) => image.property_id === propertyId && !image.is_rejected)
       .sort((a, b) => (b.is_cover_photo ? 1 : 0) - (a.is_cover_photo ? 1 : 0));
-  const image = ["/topimg.jpg", "/topimg.jpg", "/topimg.jpg", "/topimg.jpg"];
 
   return (
     <div className="w-full min-h-screen font-poppins lg:mt-28 lg:px-20 pb-20 lg:pb-10">
@@ -60,7 +73,7 @@ export default function Page() {
         <LoadingOfferForYou />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full px-2 mt-5 ">
-          {property?.map((item) => (
+          {filteredProperties?.map((item) => (
             // <Link key={item.id} href={`/hotel/hotel-details/${item?.id}`}>
             <div className="shadow-md border border-gray-400 p-5 rounded-md">
               <CardProperty image={getValidImages(item?.id)} item={item} />
