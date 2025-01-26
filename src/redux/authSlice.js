@@ -144,7 +144,7 @@ const authSlice = createSlice({
       state.sessionFromLocal = action.payload;
     },
     setIsOTPModalOpen: (state, action) => {
-      state.isOTPModalOpen = !state.isOTPModalOpen; // Toggle the current state
+      state.isOTPModalOpen = !state.isOTPModalOpen;
     },
   },
   extraReducers: (builder) => {

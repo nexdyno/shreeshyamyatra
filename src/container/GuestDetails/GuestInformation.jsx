@@ -48,6 +48,7 @@ export default function GuestInformation() {
               handleSubmit={handleSubmit}
               setValid={setValid}
               valid={valid}
+              setStep={setStep}
             />
           </div>
 

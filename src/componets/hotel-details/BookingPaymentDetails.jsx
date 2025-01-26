@@ -65,8 +65,11 @@ export default function BookingPaymentDetails() {
 
     // Calculate extra person price
     const extraPersonPrice =
-      (roomAndGuest?.extraPerson || 0) * 350 * numberOfDays;
+      (roomAndGuest?.guestExtra || 0) *
+      selectedRoom?.extra_charge_per_adult *
+      numberOfDays;
 
+    console.log(extraPersonPrice, "extraPersonPrice extraPersonPrice");
     // Calculate final room price
     const finalRoomPrice = roomPriceWIthGST * numberOfDays * roomAndGuest?.room;
 
@@ -90,6 +93,7 @@ export default function BookingPaymentDetails() {
     JSON.stringify(bookingDate),
     JSON.stringify(selectedRoom),
     JSON.stringify(roomAndGuest),
+    roomAndGuest?.guestExtra,
   ]);
 
   useEffect(() => {
@@ -183,7 +187,7 @@ export default function BookingPaymentDetails() {
       is_manual_entry: checkIsManual,
       total_amount: billingData?.totalPrice,
       extra_guest: {
-        extraPerson: roomAndGuest?.extraPerson,
+        extraPerson: roomAndGuest?.guestExtra,
         extraPrice: billingData?.extraPersonPrice,
       },
       our_charges: billingData?.commission,
@@ -272,7 +276,7 @@ export default function BookingPaymentDetails() {
                 </p>
               </div>
               <div className="flex justify-between py-1">
-                <p>Extra Guests: {roomAndGuest?.extraPerson}</p>
+                <p>Extra Guests: {roomAndGuest?.guestExtra}</p>
                 <p className="text-secondary font-semibold">
                   Rs {Math.round(billingData?.extraPersonPrice)}
                 </p>

@@ -29,6 +29,45 @@ const OTPModal = ({ handleSendOtp, phone, setValid, setStep }) => {
     }
   };
 
+  // const handleVerify = async () => {
+  //   const token = otp.join("").trim();
+  //   if (token.length !== 6) {
+  //     toast.error("Please enter a valid 6-digit OTP.");
+  //     return;
+  //   }
+  //   if (!otp || !phone) {
+  //     toast.error("Please enter OTP .");
+  //     return;
+  //   }
+
+  //   try {
+  //     setIsLoading(true);
+  //     const response = await fetch("/api/verify-otp", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ phone, otp: token, id: session?.user?.id }),
+  //     });
+
+  //     const data = await response.json();
+
+  //     if (response.ok) {
+  //       toast.success("Phone number verified successfully!");
+  //       setIsLoading(false);
+  //       setValid(true);
+  //       setStep(2);
+  //       dispatch(setIsOTPModalOpen());
+  //     } else {
+  //       toast.error(data.error || "Failed to verify OTP");
+  //     }
+  //   } catch (error) {
+  //     toast.error("Error verifying OTP.");
+  //   } finally {
+  //     setIsLoading(false);
+  //     dispatch(setIsOTPModalOpen());
+  //   }
+  // };
   const handleVerify = async () => {
     const token = otp.join("").trim();
     if (token.length !== 6) {
@@ -36,7 +75,7 @@ const OTPModal = ({ handleSendOtp, phone, setValid, setStep }) => {
       return;
     }
     if (!otp || !phone) {
-      toast.error("Please enter OTP .");
+      toast.error("Please enter OTP.");
       return;
     }
 
@@ -54,17 +93,19 @@ const OTPModal = ({ handleSendOtp, phone, setValid, setStep }) => {
 
       if (response.ok) {
         toast.success("Phone number verified successfully!");
-        setIsLoading(false);
         setValid(true);
         setStep(2);
-        dispatch(setIsOTPModalOpen(false));
       } else {
-        toast.error(data.error || "Failed to verify OTP");
+        // Handle API error message gracefully
+        const errorMessage = data.error || "Failed to verify OTP.";
+        toast.error(errorMessage);
       }
     } catch (error) {
+      console.error("Error caught in handleVerify:", error);
       toast.error("Error verifying OTP.");
     } finally {
       setIsLoading(false);
+      dispatch(setIsOTPModalOpen());
     }
   };
 

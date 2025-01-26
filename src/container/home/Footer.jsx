@@ -66,7 +66,7 @@ const footerLinks = [
       },
       {
         name: "Privacy Policy",
-        link: "/legal/privacyPolicy",
+        link: "/privacy-policy",
       },
       {
         name: "Contact Us",

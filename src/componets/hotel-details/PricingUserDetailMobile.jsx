@@ -62,7 +62,9 @@ export default function PricingUserDetailMobile() {
 
     // Calculate extra person price
     const extraPersonPrice =
-      (roomAndGuest?.extraPerson || 0) * 350 * numberOfDays;
+      (roomAndGuest?.guestExtra || 0) *
+      selectedRoom?.extra_charge_per_adult *
+      numberOfDays;
 
     // Calculate final room price
     const finalRoomPrice = roomPriceWIthGST * numberOfDays * roomAndGuest?.room;

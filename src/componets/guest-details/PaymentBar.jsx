@@ -20,7 +20,9 @@ import PaymentSkeleton from "./PaymentSkeleton";
 
 export default function PaymentBar({ formData, setStep, valid }) {
   const dispatch = useDispatch();
-  const { bookingData } = useSelector((state) => state.data);
+  const { bookingData, matchedProperty, property } = useSelector(
+    (state) => state.data
+  );
   const { session } = useSelector((state) => state.auth);
   const [roomTag, setRoomTag] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -41,6 +43,28 @@ export default function PaymentBar({ formData, setStep, valid }) {
       payment_table_id: uuidv4(),
     };
   };
+
+  const sendMsgToGuest = async ({ phone, message }) => {
+    console.log(phone, message, "phone and message check");
+    try {
+      const response = await fetch("/api/send-message", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phone, message }),
+      });
+
+      if (response.ok) {
+        return response;
+      }
+    } catch (error) {
+      console.error("Error sending OTP.", error);
+    }
+  };
+
+  console.log(matchedProperty, "matchedProperty matchedProperty");
+  console.log(property, "property property");
 
   useEffect(() => {
     if (!formData || !bookingData) return;
@@ -150,8 +174,58 @@ export default function PaymentBar({ formData, setStep, valid }) {
               await dispatch(savePaymentDetail({ paymentdata })).unwrap();
               if (!bookingData?.[0]?.is_manual_entry) {
                 toast.success("Booking successfully created!");
+
+                const message = `Namaste! ${guestData?.name}, 🙏
+
+Greetings from https://YatraDham.Org
+
+Your room booking is currently pending for confirmation.
+
+Please complete the payment at your earliest convenience using the payment link provided: -
+
+ Booking Details:
+Surat Bhawan - ${bookingData?.[0]?.room_assigned?.[0]?.room_name} 
+Room Type :-${bookingData?.[0]?.room_assigned?.[0]?.room_name}
+Check-In :- ${bookingData?.[0]?.check_in_date}
+Check-Out :- ${bookingData?.[0]?.check_out_date}
+Days/Nights :- ${numerOfDays()}
+No of Rooms :- ${bookingData?.[0]?.room_assigned?.[0]?.quantity}
+No of Guests :- ${bookingData?.[0]?.number_of_adults}
+
+If you have already completed the payment and received a confirmation, please ignore this message.
+
+Do you have any questions or concerns regarding this booking?
+
+To process your booking, simply click on the link below:
+👉 Link: https://yatradham.org/khatu-surat-bhavan.html
+`;
+                await sendMsgToGuest({ phone: bookingData?.contact, message });
               } else {
                 dispatch(setIsConfirmOrder(true));
+                const message = `Namaste! ${guestData?.name}, 🙏
+
+Greetings from https://YatraDham.Org
+
+Your room booking is currently pending for confirmation.
+
+Please complete the payment at your earliest convenience using the payment link provided: -
+
+ Booking Details:
+Surat Bhawan - ${bookingData?.[0]?.room_assigned?.[0]?.room_name} 
+Room Type :-${bookingData?.[0]?.room_assigned?.[0]?.room_name}
+Check-In :- ${bookingData?.[0]?.check_in_date}
+Check-Out :- ${bookingData?.[0]?.check_out_date}
+Days/Nights :- ${numerOfDays()}
+No of Rooms :- ${bookingData?.[0]?.room_assigned?.[0]?.quantity}
+No of Guests :- ${bookingData?.[0]?.number_of_adults}
+If you have already completed the payment and received a confirmation, please ignore this message.
+
+Do you have any questions or concerns regarding this booking?
+
+To process your booking, simply click on the link below:
+👉 Link: https://yatradham.org/khatu-surat-bhavan.html
+`;
+                await sendMsgToGuest({ phone: guestData?.contact, message });
               }
             } catch (error) {
               console.error("Error saving guest data", error);
@@ -185,6 +259,14 @@ export default function PaymentBar({ formData, setStep, valid }) {
     }
   };
 
+  console.log(
+    bookingData?.[0]?.room_assigned?.[0]?.room_name,
+    bookingData?.[0]?.check_in_date,
+    bookingData?.[0]?.check_out_date,
+    bookingData?.[0]?.room_assigned?.[0]?.quantity,
+    bookingData?.[0]?.number_of_adults,
+    "asdasdfff"
+  );
   if (isLoading) {
     return (
       <div className="w-full h-full px-5 py-4">

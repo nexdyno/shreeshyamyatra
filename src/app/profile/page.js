@@ -129,7 +129,7 @@ export default function page() {
     window.location.href = "/legal/termsAndConditions";
   };
   const privacyPolicy = () => {
-    window.location.href = "/legal/privacyPolicy";
+    window.location.href = "/privacy-policy";
   };
   const termOfUse = () => {
     window.location.href = "/legal/termsOfUse";

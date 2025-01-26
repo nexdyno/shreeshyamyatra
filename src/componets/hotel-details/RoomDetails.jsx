@@ -14,7 +14,6 @@ import Link from "next/link";
 import Amenities from "../common/Amenities";
 import PropertyRules from "../common/PropertyRules";
 import { MdLocationPin } from "react-icons/md";
-import { calculateBillingData } from "@/lib/helperFunctions/calculationHelper";
 import BookingPaymentDetails from "./BookingPaymentDetails";
 import PropertryRooms from "./PropertryRooms";
 
@@ -121,31 +120,6 @@ export default function RoomDetails({ property, propertyWiseImages }) {
       pricingRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
-
-  // useEffect(() => {
-  //   const fetchBillingData = async () => {
-  //     if (roomAndGuest && bookingDate && selectedRoom && matchedProperty) {
-  //       try {
-  //         // Call the helper function and await its result
-  //         const values = await calculateBillingData(
-  //           roomAndGuest,
-  //           bookingDate,
-  //           selectedRoom,
-  //           matchedProperty
-  //         );
-  //         setPriceValues(values);
-  //       } catch (error) {
-  //         console.error("Error calculating billing data:", error);
-  //       }
-  //     }
-  //   };
-
-  //   fetchBillingData(); // Call the async function
-  // }, [
-  //   JSON.stringify(bookingDate),
-  //   JSON.stringify(selectedRoom),
-  //   JSON.stringify(roomAndGuest),
-  // ]);
 
   return (
     <div className="h-full w-full font-poppins flex flex-col lg:flex-row gap-10 pb-20 lg:pb-0 lg:px-0">

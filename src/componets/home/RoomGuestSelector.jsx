@@ -317,7 +317,7 @@ const RoomGuestSelector = () => {
   const dispatch = useDispatch();
   const { roomAndGuest, selectedRoom } = useSelector((state) => state.data);
 
-  const [guests, setGuests] = useState(roomAndGuest?.guest || 2);
+  const [guests, setGuests] = useState(roomAndGuest?.guest || 1);
   const [showPopup, setShowPopup] = useState(false);
   const [rooms, setRooms] = useState(roomAndGuest?.room || 1);
   const [extraGuest, setExtraGuests] = useState(roomAndGuest?.extraPerson || 0);
