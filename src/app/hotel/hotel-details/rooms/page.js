@@ -21,6 +21,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import toast from "react-hot-toast";
+import { notFound } from "next/navigation";
 
 export default function Page() {
   const dispatch = useDispatch();
