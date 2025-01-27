@@ -13,7 +13,6 @@ export async function POST(req) {
   try {
     const token = process.env.YOUR_WHATSAPP_API_TOKEN; // Use env variable
     const phoneNumberId = process.env.WHATSAPP_API_PHONE_NUMBER_ID; // Use env variable
-    console.log("api is hitting");
     const response = await axios.post(
       `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`,
       {
@@ -31,7 +30,6 @@ export async function POST(req) {
         },
       }
     );
-    console.log("what is the code ");
     // Save OTP and expiry in Supabase profiles table
 
     return new Response(

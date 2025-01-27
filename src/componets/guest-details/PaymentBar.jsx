@@ -3,6 +3,7 @@
 import {
   bookingCreate,
   fetchBookingData,
+  fetchPropertyById,
   saveGuestData,
   savePaymentDetail,
   setIsConfirmOrder,
@@ -20,9 +21,8 @@ import PaymentSkeleton from "./PaymentSkeleton";
 
 export default function PaymentBar({ formData, setStep, valid }) {
   const dispatch = useDispatch();
-  const { bookingData, matchedProperty, property } = useSelector(
-    (state) => state.data
-  );
+  const { bookingData, matchedProperty, property, singleProperty } =
+    useSelector((state) => state.data);
   const { session } = useSelector((state) => state.auth);
   const [roomTag, setRoomTag] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -45,7 +45,6 @@ export default function PaymentBar({ formData, setStep, valid }) {
   };
 
   const sendMsgToGuest = async ({ phone, message }) => {
-    console.log(phone, message, "phone and message check");
     try {
       const response = await fetch("/api/send-message", {
         method: "POST",
@@ -62,9 +61,6 @@ export default function PaymentBar({ formData, setStep, valid }) {
       console.error("Error sending OTP.", error);
     }
   };
-
-  console.log(matchedProperty, "matchedProperty matchedProperty");
-  console.log(property, "property property");
 
   useEffect(() => {
     if (!formData || !bookingData) return;
@@ -97,6 +93,10 @@ export default function PaymentBar({ formData, setStep, valid }) {
           throw new Error("Booking ID not found in local storage");
         }
         await dispatch(fetchBookingData(id)).unwrap();
+
+        await dispatch(
+          fetchPropertyById(bookingData?.[0]?.property_id)
+        ).unwrap();
       } catch (error) {
         console.error("Error while fetching booking data:", error);
       } finally {
@@ -106,6 +106,21 @@ export default function PaymentBar({ formData, setStep, valid }) {
 
     fetchData();
   }, [dispatch]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await dispatch(
+          fetchPropertyById(bookingData?.[0]?.property_id)
+        ).unwrap();
+      } catch (error) {
+        console.error("Error while fetching property details data:", error);
+      } finally {
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const numerOfDays = () => {
     const checkIn = new Date(bookingData?.[0]?.check_in_date);
@@ -259,14 +274,6 @@ To process your booking, simply click on the link below:
     }
   };
 
-  console.log(
-    bookingData?.[0]?.room_assigned?.[0]?.room_name,
-    bookingData?.[0]?.check_in_date,
-    bookingData?.[0]?.check_out_date,
-    bookingData?.[0]?.room_assigned?.[0]?.quantity,
-    bookingData?.[0]?.number_of_adults,
-    "asdasdfff"
-  );
   if (isLoading) {
     return (
       <div className="w-full h-full px-5 py-4">

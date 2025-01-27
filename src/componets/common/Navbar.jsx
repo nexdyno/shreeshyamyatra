@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { PiBuildings, PiHandshake } from "react-icons/pi";
 import { IoCallOutline } from "react-icons/io5";
 import { BiSolidOffer } from "react-icons/bi";
@@ -27,13 +27,14 @@ import BookingSidebar from "@/container/profile/BookingSidebar";
 import ProfileForm from "@/container/profile/ProfileForm";
 import ProfileFormSidebar from "@/container/profile/ProfileFormSidebar";
 import { fetchAllBookingById } from "@/redux/dataSlice";
+import { MdOutlinePrivacyTip } from "react-icons/md";
 
 export default function Navbar() {
   const dispatch = useDispatch();
   const router = useRouter(); // Initialize useRouter
   const [showLogin, setShowLogin] = useState(false);
   const [type, setType] = useState("");
-
+  const dropdownRef = useRef(null);
   const { userData, isLoginModalOpen, session } = useSelector(
     (state) => state.auth
   );
@@ -83,21 +84,21 @@ export default function Navbar() {
   const data = [
     {
       icon: <PiBuildings size={30} />,
-      heading: "List your property",
-      desc: "Start earning in 30 mins",
-      link: "",
+      heading: "All Property",
+      desc: "Book now ",
+      link: "/properties",
     },
     {
       icon: <IoCallOutline size={30} />,
-      heading: "0124-6201611",
+      heading: "7073390557",
       desc: "Call us to Book now",
-      link: "",
+      link: "/contacts",
     },
     {
-      icon: <BiSolidOffer size={30} />,
-      heading: "Offer for you",
-      desc: "Grab it now",
-      link: "",
+      icon: <MdOutlinePrivacyTip size={30} />,
+      heading: "Privacy & Policy",
+      desc: "Read now",
+      link: "/privacy-policy",
     },
   ];
 
@@ -137,6 +138,20 @@ export default function Navbar() {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       <div
@@ -159,22 +174,26 @@ export default function Navbar() {
           <div className="hidden lg:block lg:w-[75%] px-2 xl:px-5 cursor-pointer">
             <div className="w-full h-full flex items-center justify-center">
               {data.map((item, index) => (
-                <div
-                  key={index}
-                  className="border-r h-full px-2 xl:px-4 w-fit group hover:bg-gray-100"
-                >
-                  <div className="flex items-center gap-2 xl:gap-5 xl:px-3 xl:py-5">
-                    <div className="group-hover:text-primary">{item.icon}</div>
-                    <div className="text-wrap">
-                      <p className="text-sm font-bold group-hover:text-primary text-nowrap">
-                        {item.heading}
-                      </p>
-                      <p className="text-xs text-gray-500 group-hover:text-primary text-nowrap">
-                        {item.desc}
-                      </p>
+                <Link href={item?.link}>
+                  <div
+                    key={index}
+                    className="border-r h-full px-2 xl:px-4 w-fit group hover:bg-gray-100"
+                  >
+                    <div className="flex items-center gap-2 xl:gap-5 xl:px-3 xl:py-5">
+                      <div className="group-hover:text-primary">
+                        {item.icon}
+                      </div>
+                      <div className="text-wrap">
+                        <p className="text-sm font-bold group-hover:text-primary text-nowrap">
+                          {item.heading}
+                        </p>
+                        <p className="text-xs text-gray-500 group-hover:text-primary text-nowrap">
+                          {item.desc}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -186,33 +205,21 @@ export default function Navbar() {
 
         <div
           className="lg:w-[20%] h-full flex items-center justify-center"
-          onMouseEnter={() => setIsDropdownOpen(true)}
-          //  onMouseLeave={() => setIsDropdownOpen(false)}
+          // onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          ref={dropdownRef}
         >
           {token ? (
-            // <button
-            //   onClick={handleProfileClick}
-            //   className="flex items-center gap-3 bg-primaryGradient py-2 px-3 rounded-md"
-            // >
-            //   <div>
-            //     <FaUserCircle size={20} className="text-white" />
-            //   </div>
-            //   <p className="text-sm font-semibold text-nowrap text-white">
-            //   Welcome, {guestName}
-            //   </p>
-            // </button>
-            <div className="relative flex items-center gap-2 cursor-pointer">
+            <div
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="relative flex items-center gap-2 cursor-pointer"
+            >
               <FaUserCircle size={24} className="text-primary" />
               <p className="text-sm font-semibold text-gray-700">
                 Welcome, {guestName}
               </p>
               {/* Dropdown Menu */}
               {isDropdownOpen && (
-                <div
-                  className="absolute top-10 right-0 bg-white border shadow-lg rounded-md w-48"
-                  onMouseEnter={() => setIsDropdownOpen(true)}
-                  onMouseLeave={() => setIsDropdownOpen(false)}
-                >
+                <div className=" hidden lg:block absolute top-10 right-0 bg-white border shadow-lg rounded-md w-48">
                   <ul className="py-2">
                     <li
                       onClick={() => {
@@ -230,7 +237,7 @@ export default function Navbar() {
                       My Profile
                     </li>
                     <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                      <span>Call Us: 0124-6201611</span>
+                      <span>Call Us: 7073390557</span>
                     </li>
                     <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                       <Link href="/help">Help</Link>

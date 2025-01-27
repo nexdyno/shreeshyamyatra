@@ -82,9 +82,7 @@ const Signin = ({
   };
 
   const handleGoogleLogin = async () => {
-    const currentPath = window.location.href; // or use router.asPath for path only
-    console.log(currentPath, "my inside currendt path");
-    dispatch(googleAuth(currentPath));
+    dispatch(googleAuth());
   };
 
   const handleVerifyOtp = async () => {

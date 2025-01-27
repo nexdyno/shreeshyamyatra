@@ -1,5 +1,7 @@
+"use client";
+
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
@@ -8,11 +10,15 @@ import Amenities from "../common/Amenities";
 import Link from "next/link";
 
 export default function CardProperty({ image, item }) {
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
   const ArrayDefault = [
     { image_url: "/assets/logo.svg" },
     { image_url: "/assets/logo.svg" },
   ];
-
+  const handleClick = () => {
+    setIsRedirecting(true); // Disable button
+  };
   // Determine which images to use, fallback to ArrayDefault if image is not provided
   const imagesToUse = image && image.length > 0 ? image : ArrayDefault;
   const truncateText = (text, limit) => {
@@ -63,10 +69,17 @@ export default function CardProperty({ image, item }) {
             <span>{item?.min_room_price}</span>
           </p>
         </div>
-
         <Link href={`/hotel/hotel-details/${item?.id}`}>
-          <button className="mt-2 bg-primaryGradient hover:border-none text-white py-2 px-4 rounded-sm hover:bg-gray-800 hover:text-white transition duration-300 w-full font-semibold">
-            Select Rooms
+          <button
+            onClick={handleClick}
+            disabled={isRedirecting}
+            className={`mt-2 bg-primaryGradient text-white py-2 px-4 rounded-sm transition duration-300 w-full font-semibold ${
+              isRedirecting
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-gray-800 hover:text-white"
+            }`}
+          >
+            {isRedirecting ? "Redirecting..." : "Select Rooms"}
           </button>
         </Link>
       </div>

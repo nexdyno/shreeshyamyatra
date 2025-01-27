@@ -121,9 +121,7 @@ const SignupForm = ({
   };
 
   const handleGoogleLogin = async () => {
-    const currentPath = window.location.href; // or use router.asPath for path only
-    console.log(currentPath, "inside current path");
-    dispatch(googleAuth(currentPath));
+    dispatch(googleAuth());
   };
 
   const handleSubmit = async () => {

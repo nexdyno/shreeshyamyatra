@@ -5,7 +5,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 export default function LoadingOfferForYou() {
   return (
     <div className="overflow-x-auto lg:overflow-hidden">
-      <div className="flex sm:flex-wrap md:grid-cols-3 lg:grid lg:grid-cols-3 gap-6 overflow-x-auto w-full">
+      <div className="flex flex-col items-center justify-center lg:grid lg:grid-cols-3 gap-6 overflow-x-auto w-full">
         {[...Array(6)].map((_, index) => (
           <div
             key={index}

@@ -35,8 +35,6 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
     propertyEvent,
   } = useSelector((state) => state.data); // Selected room
 
-  console.log(selectedRoom, "select room price");
-
   const getAvailableRooms = () => {
     if (!bookingDate || !matchRooms || matchRooms.length === 0) return []; // Early exit if dependencies are missing
 
@@ -73,8 +71,8 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
   };
 
   const updateRoomRates = (rooms) => {
-    const start = new Date(bookingDate.startDate);
-    const end = new Date(bookingDate.endDate);
+    const start = new Date(bookingDate?.startDate);
+    const end = new Date(bookingDate?.endDate);
     rooms.forEach((room) => {
       // Check if there's an event that matches the room and date range
       const matchingEvent = propertyEvent.find((event) => {
@@ -112,9 +110,6 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
     }
   }, [JSON.stringify(bookingDate), busyRoom, matchRooms]);
 
-  console.log(avlRoom, "avl rooms");
-  console.log(propertyEvent, "propertyEvent rooms price");
-
   useEffect(() => {
     if (!selectedRoom && avlRoom.length > 0) {
       // Default to the first room in avlRoom
@@ -150,7 +145,7 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
   return (
     <div className="font-poppins mb-28">
       <h2 className="text-2xl font-semibold mb-4 hidden lg:block">All Rooms</h2>
-      {avlRoom.length !== 0 ? (
+      {avlRoom?.length !== 0 ? (
         <div className="space-y-6 px-3 lg:space-y-0 lg:px-0 lg:grid lg:grid-cols-2 lg:gap-5">
           {avlRoom?.map((room) => (
             <div

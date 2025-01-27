@@ -72,14 +72,14 @@ export const logoutUser = createAsyncThunk(
 export const googleAuth = createAsyncThunk(
   "auth/googleAuth",
   async (_, { rejectWithValue }) => {
-    const returnUrl = window.location.origin + window.location.pathname;
+    const returnUrl =
+      process.env.NEXT_PUBLIC_REDIRECT_URL + window.location.pathname;
     try {
       // const { data, error } = await supabase.auth.linkIdentity({
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-
         options: {
-          redirectTo: returnUrl,
+          redirectTo: `https://www.shreeshyamyatra.com${window.location.pathname}`,
         },
       });
 

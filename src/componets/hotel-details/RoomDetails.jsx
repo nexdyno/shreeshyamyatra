@@ -90,7 +90,11 @@ export default function RoomDetails({ property, propertyWiseImages }) {
         "The property is wheelchair accessible. Guests with special needs are encouraged to inform the property in advance for necessary arrangements.",
     },
   ];
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
+  const handleClick = () => {
+    setIsRedirecting(true); // Disable button
+  };
   const [PriceValues, setPriceValues] = useState(null);
   const dispatch = useDispatch();
   const { rooms, roomAndGuest, bookingDate, selectedRoom, matchedProperty } =
@@ -181,9 +185,22 @@ export default function RoomDetails({ property, propertyWiseImages }) {
         {/* <div className="flex items-center gap-2">
           <span className="text-lg font-semibold text-primary">Rs 1000</span>
         </div> */}
-        <Link href="/hotel/hotel-details/rooms">
-          <button className="border border-blue-500 text-white bg-primaryGradient rounded-full px-4 py-2 hover:bg-blue-100 transition">
+        {/* <Link href="/hotel/hotel-details/rooms">
+          <button  className="border border-blue-500 text-white bg-primaryGradient rounded-full px-4 py-2 hover:bg-blue-100 transition">
             Select rooms
+          </button>
+        </Link> */}
+        <Link href="/hotel/hotel-details/rooms">
+          <button
+            onClick={handleClick}
+            disabled={isRedirecting}
+            className={`border border-blue-500 text-white bg-primaryGradient rounded-full px-4 py-2 hover:bg-blue-100 transition ${
+              isRedirecting
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-gray-800 hover:text-white"
+            }`}
+          >
+            {isRedirecting ? "Redirecting..." : "Select Rooms"}
           </button>
         </Link>
       </div>

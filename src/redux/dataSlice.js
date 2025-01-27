@@ -26,6 +26,27 @@ export const fetchProperty = createAsyncThunk(
   }
 );
 
+export const fetchPropertyById = createAsyncThunk(
+  "data/fetchPropertyById",
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data, error } = await supabase
+        .from("property")
+        .select()
+        .eq("id", id);
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Error fetching property:", error.message);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const fetchPropertyEvent = createAsyncThunk(
   "data/fetchPropertyEvent",
   async () => {
@@ -179,6 +200,7 @@ const dataSlice = createSlice({
     busyRoom: [],
     allImages: [],
     propertyEvent: [],
+    singleProperty: [],
     searchValue: "",
     guestData: null,
     paymentdata: null,
@@ -199,53 +221,60 @@ const dataSlice = createSlice({
     // Reducer to set matchedProperty
     setSearchValue: (state, action) => {
       state.searchValue = action.payload;
-      localStorage.setItem("searchValue", action.payload);
+      // localStorage.setItem("searchValue", action.payload);
     },
     setMatchedProperty: (state, action) => {
       state.matchedProperty = action.payload;
-      localStorage.setItem("matchedProperty", JSON.stringify(action.payload));
+      if (action.payload) {
+        const { id, name, address, country, city } = action.payload;
+        const filteredProperty = { id, name, address, country, city };
+        localStorage.setItem(
+          "matchedProperty",
+          JSON.stringify(filteredProperty)
+        );
+      }
     },
     setIsSearchOpen: (state, action) => {
       state.IsSearchOpen = action.payload;
     },
     setOneRoom: (state, action) => {
       state.OneRoom = action.payload;
-      localStorage.setItem("OneRoom", JSON.stringify(action.payload));
+      // localStorage.setItem("OneRoom", JSON.stringify(action.payload));
     },
     setBookingDate: (state, action) => {
       state.bookingDate = action.payload;
-      localStorage.setItem("bookingDate", JSON.stringify(action.payload));
+      // localStorage.setItem("bookingDate", JSON.stringify(action.payload));
     },
     setroomAndGuest: (state, action) => {
       state.roomAndGuest = action.payload;
-      localStorage.setItem("roomAndGuest", JSON.stringify(action.payload));
+      // localStorage.setItem("roomAndGuest", JSON.stringify(action.payload));
     },
     setSelectedRoom: (state, action) => {
       state.selectedRoom = action.payload;
-      localStorage.setItem("selectedRoom", JSON.stringify(action.payload));
+      // localStorage.setItem("selectedRoom", JSON.stringify(action.payload));
     },
     setTotalSummary: (state, action) => {
       state.totalSummary = action.payload;
-      localStorage.setItem("totalSummary", JSON.stringify(action.payload));
+      // localStorage.setItem("totalSummary", JSON.stringify(action.payload));
     },
     setIsConfirmOrder: (state, action) => {
       state.isConfirmOrder = action.payload;
     },
 
     clearAll: (state) => {
-      state.matchedProperty = null;
-      state.OneRoom = null;
-      state.bookingDate = null;
-      state.roomAndGuest = null;
-      state.selectedRoom = null;
-      state.totalSummary = null;
+      //   state.matchedProperty = null;
+      //   state.OneRoom = null;
+      //   state.bookingDate = null;
+      //   state.roomAndGuest = null;
+      //   state.selectedRoom = null;
+      //   state.totalSummary = null;
 
       localStorage.removeItem("matchedProperty");
-      localStorage.removeItem("OneRoom");
-      localStorage.removeItem("bookingDate");
-      localStorage.removeItem("roomAndGuest");
-      localStorage.removeItem("selectedRoom");
-      localStorage.removeItem("totalSummary");
+      // localStorage.removeItem("OneRoom");
+      // localStorage.removeItem("bookingDate");
+      // localStorage.removeItem("roomAndGuest");
+      // localStorage.removeItem("selectedRoom");
+      // localStorage.removeItem("totalSummary");
     },
   },
   extraReducers: (builder) => {
@@ -317,6 +346,18 @@ const dataSlice = createSlice({
         state.property = action.payload;
       })
       .addCase(fetchProperty.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchPropertyById.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(fetchPropertyById.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.singleProperty = action.payload;
+      })
+      .addCase(fetchPropertyById.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })

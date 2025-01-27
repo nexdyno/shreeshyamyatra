@@ -103,11 +103,14 @@ export default function BannerOffer() {
                   </div>
                 ))}
               </div>
-              <Link href="/hotel">
-                <button className="bg-primaryGradient text-white font-medium tracking-wide text-lg py-2 px-16 w-fit rounded-lg">
-                  Book now
-                </button>
-              </Link>
+              {/* <Link href="/hotel"> */}
+              <button
+                // onClick={fetchPaymentDetails()}
+                className="bg-primaryGradient text-white font-medium tracking-wide text-lg py-2 px-16 w-fit rounded-lg"
+              >
+                Book now
+              </button>
+              {/* </Link> */}
             </div>
             <div className=" font-bold tracking-wide text-white flex flex-col justify-end items-end gap-2">
               <p className="text-lg">Starting from</p>

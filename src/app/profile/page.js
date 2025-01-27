@@ -131,6 +131,9 @@ export default function page() {
   const privacyPolicy = () => {
     window.location.href = "/privacy-policy";
   };
+  const contactUs = () => {
+    window.location.href = "/contacts";
+  };
   const termOfUse = () => {
     window.location.href = "/legal/termsOfUse";
   };
@@ -189,10 +192,7 @@ export default function page() {
       {type === "Bookings" && <BookingCard setType={setType} />}
       {type === "Guest policy" && privacyPolicy()}
       {type === "Term of Use" && termOfUse()}
-      {type === "Property policy" && privacyPolicy()}
-      {type === "Cancellation policy" && privacyPolicy()}
-      {type === "Partner with Shree Shyam Yatra" && privacyPolicy()}
-      {type === "Call us" && <ProfileForm />}
+      {type === "Contact Us" && contactUs()}
       {type === "About Us" && about()}
       {type === "Log Out" && signOutUser()}
       {type === "Terms and Conditions" && termAndConditon()}

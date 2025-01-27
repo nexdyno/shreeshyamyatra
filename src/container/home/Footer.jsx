@@ -16,10 +16,18 @@ import { RxTwitterLogo } from "react-icons/rx"; // X (formerly Twitter)
 import { useMediaQuery } from "react-responsive";
 
 const icons = [
-  { id: 1, Icon: FaInstagram, link: "https://instagram.com" },
+  {
+    id: 1,
+    Icon: FaInstagram,
+    link: "https://www.instagram.com/shreeshyamyatra__/",
+  },
   { id: 2, Icon: FaLinkedinIn, link: "https://linkedin.com" },
   { id: 3, Icon: RxTwitterLogo, link: "https://twitter.com" },
-  { id: 4, Icon: FaFacebookF, link: "https://facebook.com" },
+  {
+    id: 4,
+    Icon: FaFacebookF,
+    link: "https://www.facebook.com/share/14L9RCFjSo/",
+  },
 ];
 
 const footerLinks = [
@@ -70,7 +78,7 @@ const footerLinks = [
       },
       {
         name: "Contact Us",
-        link: "#",
+        link: "/contacts",
       },
     ],
   },

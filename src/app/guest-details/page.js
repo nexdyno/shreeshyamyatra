@@ -20,12 +20,12 @@ export default function Page() {
         await dispatch(checkUserSession()).unwrap();
 
         // Redirect to home if the session is invalid
-        if (session?.user?.email === "" || session?.user?.phone === "") {
-          // router.push("/");
+        if (session?.user?.email === "" && session?.user?.phone === "") {
+          router.push("/");
         }
       } catch (error) {
         console.error("Error verifying session:", error);
-        // router.push("/"); // Redirect in case of an error
+        router.push("/"); // Redirect in case of an error
       }
     };
 

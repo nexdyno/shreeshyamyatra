@@ -16,7 +16,7 @@ const ProfileSidebar = ({ onClose, type, setType }) => {
     { name: "Privacy and Policy", link: "#" },
     { name: "Term of Use", link: "#" },
     { name: "About Us", link: "#" },
-    { name: "Call us", link: "#" },
+    { name: "Contact Us", link: "#" },
     { name: "Log Out", link: "#" },
   ];
 
@@ -28,7 +28,7 @@ const ProfileSidebar = ({ onClose, type, setType }) => {
     { name: "Term of Use", link: "#" },
     { name: "Privacy and Policy", link: "#" },
     { name: "About Us", link: "#" },
-    { name: "Call us", link: "#" },
+    { name: "Contact Us", link: "#" },
   ];
 
   return (

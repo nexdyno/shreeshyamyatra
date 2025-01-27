@@ -1,6 +1,10 @@
 import MobileFooter from "@/componets/common/MobileFooter";
 import Navbar from "@/componets/common/Navbar";
 import React from "react";
+import { AiOutlineStar } from "react-icons/ai";
+import { RiShieldCheckFill } from "react-icons/ri";
+import { FaUsers } from "react-icons/fa";
+import { MdPhone, MdEmail, MdAccessTime } from "react-icons/md";
 
 const AboutPage = () => {
   return (
@@ -30,11 +34,12 @@ const AboutPage = () => {
             </h2>
             <div className="bg-white rounded-lg shadow-lg p-8">
               <p className="text-lg text-gray-700 leading-relaxed">
-                At Shree Shyam Yatra, we understand that a peaceful stay is
-                essential for a meaningful pilgrimage. Our mission extends
-                beyond mere accommodation - we strive to create a spiritual
-                haven where devotees can focus on their divine journey while we
-                take care of their comfort and well-being.
+                Our mission is straightforward: to deliver travelers a smooth
+                and enjoyable booking experience that saves time, fits their
+                budget, and surpasses their expectations. We meticulously curate
+                our hotel listings to ensure each property adheres to high
+                standards of cleanliness, comfort, and safety, providing our
+                users with peace of mind during their stay.
               </p>
             </div>
           </div>
@@ -48,17 +53,17 @@ const AboutPage = () => {
             </h2>
             <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
               <FeatureCard
-                icon={<DefaultIcon text="\u2605" />}
+                icon={<AiOutlineStar size={30} />}
                 title="Premium Selections"
                 description="Carefully curated accommodations that meet our strict standards for cleanliness, comfort, and devotee-friendly amenities."
               />
               <FeatureCard
-                icon={<DefaultIcon text="\uD83D\uDEE1\uFE0F" />}
+                icon={<RiShieldCheckFill size={30} />}
                 title="Safe & Secure"
                 description="Verified properties with 24/7 security, ensuring a worry-free stay for all our guests."
               />
               <FeatureCard
-                icon={<DefaultIcon text="\uD83D\uDC65" />}
+                icon={<FaUsers size={30} />}
                 title="Community Focus"
                 description="Join a community of devoted pilgrims and share in the spiritual journey together."
               />
@@ -74,17 +79,17 @@ const AboutPage = () => {
             </h2>
             <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               <ContactCard
-                icon={<DefaultIcon text="\u260E\uFE0F" />}
+                icon={<MdPhone size={30} />}
                 title="Phone Support"
                 info="+91 XXXXX XXXXX"
               />
               <ContactCard
-                icon={<DefaultIcon text="\u2709\uFE0F" />}
+                icon={<MdEmail size={30} />}
                 title="Email Us"
                 info="contact@shreeshyamyatra.com"
               />
               <ContactCard
-                icon={<DefaultIcon text="\u23F3" />}
+                icon={<MdAccessTime size={30} />}
                 title="Available Hours"
                 info="24/7 Support"
               />
@@ -92,7 +97,9 @@ const AboutPage = () => {
           </div>
         </section>
       </main>
-      <MobileFooter />
+      <div className="lg:hidden">
+        <MobileFooter />
+      </div>
     </>
   );
 };
@@ -115,10 +122,6 @@ const ContactCard = ({ icon, title, info }) => (
     <h3 className="text-lg font-semibold mb-2 text-gray-800">{title}</h3>
     <p className="text-gray-600">{info}</p>
   </div>
-);
-
-const DefaultIcon = ({ text }) => (
-  <span className="text-xl font-bold">{text}</span>
 );
 
 export default AboutPage;
