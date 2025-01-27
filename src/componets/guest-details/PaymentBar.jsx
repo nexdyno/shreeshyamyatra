@@ -151,7 +151,7 @@ export default function PaymentBar({ formData, setStep, valid }) {
               const paymentdata = {
                 id: paymentTableId,
                 date: new Date().toISOString(),
-                // payment_method: "Credit Card",
+                payment_method: "",
                 amount: bookingData?.[0]?.total_amount,
                 paid_to: "19d19b90-3b41-4f48-9fc7-b0a78255a5a4",
                 paid_from: bookingData?.[0]?.profile_id,

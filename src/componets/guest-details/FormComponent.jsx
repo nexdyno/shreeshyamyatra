@@ -128,7 +128,7 @@ export default function FormComponent({
 
   return (
     <>
-      <div className="bg-white py-4 border-b border-gray-400 px-6 flex items-center justify-between shadow-md rounded-sm">
+      <div className="lg:hidden bg-white py-4 border-b border-gray-400 px-6 flex items-center justify-between shadow-md rounded-sm">
         {/* Left Section */}
         <div className="flex flex-col gap-2">
           {/* Header with Back Arrow and Title */}
