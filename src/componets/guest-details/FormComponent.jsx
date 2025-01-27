@@ -7,6 +7,7 @@ import { use, useState } from "react";
 import "react-phone-input-2/lib/style.css";
 import PhoneInput from "react-phone-input-2";
 import toast from "react-hot-toast";
+import { IoMdArrowBack } from "react-icons/io";
 
 export default function FormComponent({
   formData,
@@ -97,7 +98,7 @@ export default function FormComponent({
             dispatch(setIsOTPModalOpen());
           }
         } else {
-          toast.success(data.error || "Failed to send OTP Try again");
+          toast.error(data.error || "Failed to send OTP Try again");
           setIsLoading(false);
         }
       } catch (error) {
@@ -115,8 +116,33 @@ export default function FormComponent({
     }
   };
 
+  const handleBack = () => {
+    if (typeof window !== "undefined") {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "/";
+      }
+    }
+  };
+
   return (
     <>
+      <div className="bg-white py-4 border-b border-gray-400 px-6 flex items-center justify-between shadow-md rounded-sm">
+        {/* Left Section */}
+        <div className="flex flex-col gap-2">
+          {/* Header with Back Arrow and Title */}
+          <div className="flex items-center">
+            <span className="cursor-pointer text-gray-600 -ml-5">
+              <IoMdArrowBack
+                onClick={handleBack}
+                size={20}
+                className="text-black font-bold"
+              />
+            </span>
+          </div>
+        </div>
+      </div>
       <div className="flex flex-col justify-center items-center h-full w-fit font-poppins">
         <div className="bg-white w-full p-6 rounded-md font-poppins overflow-y-auto">
           <h3 className="text-xl font-semibold mb-2 text-gray-700">

@@ -11,20 +11,33 @@ export async function POST(req) {
   try {
     const { payment_id } = await req.json();
 
-    // Fetch payment details from Razorpay using payment_id
-    const payment = await razorpay.payments.fetch(payment_id);
-
-    // Extract payment details
-    const { method, upi_id, card, amount } = payment;
-
-    console.log(method, upi_id, card, amount, "method, upi_id, card, amount");
-    if (error) {
-      throw error;
+    // Check if payment_id is provided
+    if (!payment_id) {
+      return NextResponse.json(
+        { error: "Payment ID is required" },
+        { status: 400 }
+      );
     }
 
-    // Return success response
+    // Fetch payment details from Razorpay
+    const payment = await razorpay.payments.fetch(payment_id);
+
+    // Extract relevant payment details
+    const { method, upi_id, card, amount, email, contact, status } = payment;
+
     return NextResponse.json(
-      { success: true, paymentDetails: payment },
+      {
+        success: true,
+        paymentDetails: {
+          method,
+          upi_id,
+          card,
+          amount,
+          email,
+          contact,
+          status,
+        },
+      },
       { status: 200 }
     );
   } catch (error) {

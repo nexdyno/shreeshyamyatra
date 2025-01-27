@@ -81,7 +81,7 @@ const AboutPage = () => {
               <ContactCard
                 icon={<MdPhone size={30} />}
                 title="Phone Support"
-                info="+91 XXXXX XXXXX"
+                info="+91 7073390557"
               />
               <ContactCard
                 icon={<MdEmail size={30} />}

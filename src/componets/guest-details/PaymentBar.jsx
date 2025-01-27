@@ -21,8 +21,9 @@ import PaymentSkeleton from "./PaymentSkeleton";
 
 export default function PaymentBar({ formData, setStep, valid }) {
   const dispatch = useDispatch();
-  const { bookingData, matchedProperty, property, singleProperty } =
-    useSelector((state) => state.data);
+  const { bookingData, matchedProperty, property } = useSelector(
+    (state) => state.data
+  );
   const { session } = useSelector((state) => state.auth);
   const [roomTag, setRoomTag] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -93,10 +94,6 @@ export default function PaymentBar({ formData, setStep, valid }) {
           throw new Error("Booking ID not found in local storage");
         }
         await dispatch(fetchBookingData(id)).unwrap();
-
-        await dispatch(
-          fetchPropertyById(bookingData?.[0]?.property_id)
-        ).unwrap();
       } catch (error) {
         console.error("Error while fetching booking data:", error);
       } finally {
@@ -106,21 +103,6 @@ export default function PaymentBar({ formData, setStep, valid }) {
 
     fetchData();
   }, [dispatch]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await dispatch(
-          fetchPropertyById(bookingData?.[0]?.property_id)
-        ).unwrap();
-      } catch (error) {
-        console.error("Error while fetching property details data:", error);
-      } finally {
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const numerOfDays = () => {
     const checkIn = new Date(bookingData?.[0]?.check_in_date);
@@ -169,7 +151,7 @@ export default function PaymentBar({ formData, setStep, valid }) {
               const paymentdata = {
                 id: paymentTableId,
                 date: new Date().toISOString(),
-                payment_method: "Credit Card",
+                // payment_method: "Credit Card",
                 amount: bookingData?.[0]?.total_amount,
                 paid_to: "19d19b90-3b41-4f48-9fc7-b0a78255a5a4",
                 paid_from: bookingData?.[0]?.profile_id,

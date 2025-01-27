@@ -26,6 +26,7 @@ import { notFound } from "next/navigation";
 export default function Page() {
   const dispatch = useDispatch();
   const [localMatchedProperty, setLocalMatchedProperty] = useState("");
+  const [isRedirect, setIsRedirect] = useState(false);
   const { rooms, property, error, IsSearchOpen, allImages } = useSelector(
     (state) => state.data
   );
@@ -241,6 +242,7 @@ export default function Page() {
     try {
       await dispatch(bookingCreate(guestData)).unwrap();
       window.location.href = "/guest-details";
+      setIsRedirect(false);
     } catch (error) {
       toast.error(
         error.message ||
@@ -250,6 +252,7 @@ export default function Page() {
   };
 
   const handleBook = () => {
+    setIsRedirect(true);
     dispatch(setTotalSummary(billingData));
     if (session?.user?.email || session?.user?.phone) {
       const data = prepareGuestData();
@@ -342,7 +345,13 @@ export default function Page() {
 
         <button
           onClick={handleBook}
-          className="border border-blue-500 text-white bg-primaryGradient rounded-full px-4 py-2 hover:bg-blue-100 transition"
+          disabled={isRedirect}
+          className={`border border-blue-500 text-white bg-primaryGradient rounded-full px-4 py-2 hover:bg-blue-100
+             transition ${
+               isRedirect
+                 ? "opacity-50 cursor-not-allowed"
+                 : "hover:bg-gray-800 hover:text-white"
+             }`}
         >
           Proceed
         </button>

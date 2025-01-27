@@ -3,7 +3,7 @@ import { FaPhone } from "react-icons/fa"; // Importing the Phone icon
 
 const PhoneIcon = () => {
   const handlePhoneRedirect = () => {
-    const phoneNumber = 8130679338;
+    const phoneNumber = 7073390557;
 
     window.location.href = `tel:${phoneNumber}`;
   };

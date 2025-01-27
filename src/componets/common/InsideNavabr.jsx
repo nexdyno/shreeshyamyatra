@@ -36,7 +36,7 @@ export default function InsideNavabr() {
             />
           </span>
           <p className="ml-4 text-lg font-semibold font-poppins text-gray-800">
-            Kahtu Shyam Mandir
+            Khatu Shyam
           </p>
         </div>
 
