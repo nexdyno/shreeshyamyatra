@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { googleAuth, newUserSignUp } from "@/redux/authSlice";
+import { googleAuth, newUserSignUp, userSignIn } from "@/redux/authSlice";
 import { FcGoogle } from "react-icons/fc";
 import { supabase } from "@/lib/supabase/supabaseClient.js";
 import Image from "next/image";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css"; // Make sure to import the styles
+import toast from "react-hot-toast";
 
 const SignupForm = ({
   step,
@@ -46,7 +47,6 @@ const SignupForm = ({
     setError("");
 
     if (step === 1) {
-      alert("emailOrPhone" + emailOrPhone + "email" + email + "phone" + phone);
       if (email && !validateEmail(email)) {
         setError("Please enter a valid email address.");
         return;
@@ -60,9 +60,6 @@ const SignupForm = ({
       // Send OTP for phone verification
       if (phone) {
         try {
-          // const { error } = await supabase.auth.signInWithOtp({
-          //   phone,
-          // });
           await dispatch(sendOtp(phone)).unwrap();
           toast.success("OTP send successfully");
           if (error) {
@@ -75,11 +72,20 @@ const SignupForm = ({
           return;
         }
       }
-    }
-
-    if (step === 2 && !emailOtp) {
-      setError("Please enter the OTP sent to your email or phone.");
-      return;
+      if (email) {
+        try {
+          await dispatch(userSignIn(email)).unwrap();
+          toast.success("OTP send successfully");
+          // if (error) {
+          //   setError(`Error sending OTP: ${error.message}`);
+          //   return;
+          // }
+        } catch (err) {
+          console.error("Error sending OTP:", err);
+          setError("Failed to send OTP. Please try again.");
+          return;
+        }
+      }
     }
 
     if (step === 2 && phone) {
@@ -95,6 +101,25 @@ const SignupForm = ({
           return;
         }
         alert("Phone number verified successfully!");
+      } catch (err) {
+        console.error("Error verifying OTP:", err);
+        setError("Failed to verify OTP. Please try again.");
+        return;
+      }
+    }
+    if (step === 2 && email) {
+      // Verify OTP for phone
+      try {
+        const { data, error } = await supabase.auth.verifyOtp({
+          email,
+          token: emailOtp,
+          type: "email",
+        });
+        if (error) {
+          setError(`Error verifying OTP: ${error.message}`);
+          return;
+        }
+        alert("Email address verified successfully!");
       } catch (err) {
         console.error("Error verifying OTP:", err);
         setError("Failed to verify OTP. Please try again.");

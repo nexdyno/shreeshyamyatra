@@ -38,19 +38,43 @@ export const newUserSignUp = createAsyncThunk(
   }
 );
 export const userSignIn = createAsyncThunk(
-  "auth/userSignIn", // Corrected action name
-  async ({ email, password }, { rejectWithValue }) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (error) return rejectWithValue(error.message);
+  "auth/userSignIn",
+  async (email, { rejectWithValue }) => {
+    console.log(email, "what my email");
+    try {
+      const { data, error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: false, // Prevents automatic user sign-up
+        },
+      });
 
-    if (!error) alert("login successfully");
+      if (error) {
+        toast.error(error.message); // Display error message as a toast
+        return rejectWithValue(error.message);
+      }
 
-    return data;
+      return data; // Return response data if successful
+    } catch (error) {
+      toast.error("An unexpected error occurred."); // Handle unexpected errors
+      return rejectWithValue(error.message);
+    }
   }
 );
+// export const userSignIn = createAsyncThunk(
+//   "auth/userSignIn", // Corrected action name
+//   async ({ email, password }, { rejectWithValue }) => {
+//     const { data, error } = await supabase.auth.signInWithPassword({
+//       email,
+//       password,
+//     });
+//     if (error) return rejectWithValue(error.message);
+
+//     if (!error) alert("login successfully");
+
+//     return data;
+//   }
+// );
 
 export const logoutUser = createAsyncThunk(
   "auth/logoutUser",
@@ -107,17 +131,47 @@ export const sendOtp = createAsyncThunk(
     }
   }
 );
+// export const verifyOtp = createAsyncThunk(
+//   "auth/verifyOtp",
+//   async ({ phone, email, token }, { rejectWithValue }) => {
+//     try {
+//       const { data, error } = await supabase.auth.verifyOtp({
+//         phone,
+//         token,
+//         type: "sms",
+//       });
+//       if (error) throw error;
+//       return { user: data.user };
+//     } catch (err) {
+//       console.error("OTP Verification Failed:", err.message);
+//       return rejectWithValue(err.message || "Failed to verify OTP.");
+//     }
+//   }
+// );
+
 export const verifyOtp = createAsyncThunk(
   "auth/verifyOtp",
-  async ({ phone, token }, { rejectWithValue }) => {
+  async ({ phone, email, token }, { rejectWithValue }) => {
+    console.log("this is hit");
     try {
+      // Dynamically set the type based on whether phone or email is provided
+      const type = phone ? "sms" : email ? "email" : null;
+
+      if (!type) {
+        throw new Error("Either phone or email must be provided.");
+      }
+
       const { data, error } = await supabase.auth.verifyOtp({
-        phone,
+        [phone ? "phone" : "email"]: phone || email, // Use phone or email dynamically
         token,
-        type: "sms",
+        type,
       });
-      if (error) throw error;
-      return { user: data.user };
+
+      if (error) {
+        throw error; // Throw error if OTP verification fails
+      }
+
+      return { user: data.user }; // Return the user data if successful
     } catch (err) {
       console.error("OTP Verification Failed:", err.message);
       return rejectWithValue(err.message || "Failed to verify OTP.");
