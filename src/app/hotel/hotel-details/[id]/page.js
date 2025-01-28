@@ -19,6 +19,8 @@ import { anonymouslySignin, setUserSession } from "@/redux/authSlice";
 import { initializeSession } from "@/lib/helperFunctions/sessionChecker";
 import InsideNavabr from "@/componets/common/InsideNavabr";
 import { IoArrowBack } from "react-icons/io5";
+import ImageSkeleton from "@/componets/hotel-details/ImageSkeleton";
+import RoomCardSkeleton from "@/componets/hotel-details/RoomCardSkeleton";
 
 export default function Page() {
   const [isVisible, setIsVisible] = useState(false);
@@ -108,9 +110,12 @@ export default function Page() {
       </div>
       <div>
         {isLoading ? (
-          <div className="w-full min-h-screen ">
-            <div className="flex items-center justify-center h-screen">
-              <div className="w-16 h-16 border-4 border-t-transparent border-blue-600 border-solid rounded-full animate-spin"></div>
+          <div className="w-full min-h-screen pb-8">
+            <ImageSkeleton />
+            <div className="w-full px-10 lg:flex items-center gap-5 hidden ">
+              {[...Array(2)].map((_, index) => (
+                <RoomCardSkeleton key={index} />
+              ))}
             </div>
           </div>
         ) : matchedProperty ? (

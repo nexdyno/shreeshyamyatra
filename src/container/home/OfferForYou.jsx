@@ -12,6 +12,8 @@ import Image from "next/image";
 import CardRecommended from "@/componets/home/CardRecommended";
 
 export default function OfferForYou({ property, isLoading }) {
+  console.log(property, "property property");
+
   return (
     <section className="w-full h-full py-10 md:min-h-screen px-5 lg:px-20  font-poppins">
       {isLoading ? (

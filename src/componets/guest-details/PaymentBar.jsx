@@ -21,14 +21,13 @@ import PaymentSkeleton from "./PaymentSkeleton";
 
 export default function PaymentBar({ formData, setStep, valid }) {
   const dispatch = useDispatch();
-  const { bookingData, matchedProperty, property } = useSelector(
-    (state) => state.data
-  );
+  const { bookingData } = useSelector((state) => state.data);
   const { session } = useSelector((state) => state.auth);
   const [roomTag, setRoomTag] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [paymentTableId, setPaymentTableId] = useState(null);
+  const [matchPropertyValue, setMatchPropertyValue] = useState(null);
   const [guestData, setGuestData] = useState({
     name: "",
     email: "",
@@ -38,6 +37,7 @@ export default function PaymentBar({ formData, setStep, valid }) {
     booking_status: "pending",
     bill_clear: true,
   });
+  console.log(matchPropertyValue, "matchPropertyValue");
 
   const generateUniqueIds = () => {
     return {
@@ -90,6 +90,10 @@ export default function PaymentBar({ formData, setStep, valid }) {
     const fetchData = async () => {
       try {
         const id = localStorage.getItem("my_id");
+        const match = JSON.parse(localStorage.getItem("matchedProperty"));
+        if (match) {
+          setMatchPropertyValue(match);
+        }
         if (!id) {
           throw new Error("Booking ID not found in local storage");
         }
@@ -174,14 +178,12 @@ export default function PaymentBar({ formData, setStep, valid }) {
 
                 const message = `Namaste! ${guestData?.name}, 🙏
 
-Greetings from https://YatraDham.Org
+Greetings from https://www.shreeshyamyatra.com/
 
-Your room booking is currently pending for confirmation.
-
-Please complete the payment at your earliest convenience using the payment link provided: -
+Your room booking is pending confirmation from the property. Payment has been received successfully
 
  Booking Details:
-Surat Bhawan - ${bookingData?.[0]?.room_assigned?.[0]?.room_name} 
+Property Name- ${bookingData?.[0]?.room_assigned?.[0]?.room_name} 
 Room Type :-${bookingData?.[0]?.room_assigned?.[0]?.room_name}
 Check-In :- ${bookingData?.[0]?.check_in_date}
 Check-Out :- ${bookingData?.[0]?.check_out_date}
@@ -189,38 +191,37 @@ Days/Nights :- ${numerOfDays()}
 No of Rooms :- ${bookingData?.[0]?.room_assigned?.[0]?.quantity}
 No of Guests :- ${bookingData?.[0]?.number_of_adults}
 
-If you have already completed the payment and received a confirmation, please ignore this message.
+Once the property confirms your booking, you will receive a final confirmation message.
 
-Do you have any questions or concerns regarding this booking?
 
-To process your booking, simply click on the link below:
-👉 Link: https://yatradham.org/khatu-surat-bhavan.html
+If you have any questions or concerns, feel free to reach out to us.
+
+Thank you for choosing Shree Shyam Yatra for your sacred journey!
 `;
                 await sendMsgToGuest({ phone: bookingData?.contact, message });
               } else {
                 dispatch(setIsConfirmOrder(true));
                 const message = `Namaste! ${guestData?.name}, 🙏
 
-Greetings from https://YatraDham.Org
+Greetings from https://www.shreeshyamyatra.com/
 
-Your room booking is currently pending for confirmation.
-
-Please complete the payment at your earliest convenience using the payment link provided: -
+Your room booking is pending confirmation from the property. Payment has been received successfully
 
  Booking Details:
-Surat Bhawan - ${bookingData?.[0]?.room_assigned?.[0]?.room_name} 
+Property Name- ${bookingData?.[0]?.room_assigned?.[0]?.room_name} 
 Room Type :-${bookingData?.[0]?.room_assigned?.[0]?.room_name}
 Check-In :- ${bookingData?.[0]?.check_in_date}
 Check-Out :- ${bookingData?.[0]?.check_out_date}
 Days/Nights :- ${numerOfDays()}
 No of Rooms :- ${bookingData?.[0]?.room_assigned?.[0]?.quantity}
 No of Guests :- ${bookingData?.[0]?.number_of_adults}
-If you have already completed the payment and received a confirmation, please ignore this message.
 
-Do you have any questions or concerns regarding this booking?
+Once the property confirms your booking, you will receive a final confirmation message.
 
-To process your booking, simply click on the link below:
-👉 Link: https://yatradham.org/khatu-surat-bhavan.html
+
+If you have any questions or concerns, feel free to reach out to us.
+
+Thank you for choosing Shree Shyam Yatra for your sacred journey!
 `;
                 await sendMsgToGuest({ phone: guestData?.contact, message });
               }
@@ -266,33 +267,17 @@ To process your booking, simply click on the link below:
   return (
     <div className="bg-white p-5 font-poppins mt-5 w-full ">
       <Script src="https://checkout.razorpay.com/v1/checkout.js" />
-      <h3 className="text-2xl font-semibold pb-4">
-        {bookingData?.[0]?.room_assigned?.[0]?.room_name}
+      <h3 className="text-2xl font-semibold">
+        {matchPropertyValue ? matchPropertyValue?.name : ""}
       </h3>
       <div className="w-full flex gap-2">
-        <div className="w-[70%] space-y-2">
+        <div className="w-full space-y-2">
           <p className="text-sm text-secondary py-1 text-start">
-            Near Patel Nagar Metro, Block 2, Khatu
+            {matchPropertyValue ? matchPropertyValue?.address : ""}
           </p>
-          <div className="flex items-center text-start">
-            <span className="bg-green-500 text-white text-xs font-semibold px-2 py-1 rounded-md mr-2">
-              4.1 ★
-            </span>
-            <span className="text-sm text-secondary text-start">
-              (368 Ratings), Very Good
-            </span>
+          <div className="flex items-center text-start font-semibold">
+            {bookingData?.[0]?.room_assigned?.[0]?.room_name}
           </div>
-        </div>
-
-        {/* Hotel Image */}
-        <div className="w-[30%] mb-4">
-          <Image
-            src="/assets/home/image1.svg"
-            alt="Hotel Shree Shyam"
-            width={200}
-            height={150}
-            className=""
-          />
         </div>
       </div>
 
