@@ -36,7 +36,7 @@ export default function BookingCard({ setType, setShowInvoice, showInvoice }) {
 
   const getNameById = (id) => {
     const filtered = property.filter((element) => element.id === id);
-    return filtered.length > 0 ? filtered[0].name : "Unknown Property";
+    return filtered?.length > 0 ? filtered?.[0]?.name : "--";
   };
 
   return (
@@ -60,14 +60,14 @@ export default function BookingCard({ setType, setShowInvoice, showInvoice }) {
               All Booking Details
             </h2>
           </div>
-          {userAllBooking.length === 0 && (
+          {userAllBooking?.length === 0 && (
             <div className="w-full h-full flex items-center justify-center">
               <h1 className="text-2xl font-semibold font-poppins">
                 Booking Not Found{" "}
               </h1>
             </div>
           )}
-          {userAllBooking.length > 0 &&
+          {userAllBooking?.length > 0 &&
             userAllBooking?.map((booking) => (
               <div
                 key={booking.id}
