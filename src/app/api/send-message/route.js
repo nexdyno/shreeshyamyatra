@@ -1,4 +1,3 @@
-import { supabase } from "@/lib/supabase/supabaseClient";
 import axios from "axios";
 
 export async function POST(req) {
@@ -16,12 +15,8 @@ export async function POST(req) {
     const response = await axios.post(
       `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`,
       {
-        messaging_product: "whatsapp",
+        ...message, // Spread message directly, no need for `template: JSON.stringify(message)`
         to: phone, // Phone number in international format (e.g., +1234567890)
-        type: "text",
-        text: {
-          body: message,
-        },
       },
       {
         headers: {

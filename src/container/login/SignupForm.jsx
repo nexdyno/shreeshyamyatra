@@ -72,20 +72,21 @@ const SignupForm = ({
           return;
         }
       }
-      if (email) {
-        try {
-          await dispatch(userSignIn(email)).unwrap();
-          toast.success("OTP send successfully");
-          // if (error) {
-          //   setError(`Error sending OTP: ${error.message}`);
-          //   return;
-          // }
-        } catch (err) {
-          console.error("Error sending OTP:", err);
-          setError("Failed to send OTP. Please try again.");
-          return;
-        }
-      }
+
+      // if (email) {
+      //   try {
+      //     await dispatch(userSignIn(email)).unwrap();
+      //     toast.success("OTP send successfully");
+      //     // if (error) {
+      //     //   setError(`Error sending OTP: ${error.message}`);
+      //     //   return;
+      //     // }
+      //   } catch (err) {
+      //     console.error("Error sending OTP:", err);
+      //     setError("Failed to send OTP. Please try again.");
+      //     return;
+      //   }
+      // }
     }
 
     if (step === 2 && phone) {
@@ -107,25 +108,25 @@ const SignupForm = ({
         return;
       }
     }
-    if (step === 2 && email) {
-      // Verify OTP for phone
-      try {
-        const { data, error } = await supabase.auth.verifyOtp({
-          email,
-          token: emailOtp,
-          type: "email",
-        });
-        if (error) {
-          setError(`Error verifying OTP: ${error.message}`);
-          return;
-        }
-        alert("Email address verified successfully!");
-      } catch (err) {
-        console.error("Error verifying OTP:", err);
-        setError("Failed to verify OTP. Please try again.");
-        return;
-      }
-    }
+    // if (step === 2 && email) {
+    //   // Verify OTP for phone
+    //   try {
+    //     const { data, error } = await supabase.auth.verifyOtp({
+    //       email,
+    //       token: emailOtp,
+    //       type: "email",
+    //     });
+    //     if (error) {
+    //       setError(`Error verifying OTP: ${error.message}`);
+    //       return;
+    //     }
+    //     alert("Email address verified successfully!");
+    //   } catch (err) {
+    //     console.error("Error verifying OTP:", err);
+    //     setError("Failed to verify OTP. Please try again.");
+    //     return;
+    //   }
+    // }
 
     if (step === 3 && !password) {
       setError("Please enter a valid password.");

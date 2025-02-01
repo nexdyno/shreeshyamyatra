@@ -4,6 +4,7 @@ import {
   bookingCreate,
   fetchBookingData,
   fetchPropertyById,
+  fetchPropetyContactByBookingId,
   saveGuestData,
   savePaymentDetail,
   setIsConfirmOrder,
@@ -21,7 +22,7 @@ import PaymentSkeleton from "./PaymentSkeleton";
 
 export default function PaymentBar({ formData, setStep, valid }) {
   const dispatch = useDispatch();
-  const { bookingData } = useSelector((state) => state.data);
+  const { bookingData, propertyContact } = useSelector((state) => state.data);
   const { session } = useSelector((state) => state.auth);
   const [roomTag, setRoomTag] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -37,7 +38,6 @@ export default function PaymentBar({ formData, setStep, valid }) {
     booking_status: "pending",
     bill_clear: true,
   });
-  console.log(matchPropertyValue, "matchPropertyValue");
 
   const generateUniqueIds = () => {
     return {
@@ -98,6 +98,7 @@ export default function PaymentBar({ formData, setStep, valid }) {
           throw new Error("Booking ID not found in local storage");
         }
         await dispatch(fetchBookingData(id)).unwrap();
+        await dispatch(fetchPropetyContactByBookingId(id)).unwrap();
       } catch (error) {
         console.error("Error while fetching booking data:", error);
       } finally {
@@ -176,54 +177,203 @@ export default function PaymentBar({ formData, setStep, valid }) {
               if (!bookingData?.[0]?.is_manual_entry) {
                 toast.success("Booking successfully created!");
 
-                const message = `Namaste! ${guestData?.name}, 🙏
+                const bookingDetails = [
+                  { type: "text", text: guestData?.name },
+                  { type: "text", text: matchPropertyValue?.name },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.room_assigned?.[0]?.room_name,
+                  },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.check_in_date,
+                  },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.check_out_date,
+                  },
+                  {
+                    type: "text",
+                    text: numerOfDays(),
+                  },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.room_assigned?.[0]?.quantity,
+                  },
+                  { type: "text", text: bookingData?.[0]?.number_of_adults },
+                ];
+                const body = {
+                  messaging_product: "whatsapp",
+                  to: guestData?.contact,
+                  type: "template",
+                  template: {
+                    name: "booking_pending_confirmation ",
+                    language: { code: "en" },
+                    components: [
+                      {
+                        type: "body",
+                        parameters: bookingDetails,
+                      },
+                    ],
+                  },
+                };
+                //  this is for the guest msg send
+                await sendMsgToGuest({
+                  phone: bookingData?.contact,
+                  message: body,
+                });
 
-Greetings from https://www.shreeshyamyatra.com/
+                // this is for the send the message to the property
 
-Your room booking is pending confirmation from the property. Payment has been received successfully
+                const propertyBookingDetails = [
+                  { type: "text", text: guestData?.name },
+                  { type: "text", text: bookingData?.[0]?.booking_id },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.room_assigned?.[0]?.room_name,
+                  },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.check_in_date,
+                  },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.check_out_date,
+                  },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.check_in_date,
+                  },
+                  {
+                    type: "text",
+                    text: numerOfDays(),
+                  },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.room_assigned?.[0]?.quantity,
+                  },
+                  { type: "text", text: bookingData?.[0]?.number_of_adults },
+                ];
+                const propertyBody = {
+                  messaging_product: "whatsapp",
+                  to: propertyContact,
+                  type: "template",
+                  template: {
+                    name: "booking_inquiry_with_buttons",
+                    language: { code: "en" },
+                    components: [
+                      {
+                        type: "body",
+                        parameters: propertyBookingDetails,
+                      },
+                    ],
+                  },
+                };
 
- Booking Details:
-Property Name- ${bookingData?.[0]?.room_assigned?.[0]?.room_name} 
-Room Type :-${bookingData?.[0]?.room_assigned?.[0]?.room_name}
-Check-In :- ${bookingData?.[0]?.check_in_date}
-Check-Out :- ${bookingData?.[0]?.check_out_date}
-Days/Nights :- ${numerOfDays()}
-No of Rooms :- ${bookingData?.[0]?.room_assigned?.[0]?.quantity}
-No of Guests :- ${bookingData?.[0]?.number_of_adults}
-
-Once the property confirms your booking, you will receive a final confirmation message.
-
-
-If you have any questions or concerns, feel free to reach out to us.
-
-Thank you for choosing Shree Shyam Yatra for your sacred journey!
-`;
-                await sendMsgToGuest({ phone: bookingData?.contact, message });
+                await sendMsgToGuest({
+                  phone: propertyContact,
+                  message: propertyBody,
+                });
               } else {
                 dispatch(setIsConfirmOrder(true));
-                const message = `Namaste! ${guestData?.name}, 🙏
+                console.log("this will hit");
+                const bookingDetails = [
+                  { type: "text", text: guestData?.name },
+                  { type: "text", text: matchPropertyValue?.name },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.room_assigned?.[0]?.room_name,
+                  },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.check_in_date,
+                  },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.check_out_date,
+                  },
+                  {
+                    type: "text",
+                    text: numerOfDays(),
+                  },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.room_assigned?.[0]?.quantity,
+                  },
+                  { type: "text", text: bookingData?.[0]?.number_of_adults },
+                ];
+                const body = {
+                  messaging_product: "whatsapp",
+                  to: guestData?.contact,
+                  type: "template",
+                  template: {
+                    name: "booking_pending_confirmation ",
+                    language: { code: "en" },
+                    components: [
+                      {
+                        type: "body",
+                        parameters: bookingDetails,
+                      },
+                    ],
+                  },
+                };
+                // This is for the guest
+                await sendMsgToGuest({
+                  phone: guestData?.contact,
+                  message: body,
+                });
 
-Greetings from https://www.shreeshyamyatra.com/
+                // this is for the property
 
-Your room booking is pending confirmation from the property. Payment has been received successfully
+                const propertyBookingDetails = [
+                  { type: "text", text: guestData?.name },
+                  { type: "text", text: bookingData?.[0]?.booking_id },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.room_assigned?.[0]?.room_name,
+                  },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.check_in_date,
+                  },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.check_out_date,
+                  },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.check_in_date,
+                  },
+                  {
+                    type: "text",
+                    text: numerOfDays(),
+                  },
+                  {
+                    type: "text",
+                    text: bookingData?.[0]?.room_assigned?.[0]?.quantity,
+                  },
+                  { type: "text", text: bookingData?.[0]?.number_of_adults },
+                ];
+                const propertyBody = {
+                  messaging_product: "whatsapp",
+                  to: propertyContact,
+                  type: "template",
+                  template: {
+                    name: "booking_inquiry_with_buttons",
+                    language: { code: "en" },
+                    components: [
+                      {
+                        type: "body",
+                        parameters: propertyBookingDetails,
+                      },
+                    ],
+                  },
+                };
 
- Booking Details:
-Property Name- ${bookingData?.[0]?.room_assigned?.[0]?.room_name} 
-Room Type :-${bookingData?.[0]?.room_assigned?.[0]?.room_name}
-Check-In :- ${bookingData?.[0]?.check_in_date}
-Check-Out :- ${bookingData?.[0]?.check_out_date}
-Days/Nights :- ${numerOfDays()}
-No of Rooms :- ${bookingData?.[0]?.room_assigned?.[0]?.quantity}
-No of Guests :- ${bookingData?.[0]?.number_of_adults}
-
-Once the property confirms your booking, you will receive a final confirmation message.
-
-
-If you have any questions or concerns, feel free to reach out to us.
-
-Thank you for choosing Shree Shyam Yatra for your sacred journey!
-`;
-                await sendMsgToGuest({ phone: guestData?.contact, message });
+                await sendMsgToGuest({
+                  phone: propertyContact,
+                  message: propertyBody,
+                });
               }
             } catch (error) {
               console.error("Error saving guest data", error);

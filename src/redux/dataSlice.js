@@ -95,6 +95,62 @@ export const bookingCreate = createAsyncThunk(
     return data;
   }
 );
+export const fetchPropetyContactByBookingId = createAsyncThunk(
+  "guests/fetchContact",
+  async (id, { rejectWithValue }) => {
+    try {
+      // Step 1: Fetch property_id from guests table
+      const { data: guestData, error: guestError } = await supabase
+        .from("guests")
+        .select("property_id")
+        .eq("booking_id", id)
+        .single();
+
+      if (guestError || !guestData) {
+        console.error("Error fetching property_id:", guestError);
+        return rejectWithValue(guestError?.message || "Property ID not found");
+      }
+
+      const property_id = guestData.property_id;
+
+      // Step 2: Fetch user_id from property table using property_id
+      const { data: propertyData, error: propertyError } = await supabase
+        .from("property")
+        .select("user_id")
+        .eq("id", property_id)
+        .single();
+
+      if (propertyError || !propertyData) {
+        console.error("Error fetching user_id:", propertyError);
+        return rejectWithValue(propertyError?.message || "User ID not found");
+      }
+      const user_id = propertyData.user_id;
+
+      // Step 3: Fetch contact_number from profiles table using user_id
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("phone")
+        .eq("id", user_id)
+        .select();
+
+      if (profileError || !profileData) {
+        console.error("Error fetching contact_number:", profileError);
+        return rejectWithValue(
+          profileError?.message || "Contact number not found"
+        );
+      }
+      console.log(
+        profileData,
+        "fetchPropertyContactByBookingId: Retrieved contact_number"
+      );
+
+      return profileData?.[0]?.phone;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 export const fetchAllBookingById = createAsyncThunk(
   "data/fetchAllBookingById",
   async (id, { rejectWithValue }) => {
@@ -201,6 +257,7 @@ const dataSlice = createSlice({
     allImages: [],
     propertyEvent: [],
     singleProperty: [],
+    propertyContact: null,
     searchValue: "",
     guestData: null,
     paymentdata: null,
@@ -288,6 +345,18 @@ const dataSlice = createSlice({
         state.profiles = action.payload;
       })
       .addCase(fetchProfiles.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(fetchPropetyContactByBookingId.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(fetchPropetyContactByBookingId.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.propertyContact = action.payload;
+      })
+      .addCase(fetchPropetyContactByBookingId.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
       })

@@ -44,6 +44,7 @@ export default function FormComponent({
     return Object.keys(newErrors).length === 0; // Return true if no errors
   };
 
+  console.log(formData, "formData formData");
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -54,7 +55,7 @@ export default function FormComponent({
   };
 
   const handlePhoneChange = (value) => {
-    const formattedValue = value.startsWith("+") ? value : `+${value}`; // Ensure the value starts with '+'
+    const formattedValue = value;
     setFormData({ ...formData, mobile: formattedValue });
 
     if (!session?.user?.phone) {
@@ -63,16 +64,6 @@ export default function FormComponent({
   };
 
   const handleSendOtp = async (value) => {
-    // if (validateForm()) {
-    //   const phone = formData?.mobile;
-    //   dispatch(sendOtp(phone));
-    //   if (!value) {
-    //     dispatch(setIsOTPModalOpen());
-    //   }
-    // }
-    // validateForm();
-    // onContinue();
-
     if (validateForm()) {
       const phone = formData?.mobile;
       if (!phone) {
@@ -98,10 +89,12 @@ export default function FormComponent({
             dispatch(setIsOTPModalOpen());
           }
         } else {
-          toast.error(data.error || "Failed to send OTP Try again");
+          console.log("this is run");
+          toast.error("Failed to send OTP Try again");
           setIsLoading(false);
         }
       } catch (error) {
+        console.log(error, "lets check the error");
         console.error("Error sending OTP.");
         setIsLoading(false);
       } finally {
@@ -164,7 +157,7 @@ export default function FormComponent({
                 <input
                   type="text"
                   name="name"
-                  value={formData?.name}
+                  value={session?.user_metadata?.name || formData?.name}
                   onChange={handleChange}
                   placeholder="John"
                   className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:border-primary text-sm ${

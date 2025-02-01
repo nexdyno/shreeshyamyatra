@@ -116,7 +116,7 @@ const OTPModal = ({ handleSendOtp, phone, setValid, setStep }) => {
       <div className="bg-[#182532] p-10 rounded-md shadow-lg text-center text-white w-11/12 sm:w-2/3 md:w-1/3 relative">
         <h2 className="text-2xl mb-4 font-bold">Enter Verification Code</h2>
         <p className="mb-4 text-sm">
-          We have sent a verification code to this +91 {phone}. Please enter the
+          We have sent a verification code to this {phone}. Please enter the
           verification code below.
         </p>
 

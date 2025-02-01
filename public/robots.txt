@@ -1,0 +1,25 @@
+# robots.txt for shreeshyamyatra.com
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://shreeshyamyatra.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 10
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /private/
+Disallow: /api/
+Disallow: /?
+
+# Allow important directories
+Allow: /hotels/
+Allow: /dharamshalas/
+Allow: /images/
+Allow: /about/
+Allow: /contact/
+
+# Cache time
+Host: https://shreeshyamyatra.com 

@@ -94,7 +94,8 @@ export const metadata = {
     },
   },
   verification: {
-    google: "your-google-verification-code",
+    google:
+      "google-site-verification=hOHB1aoIJ7M0hzHze6Llfrh5eUORDTY-uWG1jRdq2HE",
   },
 };
 
