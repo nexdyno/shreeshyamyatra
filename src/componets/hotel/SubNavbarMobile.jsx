@@ -43,7 +43,7 @@ export default function SubNavbarMobile({ onClose, IsSearchOpen }) {
           <RoomGuestSelector />
         </div>
       </div> */}
-      <SearchComponent />
+      <SearchComponent onClose={onClose} />
     </div>
   );
 }

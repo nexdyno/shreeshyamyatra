@@ -36,7 +36,7 @@ export default function InsideNavabr() {
             />
           </span>
           <p className="ml-4 text-lg font-semibold font-poppins text-gray-800">
-            Khatu Shyam
+            {localStorage.getItem("searchValue") || "Khatu Shyam"}
           </p>
         </div>
 
