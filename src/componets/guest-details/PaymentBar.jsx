@@ -207,7 +207,7 @@ export default function PaymentBar({ formData, setStep, valid }) {
                   to: guestData?.contact,
                   type: "template",
                   template: {
-                    name: "booking_pending_confirmation ",
+                    name: "booking_pending_confirmation_template",
                     language: { code: "en" },
                     components: [
                       {
@@ -259,7 +259,7 @@ export default function PaymentBar({ formData, setStep, valid }) {
                   to: propertyContact,
                   type: "template",
                   template: {
-                    name: "booking_inquiry_with_buttons",
+                    name: "booking_inquiry_with_buttons_template",
                     language: { code: "en" },
                     components: [
                       {
@@ -307,7 +307,7 @@ export default function PaymentBar({ formData, setStep, valid }) {
                   to: guestData?.contact,
                   type: "template",
                   template: {
-                    name: "booking_pending_confirmation ",
+                    name: "booking_pending_confirmation_template",
                     language: { code: "en" },
                     components: [
                       {
@@ -359,7 +359,7 @@ export default function PaymentBar({ formData, setStep, valid }) {
                   to: propertyContact,
                   type: "template",
                   template: {
-                    name: "booking_inquiry_with_buttons",
+                    name: "booking_inquiry_with_buttons_template",
                     language: { code: "en" },
                     components: [
                       {

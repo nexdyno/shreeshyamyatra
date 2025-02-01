@@ -6,8 +6,9 @@ import { FiPrinter } from "react-icons/fi";
 import { MdOutlineFileDownload } from "react-icons/md";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import { RxCross2 } from "react-icons/rx";
 
-export default function Invoice() {
+export default function Invoice({ setShowInvoice }) {
   const invoiceRef = useRef();
 
   // Hotel Booking Data
@@ -72,10 +73,16 @@ export default function Invoice() {
 
   return (
     <div className="w-full h-full pb-20 lg:pb-0 flex flex-col items-center lg:px-5 font-inter">
-      <div className="flex flex-wrap items-center justify-end w-full pb-3 px-4 gap-3 lg:gap-10">
+      <div className="flex flex-wrap items-center justify-between lg:justify-end w-full pb-3 px-4 gap-3 lg:gap-10">
+        <div
+          onClick={() => setShowInvoice(false)}
+          className="p-1 rounded-sm bg-gray-100 lg:hidden"
+        >
+          <RxCross2 size={25} />
+        </div>
         <button
           onClick={handleDownloadPDF}
-          className="flex items-center justify-center gap-2 bg-primary text-white rounded-full px-4 py-2 lg:px-5 lg:py-3"
+          className="flex items-center justify-center gap-2 bg-primary text-white rounded-full px-3 py-2 lg:px-5 lg:py-3"
         >
           <MdOutlineFileDownload size={20} />
           <span className="text-sm lg:text-base font-medium">Download</span>

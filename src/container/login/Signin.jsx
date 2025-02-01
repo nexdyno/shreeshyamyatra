@@ -16,6 +16,7 @@ import "react-phone-number-input/style.css"; // Make sure to import the styles
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase/supabaseClient";
 import toast from "react-hot-toast";
+import { set } from "date-fns";
 
 const Signin = ({
   email,
@@ -42,6 +43,7 @@ const Signin = ({
     session,
     error: authError,
   } = useSelector((state) => state.auth);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [step, setStep] = useState(1); // Step for OTP modal handling
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -65,7 +67,7 @@ const Signin = ({
         return;
       }
       try {
-        alert("Valid Phone Number in try" + phone);
+        toast.error("Valid Phone Number in try" + phone);
         // Send OTP for phone verification
         const { error } = await supabase.auth.signInWithOtp({ phone });
         if (error) {
@@ -144,14 +146,22 @@ const Signin = ({
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     handleNext(); // Validate inputs first
     if (error) return; // Prevent submission if there are errors
 
     const data = emailOrPhone ? { email, password } : { phone, password };
 
-    dispatch(userSignIn(data));
-    // dispatch(userSignIn({ email, password }));
+    try {
+      setIsLoading(true);
+      await dispatch(userSignIn(data)).unwrap();
+      onClose();
+      window.location.href = "/";
+    } catch (error) {
+      console.log(error, "error while signin the User");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -215,7 +225,7 @@ const Signin = ({
               </div>
               <button
                 // onClick={handleSubmit}
-                onClick={handleNext}
+                onClick={email ? handleSubmit : handleNext}
                 className="w-full bg-primaryGradient text-white py-2 rounded-md mb-4 hover:bg-blue-800"
               >
                 Submit

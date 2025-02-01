@@ -106,7 +106,6 @@ export default function Navbar() {
     try {
       // Dispatch logoutUser and handle the response
       await dispatch(logoutUser()).unwrap();
-      toast.success("Logout successful");
 
       // Clear local token or any other necessary client-side data
       setToken("");
@@ -174,7 +173,7 @@ export default function Navbar() {
           <div className="hidden lg:block lg:w-[75%] px-2 xl:px-5 cursor-pointer">
             <div className="w-full h-full flex items-center justify-center">
               {data.map((item, index) => (
-                <Link href={item?.link}>
+                <Link key={index} href={item?.link}>
                   <div
                     key={index}
                     className="border-r h-full px-2 xl:px-4 w-fit group hover:bg-gray-100"

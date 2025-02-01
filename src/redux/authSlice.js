@@ -37,44 +37,60 @@ export const newUserSignUp = createAsyncThunk(
     return data;
   }
 );
-export const userSignIn = createAsyncThunk(
-  "auth/userSignIn",
-  async (email, { rejectWithValue }) => {
-    console.log(email, "what my email");
+
+export const userSignUp = createAsyncThunk(
+  "auth/userSignUp",
+  async ({ email, password }, { rejectWithValue }) => {
+    console.log(email, password, "what my email");
     try {
-      const { data, error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          shouldCreateUser: false, // Prevents automatic user sign-up
-        },
+      // Call the signUp function directly within try block
+      const { data, error } = await supabase.auth.signUp({
+        email: email, // Use the email passed in
+        password: password, // Use a password (you can replace it with a variable or input from the user)
       });
 
+      // If there is an error with the sign-up process, handle it
       if (error) {
-        toast.error(error.message); // Display error message as a toast
-        return rejectWithValue(error.message);
+        throw new Error(error.message);
       }
 
-      return data; // Return response data if successful
+      // Return the user data if successful
+      toast.success("User Created Successfully");
+      return data;
     } catch (error) {
-      toast.error("An unexpected error occurred."); // Handle unexpected errors
-      return rejectWithValue(error.message);
+      toast.error("An unexpected error occurred."); // Show error message to the user
+      return rejectWithValue(error.message); // Return the error message to the thunk's reject handler
     }
   }
 );
-// export const userSignIn = createAsyncThunk(
-//   "auth/userSignIn", // Corrected action name
-//   async ({ email, password }, { rejectWithValue }) => {
-//     const { data, error } = await supabase.auth.signInWithPassword({
-//       email,
-//       password,
-//     });
-//     if (error) return rejectWithValue(error.message);
 
-//     if (!error) alert("login successfully");
+export const userSignIn = createAsyncThunk(
+  "auth/userSignIn",
+  async ({ email, password }, { rejectWithValue }) => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email, // Email passed from the user
+        password, // Password passed from the user
+      });
 
-//     return data;
-//   }
-// );
+      // Handle error if sign in fails
+      if (error) {
+        throw new Error(error.message); // Throw an error with the message if available
+      }
+
+      // Successfully signed in
+      toast.success("Log in successful!");
+
+      // Return the user data or session
+      return data; // Data will typically contain the session and user information
+    } catch (error) {
+      // Handle any unexpected errors
+      console.log(error, "Error while logging in");
+      toast.error(error.message || "An unexpected error occurred."); // Show meaningful error message
+      return rejectWithValue(error.message); // Pass the error message to the reject handler
+    }
+  }
+);
 
 export const logoutUser = createAsyncThunk(
   "auth/logoutUser",

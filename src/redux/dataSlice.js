@@ -153,7 +153,8 @@ export const fetchPropetyContactByBookingId = createAsyncThunk(
 
 export const fetchAllBookingById = createAsyncThunk(
   "data/fetchAllBookingById",
-  async (id, { rejectWithValue }) => {
+  async ({ id }, { rejectWithValue }) => {
+    console.log(id, "my id is ");
     try {
       // Fetch data from the Supabase "guests" table
       const { data, error } = await supabase
@@ -167,11 +168,6 @@ export const fetchAllBookingById = createAsyncThunk(
           error.message || "Error fetching booking data from the database"
         );
       }
-
-      // if (!data || data.length === 0) {
-      //   // Handle no data scenario
-      //   throw new Error("No bookings found for the given user ID");
-      // }
 
       return data; // Return the fetched data
     } catch (err) {
@@ -246,6 +242,32 @@ export const savePaymentDetail = createAsyncThunk(
   }
 );
 
+export const fetchUserData = createAsyncThunk(
+  "data/userData",
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select()
+        .eq("id", id);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // Check if data is null or undefined
+      if (!data) {
+        throw new Error("No user data found.");
+      }
+
+      return data; // Returning the data directly
+    } catch (error) {
+      console.log("Error while fetching the user data", error);
+      return rejectWithValue(error.message); // Passing the error message
+    }
+  }
+);
+
 // Slice
 const dataSlice = createSlice({
   name: "data",
@@ -257,6 +279,7 @@ const dataSlice = createSlice({
     allImages: [],
     propertyEvent: [],
     singleProperty: [],
+    userData: null,
     propertyContact: null,
     searchValue: "",
     guestData: null,
@@ -368,6 +391,17 @@ const dataSlice = createSlice({
         state.guestData = action.payload;
       })
       .addCase(saveGuestData.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(fetchUserData.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchUserData.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.userData = action.payload;
+      })
+      .addCase(fetchUserData.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })

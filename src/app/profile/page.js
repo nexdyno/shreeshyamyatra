@@ -117,6 +117,7 @@ import { useDispatch, useSelector } from "react-redux";
 export default function page() {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(true);
+  const [showInvoice, setShowInvoice] = useState(false);
   const [type, setType] = useState("");
   const [showLogin, setShowLogin] = useState(true);
   const { session } = useSelector((state) => state.auth);
@@ -189,7 +190,13 @@ export default function page() {
           }}
         />
       )}
-      {type === "Bookings" && <BookingCard setType={setType} />}
+      {type === "Bookings" && (
+        <BookingCard
+          setType={setType}
+          showInvoice={showInvoice}
+          setShowInvoice={setShowInvoice}
+        />
+      )}
       {type === "Guest policy" && privacyPolicy()}
       {type === "Term of Use" && termOfUse()}
       {type === "Contact Us" && contactUs()}

@@ -126,6 +126,7 @@ export default function LoginModal({ isOpen, onClose }) {
               passwordVisible={passwordVisible}
               setPasswordVisible={setPasswordVisible}
               togglePasswordVisibility={togglePasswordVisibility}
+              onClose={onClose}
             />
           )}
         </div>

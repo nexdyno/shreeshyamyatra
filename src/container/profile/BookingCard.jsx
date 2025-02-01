@@ -1,116 +1,153 @@
-import React from "react";
-import { IoMdArrowBack } from "react-icons/io";
+"use client";
 
-export default function BookingCard({ setType, setShowInvoice }) {
-  const bookings = [
-    {
-      id: 1,
-      roomName: "Deluxe Suite",
-      numRooms: 2,
-      guests: 4,
-      details: "Ocean view, King-size bed, Free breakfast",
-      price: 350.75,
-      numDays: 3,
-      date: "2025-01-10",
-      time: "3:00 PM - 11:00 AM",
-      status: "Confirmed",
-    },
-    {
-      id: 2,
-      roomName: "Standard Room",
-      numRooms: 1,
-      guests: 2,
-      details: "City view, Queen-size bed, Free WiFi",
-      price: 120.5,
-      numDays: 2,
-      date: "2025-01-12",
-      time: "2:00 PM - 10:00 AM",
-      status: "Pending",
-    },
-    {
-      id: 3,
-      roomName: "Executive Suite",
-      numRooms: 1,
-      guests: 1,
-      details: "Garden view, Workspace, Free parking",
-      price: 200.0,
-      numDays: 5,
-      date: "2025-01-15",
-      time: "4:00 PM - 12:00 PM",
-      status: "Cancelled",
-    },
-  ];
+import { checkUserSession } from "@/redux/authSlice";
+import { fetchAllBookingById } from "@/redux/dataSlice";
+import React, { useEffect, useState } from "react";
+import { IoMdArrowBack } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
+
+import Invoice from "./Invoice";
+import BookingDetailsSkeleton from "./BookingDetailsSkeleton";
+
+export default function BookingCard({ setType, setShowInvoice, showInvoice }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+
+  const { userAllBooking, property } = useSelector((state) => state.data);
+  const { session } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        if (!session) {
+          await dispatch(checkUserSession()).unwrap();
+        }
+        console.log(session?.user?.id, "session?.user?.id session?.user?.id");
+        await dispatch(fetchAllBookingById({ id: session?.user?.id })).unwrap();
+      } catch (error) {
+        console.error(error, "Error while fetching the booking data");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [dispatch, session?.user?.id]);
+
+  const getNameById = (id) => {
+    const filtered = property.filter((element) => element.id === id);
+    return filtered.length > 0 ? filtered[0].name : "Unknown Property";
+  };
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 space-y-6 w-full   mx-auto font-poppins mb-16 lg:mb-20 lg:overflow-y-auto">
-      <div className="flex items-center justify-between mb-8 lg:hidden">
-        <div onClick={() => setType("")}>
-          <IoMdArrowBack size={30} />
+    <>
+      {showInvoice ? (
+        <div className="p-3">
+          <Invoice setShowInvoice={setShowInvoice} />
         </div>
+      ) : isLoading ? (
+        <BookingDetailsSkeleton />
+      ) : (
+        <div className="p-4 sm:p-6 lg:p-8 space-y-6 w-full mx-auto font-poppins mb-16 lg:mb-20 lg:overflow-y-auto">
+          <div className="flex items-center justify-between mb-6 lg:mb-8 lg:hidden ">
+            <div onClick={() => setType("")} className="cursor-pointer">
+              <IoMdArrowBack
+                size={24}
+                className="text-gray-800 hover:text-gray-600"
+              />
+            </div>
+            <h2 className="text-lg font-bold text-gray-800">
+              All Booking Details
+            </h2>
+          </div>
+          {userAllBooking.length === 0 && (
+            <div className="w-full h-full flex items-center justify-center">
+              <h1 className="text-2xl font-semibold font-poppins">
+                Booking Not Found{" "}
+              </h1>
+            </div>
+          )}
+          {userAllBooking.length > 0 &&
+            userAllBooking?.map((booking) => (
+              <div
+                key={booking.id}
+                className="p-6 bg-white rounded-xl shadow-md border border-gray-300 space-y-4 hover:shadow-lg transition-shadow"
+              >
+                <div className="mt-2 text-gray-700 space-y-2 text-sm sm:text-base font-medium">
+                  <p>
+                    <strong>Booking ID:</strong> {booking.booking_id}
+                  </p>
+                  <p>
+                    <strong>Hotel Name:</strong>{" "}
+                    {getNameById(booking.property_id)}
+                  </p>
+                  <p>
+                    <strong>Guest Name:</strong> {booking.name}
+                  </p>
+                  <p>
+                    <strong>Contact:</strong> {booking.contact}
+                  </p>
+                  <p>
+                    <strong>Email:</strong> {booking.email}
+                  </p>
+                  <p>
+                    <strong>Check-in:</strong> {booking.check_in_date} at{" "}
+                    {booking.guest_check_in_time}
+                  </p>
+                  <p>
+                    <strong>Check-out:</strong> {booking.check_out_date} at{" "}
+                    {booking.guest_check_out_time}
+                  </p>
+                  <p>
+                    <strong>Guests:</strong> {booking.number_of_adults} Adults,{" "}
+                    {booking.number_of_children} Children
+                  </p>
+                  <p>
+                    <strong>Room(s):</strong>{" "}
+                    {booking.room_assigned
+                      ?.map((room) => `${room.room_name} (x${room.quantity})`)
+                      .join(", ")}
+                  </p>
+                  <p>
+                    <strong>Total Room Price:</strong> ₹
+                    {booking.total_roomPrice}
+                  </p>
+                  <p>
+                    <strong>Extra Charges:</strong> ₹{booking.our_charges}
+                  </p>
+                  <p>
+                    <strong>Total Amount:</strong> ₹{booking.total_amount}
+                  </p>
+                  <p>
+                    <strong>Payment Status:</strong>{" "}
+                    {booking.bill_clear ? (
+                      <span className="text-green-600 font-semibold">Paid</span>
+                    ) : (
+                      <span className="text-red-600 font-semibold">
+                        Pending
+                      </span>
+                    )}
+                  </p>
+                  <p>
+                    <strong>Booking Status:</strong>{" "}
+                    <span className="text-black font-medium">
+                      {booking.booking_status}
+                    </span>
+                  </p>
+                </div>
 
-        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">
-          All Bookings Details
-        </h2>
-      </div>
-      {bookings.map((booking) => (
-        <div
-          key={booking.id}
-          className="p-6 bg-white rounded-lg shadow-sm border border-gray-500 space-y-4"
-        >
-          {/* Header */}
-          <div className="flex justify-between items-center">
-            <h3 className="text-xl sm:text-2xl font-semibold text-gray-800">
-              {booking.roomName}
-            </h3>
-            <span
-              className={`px-4 sm:px-6 py-2 rounded-full text-sm sm:text-base font-medium ${
-                booking.status === "Confirmed"
-                  ? "bg-green-100 text-green-800"
-                  : booking.status === "Pending"
-                  ? "bg-yellow-100 text-yellow-800"
-                  : "bg-red-100 text-red-800"
-              }`}
-            >
-              {booking.status}
-            </span>
-          </div>
-
-          {/* Booking Details */}
-          <div className="mt-4 text-gray-700 space-y-2">
-            <p className="text-sm sm:text-base">
-              <strong>Number of Rooms:</strong> {booking.numRooms}
-            </p>
-            <p className="text-sm sm:text-base">
-              <strong>Guests:</strong> {booking.guests}
-            </p>
-            <p className="text-sm sm:text-base">
-              <strong>Details:</strong> {booking.details}
-            </p>
-            <p className="text-sm sm:text-base">
-              <strong>Price:</strong> ${booking.price.toFixed(2)}
-            </p>
-            <p className="text-sm sm:text-base">
-              <strong>Days:</strong> {booking.numDays}
-            </p>
-            <p className="text-sm sm:text-base">
-              <strong>Booking Date:</strong> {booking.date}
-            </p>
-            <p className="text-sm sm:text-base">
-              <strong>Time Duration:</strong> {booking.time}
-            </p>
-          </div>
-          <div
-            onClick={() => setShowInvoice(true)}
-            className="flex justify-end items-center cursor-pointer"
-          >
-            <span
-              className={`px-4 py-1 rounded-full text-base sm:text-lg font-medium border border-black hover:bg-primaryGradient hover:text-white hover:border-none`}
-            >
-              Download Invoice
-            </span>
-          </div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => setShowInvoice(true)}
+                    className="px-5 py-2 text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 transition-colors"
+                  >
+                    Download Invoice
+                  </button>
+                </div>
+              </div>
+            ))}
         </div>
-      ))}
-    </div>
+      )}
+    </>
   );
 }

@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { googleAuth, newUserSignUp, userSignIn } from "@/redux/authSlice";
+import {
+  googleAuth,
+  newUserSignUp,
+  sendOtp,
+  userSignIn,
+  userSignUp,
+} from "@/redux/authSlice";
 import { FcGoogle } from "react-icons/fc";
 import { supabase } from "@/lib/supabase/supabaseClient.js";
 import Image from "next/image";
@@ -22,7 +28,6 @@ const SignupForm = ({
   setPassword,
   error,
   setError,
-  onClose,
   handleSignUp,
   handleSignIn,
   handleWelcomeEmail,
@@ -35,9 +40,10 @@ const SignupForm = ({
   passwordVisible,
   setPasswordVisible,
   togglePasswordVisibility,
+  onClose,
 }) => {
   const dispatch = useDispatch();
-
+  const [isLoading, setIsLoading] = useState(false);
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -72,21 +78,6 @@ const SignupForm = ({
           return;
         }
       }
-
-      // if (email) {
-      //   try {
-      //     await dispatch(userSignIn(email)).unwrap();
-      //     toast.success("OTP send successfully");
-      //     // if (error) {
-      //     //   setError(`Error sending OTP: ${error.message}`);
-      //     //   return;
-      //     // }
-      //   } catch (err) {
-      //     console.error("Error sending OTP:", err);
-      //     setError("Failed to send OTP. Please try again.");
-      //     return;
-      //   }
-      // }
     }
 
     if (step === 2 && phone) {
@@ -108,42 +99,30 @@ const SignupForm = ({
         return;
       }
     }
-    // if (step === 2 && email) {
-    //   // Verify OTP for phone
-    //   try {
-    //     const { data, error } = await supabase.auth.verifyOtp({
-    //       email,
-    //       token: emailOtp,
-    //       type: "email",
-    //     });
-    //     if (error) {
-    //       setError(`Error verifying OTP: ${error.message}`);
-    //       return;
-    //     }
-    //     alert("Email address verified successfully!");
-    //   } catch (err) {
-    //     console.error("Error verifying OTP:", err);
-    //     setError("Failed to verify OTP. Please try again.");
-    //     return;
-    //   }
-    // }
 
     if (step === 3 && !password) {
       setError("Please enter a valid password.");
       return;
     }
-
     if (step < 3) {
-      setStep(step + 1);
-    } else {
-      alert("Account created successfully!");
-      onClose();
+      console.log(email, "email");
+      if (email && step === 1) {
+        setStep(step + 2);
+      } else {
+        setStep(step + 1);
+      }
     }
   };
 
   const handleBack = () => {
     setError("");
-    if (step > 1) setStep(step - 1);
+    if (step > 1) {
+      if (email && step === 3) {
+        setStep(step - 2);
+      } else {
+        setStep(step - 1);
+      }
+    }
   };
 
   const handleGoogleLogin = async () => {
@@ -151,20 +130,6 @@ const SignupForm = ({
   };
 
   const handleSubmit = async () => {
-    alert("phones" + phone);
-    alert(email);
-
-    if (email === "email") {
-      if (!validateEmail(email)) {
-        setError("Please enter a valid email address.");
-        return;
-      }
-    } else if (phone === "phone") {
-      if (!isValidPhoneNumber(phone)) {
-        setError("Please enter a valid phone number.");
-        return;
-      }
-    }
     if (!password || !confirmPassword) {
       setError("Please enter and confirm your password.");
       return;
@@ -173,30 +138,16 @@ const SignupForm = ({
       setError("Passwords do not match.");
       return;
     }
-    const data = email === "email" ? { email, password } : { phone, password };
-
-    alert(data);
-
     try {
-      // If the phone or email is already registered, sign in. Otherwise, create a new account
-      const { user, error } = await supabase.auth.signUp(data);
-      if (error) {
-        setError(`Error during signup: ${error.message}`);
-        return;
-      }
-
-      // Update user password in Supabase after verification
-      await supabase.auth.updateUser({ password });
-
-      alert("Account created successfully!");
+      setIsLoading(true);
+      await dispatch(userSignUp({ email, password })).unwrap();
       onClose();
-    } catch (err) {
-      console.error("Error during signup:", err);
-      setError("Failed to create account. Please try again.");
+      window.location.href = "/";
+    } catch (error) {
+      console.log(error, "Error while creating the account");
+    } finally {
+      setIsLoading(false);
     }
-
-    dispatch(newUserSignUp(data));
-    // dispatch(newUserSignUp({ email, password }));
   };
 
   const handleResendOtp = async () => {
@@ -237,7 +188,7 @@ const SignupForm = ({
       setError("Please enter a valid email or phone number.");
     }
   };
-
+  console.log(email, password, " email, password   email, password ");
   return (
     <div className="w-full max-w-md">
       {step === 1 && (
@@ -370,7 +321,7 @@ const SignupForm = ({
               onClick={togglePasswordVisibility}
               className="absolute right-3 top-2"
             >
-              {passwordVisible ? (
+              {!passwordVisible ? (
                 <FaEyeSlash className="text-gray-600" size={20} />
               ) : (
                 <FaEye className="text-gray-600" size={20} />
@@ -393,7 +344,7 @@ const SignupForm = ({
               onClick={togglePasswordVisibility}
               className="absolute right-3 top-2"
             >
-              {passwordVisible ? (
+              {!passwordVisible ? (
                 <FaEyeSlash className="text-gray-600" size={20} />
               ) : (
                 <FaEye className="text-gray-600" size={20} />
@@ -411,9 +362,10 @@ const SignupForm = ({
             </button>
             <button
               onClick={handleSubmit}
+              disabled={isLoading}
               className="bg-primaryGradient text-sm text-white py-2 px-4 rounded-md hover:bg-blue-600"
             >
-              Submit
+              {isLoading ? "Loading .." : "Submit"}
             </button>
           </div>
         </>

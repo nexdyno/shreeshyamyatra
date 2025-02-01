@@ -26,7 +26,7 @@ const BookingSidebar = ({ type, closeSidebar }) => {
           type === "" ? "translate-x-full" : "translate-x-0"
         } transition-transform duration-300 ease-in-out custom-scrollbar overflow-y-auto`}
       >
-        <div className="flex items-center justify-between px-5 mt-5 mb-3">
+        <div className="flex items-center justify-between px-5 mt-5 ">
           <h2 className="text-xl font-bold text-gray-800">
             All Bookings Details
           </h2>
