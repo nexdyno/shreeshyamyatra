@@ -150,30 +150,30 @@ export default function BookingPaymentDetails() {
     }
   }, [JSON.stringify(bookingDate)]);
 
-  // const generateUniqueIds = () => {
-  //   return {
-  //     id: uuidv4(),
-  //     booking_id: uuidv4(),
-  //     room_book: uuidv4(),
-  //   };
-  // };
   const generateUniqueIds = () => {
-    const id = uuidv4();
-    const bookingIdSmall = uuidv4().substring(0, 8); // Shortened booking ID from UUID
-    const createdAt = new Date(); // Current date and time    const booking_id = getBookingId(bookingIdSmall);
-    const booking_id = getBookingId(createdAt, bookingIdSmall); // Generate booking ID with current year
-    const room_book = uuidv4();
-
     return {
-      id,
-      booking_id,
-      room_book,
+      id: uuidv4(),
+      booking_id: uuidv4(),
+      room_book: uuidv4(),
     };
   };
+  // const generateUniqueIds = () => {
+  //   const id = uuidv4();
+  //   const bookingIdSmall = uuidv4().substring(0, 8); // Shortened booking ID from UUID
+  //   const createdAt = new Date(); // Current date and time    const booking_id = getBookingId(bookingIdSmall);
+  //   const booking_id = getBookingId(createdAt, bookingIdSmall); // Generate booking ID with current year
+  //   const room_book = uuidv4();
 
-  const getBookingId = (createdAt, bookingIdSmall) => {
-    return `SSY${createdAt.getFullYear()}${bookingIdSmall}`;
-  };
+  //   return {
+  //     id,
+  //     booking_id,
+  //     room_book,
+  //   };
+  // };
+
+  // const getBookingId = (createdAt, bookingIdSmall) => {
+  //   return `SSY${createdAt.getFullYear()}${bookingIdSmall}`;
+  // };
 
   const prepareGuestData = (formData) => {
     const { id, booking_id } = generateUniqueIds();
