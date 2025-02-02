@@ -28,7 +28,7 @@ export const metadata = {
     template: "%s | Shree Shyam Yatra",
   },
   description:
-    "Book the best dharamshalas and hotels in Khatu Shyam. Comfortable stays, budget-friendly rooms, and excellent facilities for pilgrims. Trusted by thousands of devotees.",
+    "Book the best dharamshalas and hotels in Khatu Shyam. Comfortable stays, budget-friendly rooms, and excellent facilities for pilgrims. Trusted by thousands of devotees and Find here all Hotels contact number and booking price.",
   keywords: [
     "Khatu dharamshala booking",
     "best hotels in Khatu",
@@ -40,6 +40,13 @@ export const metadata = {
     "affordable accommodation Khatu",
     "Khatu Shyam Ji rooms",
     "pilgrim accommodation Khatu",
+    "online dharamshala booking",
+    "hotel room booking",
+    "online room booking",
+    "online hotel room",
+    "hotel near temple",
+    "guest house booking",
+    "list of hotel",
   ],
   authors: [{ name: "Shree Shyam Yatra" }],
   creator: "Shree Shyam Yatra",
