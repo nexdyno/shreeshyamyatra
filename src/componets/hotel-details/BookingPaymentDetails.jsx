@@ -178,7 +178,7 @@ export default function BookingPaymentDetails() {
   const prepareGuestData = (formData) => {
     const { id, booking_id } = generateUniqueIds();
     localStorage.setItem("my_id", booking_id);
-    const checkIsManual = matchedProperty?.is_auto;
+    const checkIsManual = matchedProperty?.is_auto ? true : false;
 
     return {
       id,
