@@ -204,7 +204,7 @@ export default function Page() {
   const prepareGuestData = (formData) => {
     const { id, booking_id } = generateUniqueIds();
     localStorage.setItem("my_id", booking_id);
-    const checkIsManual = matchedProperty?.is_auto ? false : true;
+    const checkIsManual = matchedProperty?.is_auto;
 
     return {
       id,
