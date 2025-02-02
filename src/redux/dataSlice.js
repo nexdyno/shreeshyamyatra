@@ -298,10 +298,8 @@ const dataSlice = createSlice({
     error: null,
   },
   reducers: {
-    // Reducer to set matchedProperty
     setSearchValue: (state, action) => {
       state.searchValue = action.payload;
-      // localStorage.setItem("searchValue", action.payload);
     },
     setMatchedProperty: (state, action) => {
       state.matchedProperty = action.payload;
@@ -319,43 +317,26 @@ const dataSlice = createSlice({
     },
     setOneRoom: (state, action) => {
       state.OneRoom = action.payload;
-      // localStorage.setItem("OneRoom", JSON.stringify(action.payload));
     },
     setBookingDate: (state, action) => {
       state.bookingDate = action.payload;
-      // localStorage.setItem("bookingDate", JSON.stringify(action.payload));
     },
     setroomAndGuest: (state, action) => {
       state.roomAndGuest = action.payload;
-      // localStorage.setItem("roomAndGuest", JSON.stringify(action.payload));
     },
     setSelectedRoom: (state, action) => {
       state.selectedRoom = action.payload;
-      // localStorage.setItem("selectedRoom", JSON.stringify(action.payload));
     },
     setTotalSummary: (state, action) => {
       state.totalSummary = action.payload;
-      // localStorage.setItem("totalSummary", JSON.stringify(action.payload));
     },
     setIsConfirmOrder: (state, action) => {
       state.isConfirmOrder = action.payload;
     },
 
     clearAll: (state) => {
-      //   state.matchedProperty = null;
-      //   state.OneRoom = null;
-      //   state.bookingDate = null;
-      //   state.roomAndGuest = null;
-      //   state.selectedRoom = null;
-      //   state.totalSummary = null;
-
       localStorage.removeItem("matchedProperty");
-      localStorage.removeItem("searchValue");
-      // localStorage.removeItem("OneRoom");
-      // localStorage.removeItem("bookingDate");
-      // localStorage.removeItem("roomAndGuest");
-      // localStorage.removeItem("selectedRoom");
-      // localStorage.removeItem("totalSummary");
+      localStorage.removeItem("my_id");
     },
   },
   extraReducers: (builder) => {
@@ -526,5 +507,6 @@ export const {
   setIsConfirmOrder,
   setIsSearchOpen,
   setSearchValue,
+  clearAll,
 } = dataSlice.actions;
 export default dataSlice.reducer;

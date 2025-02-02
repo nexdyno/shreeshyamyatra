@@ -10,9 +10,13 @@ export default function InsideNavabr() {
   const dispatch = useDispatch();
   // const [searchValue, setSearchValue] = useState("Khatu Shyam");
 
-  const { bookingDate, roomAndGuest, IsSearchOpen, searchValue } = useSelector(
-    (state) => state.data
-  );
+  const {
+    bookingDate,
+    roomAndGuest,
+    IsSearchOpen,
+    searchValue,
+    matchedProperty,
+  } = useSelector((state) => state.data);
 
   const handleBack = () => {
     if (typeof window !== "undefined") {
@@ -46,7 +50,14 @@ export default function InsideNavabr() {
             />
           </span>
           <p className="ml-4 text-lg font-semibold font-poppins text-gray-800">
-            {searchValue || "Khatu Shyam"}
+            {(matchedProperty?.name || searchValue || "Khatu Shyam").slice(
+              0,
+              20
+            ) +
+              ((matchedProperty?.name || searchValue || "Khatu Shyam").length >
+              20
+                ? "..."
+                : "")}
           </p>
         </div>
 

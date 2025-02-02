@@ -2,6 +2,7 @@
 
 import {
   bookingCreate,
+  clearAll,
   fetchBookingData,
   fetchPropertyById,
   fetchPropetyContactByBookingId,
@@ -174,7 +175,7 @@ export default function PaymentBar({ formData, setStep, valid }) {
                 })
               ).unwrap();
               await dispatch(savePaymentDetail({ paymentdata })).unwrap();
-              if (!bookingData?.[0]?.is_manual_entry) {
+              if (bookingData?.[0]?.is_manual_entry) {
                 toast.success("Booking successfully created!");
 
                 const bookingDetails = [
@@ -274,6 +275,7 @@ export default function PaymentBar({ formData, setStep, valid }) {
                   phone: propertyContact,
                   message: propertyBody,
                 });
+                await dispatch(clearAll()).unwrap();
               } else {
                 dispatch(setIsConfirmOrder(true));
                 console.log("this will hit");
@@ -374,6 +376,7 @@ export default function PaymentBar({ formData, setStep, valid }) {
                   phone: propertyContact,
                   message: propertyBody,
                 });
+                await dispatch(clearAll()).unwrap();
               }
             } catch (error) {
               console.error("Error saving guest data", error);

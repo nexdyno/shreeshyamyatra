@@ -16,7 +16,6 @@ import "react-phone-number-input/style.css"; // Make sure to import the styles
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase/supabaseClient";
 import toast from "react-hot-toast";
-import { set } from "date-fns";
 
 const Signin = ({
   email,
@@ -61,20 +60,18 @@ const Signin = ({
         return;
       }
     } else {
-      alert("Valid Phone Number" + phone);
       if (!isValidPhoneNumber(phone)) {
         setError("Please enter a valid 10-digit phone number.");
         return;
       }
       try {
-        toast.error("Valid Phone Number in try" + phone);
         // Send OTP for phone verification
-        const { error } = await supabase.auth.signInWithOtp({ phone });
-        if (error) {
-          setError(`Error sending OTP: ${error.message}`);
-          return;
-        }
-        alert("OTP sent to your phone.");
+        // const { error } = await supabase.auth.signInWithOtp({ phone });
+        // if (error) {
+        //   setError(`Error sending OTP: ${error.message}`);
+        //   return;
+        // }
+        toast.success("OTP sent to your phone.");
         setStep(2); // Move to OTP step
       } catch (err) {
         console.error("Error sending OTP:", err);
@@ -119,7 +116,7 @@ const Signin = ({
           setError(`Error sending OTP to email: ${error.message}`);
           return;
         }
-        alert("OTP sent to your email address.");
+        toast.success("OTP sent to your email address.");
       } catch (err) {
         console.error("Error sending OTP to email:", err);
         setError("Failed to resend OTP to email. Please try again.");

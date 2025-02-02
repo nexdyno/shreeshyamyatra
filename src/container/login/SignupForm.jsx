@@ -92,7 +92,7 @@ const SignupForm = ({
           setError(`Error verifying OTP: ${error.message}`);
           return;
         }
-        alert("Phone number verified successfully!");
+        toast.success("Phone number verified successfully!");
       } catch (err) {
         console.error("Error verifying OTP:", err);
         setError("Failed to verify OTP. Please try again.");
@@ -164,7 +164,7 @@ const SignupForm = ({
           setError(`Error sending OTP to email: ${error.message}`);
           return;
         }
-        alert("OTP sent to your email address.");
+        toast.success("OTP sent to your email address.");
       } catch (err) {
         console.error("Error sending OTP to email:", err);
         setError("Failed to resend OTP to email. Please try again.");
@@ -179,7 +179,7 @@ const SignupForm = ({
           setError(`Error sending OTP to phone: ${error.message}`);
           return;
         }
-        alert("OTP sent to your phone number.");
+        toast.success("OTP sent to your phone number.");
       } catch (err) {
         console.error("Error sending OTP to phone:", err);
         setError("Failed to resend OTP to phone. Please try again.");
