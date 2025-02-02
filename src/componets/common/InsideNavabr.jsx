@@ -1,14 +1,16 @@
 "use client";
 
 import { setIsSearchOpen } from "@/redux/dataSlice";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { CiEdit } from "react-icons/ci";
 import { IoMdArrowBack } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function InsideNavabr() {
   const dispatch = useDispatch();
-  const { bookingDate, roomAndGuest, IsSearchOpen } = useSelector(
+  // const [searchValue, setSearchValue] = useState("Khatu Shyam");
+
+  const { bookingDate, roomAndGuest, IsSearchOpen, searchValue } = useSelector(
     (state) => state.data
   );
 
@@ -21,6 +23,14 @@ export default function InsideNavabr() {
       }
     }
   };
+
+  // useEffect(() => {
+  //   // Ensure localStorage is available
+  //   const storedValue = localStorage.getItem("searchValue");
+  //   if (storedValue) {
+  //     setSearchValue(storedValue);
+  //   }
+  // }, []);
 
   return (
     <div className="bg-white py-4 border-b border-gray-400 px-6 flex items-center justify-between shadow-sm rounded-sm">
@@ -36,7 +46,7 @@ export default function InsideNavabr() {
             />
           </span>
           <p className="ml-4 text-lg font-semibold font-poppins text-gray-800">
-            {localStorage.getItem("searchValue") || "Khatu Shyam"}
+            {searchValue || "Khatu Shyam"}
           </p>
         </div>
 

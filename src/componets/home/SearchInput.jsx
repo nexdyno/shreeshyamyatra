@@ -8,6 +8,7 @@ import Link from "next/link";
 const SearchInput = () => {
   const dispatch = useDispatch();
   const [inputValue, setInputValue] = useState(""); // Local state for the input value
+  const { searchValue } = useSelector((state) => state.data);
 
   // const handleKeyDown = (e) => {
   //   if (e.key === "Enter" && inputValue.trim() !== "") {
@@ -36,7 +37,7 @@ const SearchInput = () => {
       <input
         type="text"
         placeholder="Search by city, hotel"
-        value={inputValue}
+        value={searchValue}
         onChange={handleInputChange}
         // onKeyDown={handleKeyDown}
         className="text-sm px-5 py-1 w-full focus:outline-none font-medium"

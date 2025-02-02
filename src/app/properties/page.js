@@ -46,7 +46,8 @@ export default function Page() {
       : property; // If query is empty, show all properties
   };
   useEffect(() => {
-    const value = localStorage.getItem("searchValue");
+    // const value = localStorage.getItem("searchValue");
+    const value = searchValue;
     const filtered = filterProperties(value);
     setFilteredProperties(filtered);
   }, [property, searchValue]);
@@ -73,13 +74,19 @@ export default function Page() {
         <LoadingOfferForYou />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full px-2 mt-5 ">
-          {filteredProperties?.map((item) => (
-            // <Link key={item.id} href={`/hotel/hotel-details/${item?.id}`}>
-            <div className="shadow-md border border-gray-400 p-5 rounded-md">
-              <CardProperty image={getValidImages(item?.id)} item={item} />
-            </div>
-            // </Link>
-          ))}
+          {filteredProperties?.length === 0 && (
+            <h1 className="text-2xl font-semibold font-poppins flex items-center justify-center">
+              No Result Found
+            </h1>
+          )}
+          {filteredProperties?.length > 0 &&
+            filteredProperties?.map((item) => (
+              // <Link key={item.id} href={`/hotel/hotel-details/${item?.id}`}>
+              <div className="shadow-md border border-gray-400 p-5 rounded-md">
+                <CardProperty image={getValidImages(item?.id)} item={item} />
+              </div>
+              // </Link>
+            ))}
         </div>
       )}
       <div className="md:hidden">

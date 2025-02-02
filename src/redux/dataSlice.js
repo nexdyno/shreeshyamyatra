@@ -350,6 +350,7 @@ const dataSlice = createSlice({
       //   state.totalSummary = null;
 
       localStorage.removeItem("matchedProperty");
+      localStorage.removeItem("searchValue");
       // localStorage.removeItem("OneRoom");
       // localStorage.removeItem("bookingDate");
       // localStorage.removeItem("roomAndGuest");
