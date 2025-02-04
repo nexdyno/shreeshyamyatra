@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://shreeshyamyatra.com/sitemap.xml
+Sitemap: https://shreeshyamyatra.com/Sitemap.xml
 
 # Crawl-delay
 Crawl-delay: 10
