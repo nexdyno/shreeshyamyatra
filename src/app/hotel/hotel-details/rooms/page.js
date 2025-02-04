@@ -12,7 +12,7 @@ import {
   fetchProperty,
   fetchRooms,
   setIsSearchOpen,
-  setMatchedProperty as setMatchedPropertyAction,
+  setMatchedProperty,
   setTotalSummary,
 } from "@/redux/dataSlice";
 import { format, parse } from "date-fns";
@@ -56,7 +56,7 @@ export default function Page() {
       const foundProperty = stableProperty.find(
         (item) => item.id === localMatchedProperty
       );
-      dispatch(setMatchedPropertyAction(foundProperty || null));
+      dispatch(setMatchedProperty(foundProperty || null));
     }
   }, [stableProperty, localMatchedProperty, dispatch]);
 
@@ -96,10 +96,16 @@ export default function Page() {
         : 1;
 
     // Calculate commission
+    const extraPersonPrice =
+      (roomAndGuest?.guestExtra || 0) *
+      selectedRoom?.extra_charge_per_adult *
+      numberOfDays;
+
     const roomRate = selectedRoom?.rate || 0;
+    const roomRateWithExtraPerson = roomRate + extraPersonPrice || 0;
     const commissionPercentage = matchedProperty?.margin / 100;
     const commission = roomRate
-      ? roomRate *
+      ? roomRateWithExtraPerson *
         commissionPercentage *
         (roomAndGuest?.room || 1) *
         numberOfDays
@@ -111,10 +117,6 @@ export default function Page() {
     const roomPriceWIthGST = selectedRoom?.rate + gstAmount;
 
     // Calculate extra person price
-    const extraPersonPrice =
-      (roomAndGuest?.guestExtra || 0) *
-      selectedRoom?.extra_charge_per_adult *
-      numberOfDays;
 
     // Calculate final room price
     const finalRoomPrice = roomPriceWIthGST * numberOfDays * roomAndGuest?.room;

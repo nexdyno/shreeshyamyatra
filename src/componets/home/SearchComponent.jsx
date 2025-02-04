@@ -7,8 +7,10 @@ import DateSelector from "./DateSelector";
 import RoomGuestSelector from "./RoomGuestSelector";
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 const SearchComponent = ({ onClose }) => {
+  const pathname = usePathname();
   const { mobileSearch, setmobileSearch } = useAppContext();
   const [searchValue, setSearchValue] = useState("");
 
@@ -40,7 +42,11 @@ const SearchComponent = ({ onClose }) => {
             </Link>
           </div>
         </div>
-        <div className="w-full lg:w-auto  mt-5  lg:hidden">
+        <div
+          className={`w-full lg:w-auto  mt-5  lg:hidden ${
+            pathname === "/hotel/hotel-details/rooms" ? "hidden" : ""
+          }`}
+        >
           <Link onClick={onClose} href="/properties">
             <button className="w-full bg-primaryGradient lg:w-auto py-2 px-6 lg:py-3 text-white text-sm transition flex items-center justify-center gap-2 font-medium rounded-full">
               <span className="text-base ">Search</span>

@@ -94,12 +94,12 @@ const ContactDetailsDiv = () => {
     {
       Icon: FaMailBulk, // Icon name
       title: "Email Address:",
-      value: "support@shreeshyamyatra.com",
+      value: "hello@shreeshyamyatra.com",
     },
     {
       Icon: FaLocationArrow, // Icon name
       title: "Office Location:",
-      value: "123 Main Street, Downtown, Cityville",
+      value: "Suratwali Dharmshala,Khatu Shyam Chauraha,Khatu 332602",
     },
   ];
   return (

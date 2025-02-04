@@ -44,7 +44,6 @@ export default function FormComponent({
     return Object.keys(newErrors).length === 0; // Return true if no errors
   };
 
-  console.log(formData, "formData formData");
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -89,12 +88,10 @@ export default function FormComponent({
             dispatch(setIsOTPModalOpen());
           }
         } else {
-          console.log("this is run");
           toast.error("Failed to send OTP Try again");
           setIsLoading(false);
         }
       } catch (error) {
-        console.log(error, "lets check the error");
         console.error("Error sending OTP.");
         setIsLoading(false);
       } finally {

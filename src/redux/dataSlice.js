@@ -139,10 +139,6 @@ export const fetchPropetyContactByBookingId = createAsyncThunk(
           profileError?.message || "Contact number not found"
         );
       }
-      console.log(
-        profileData,
-        "fetchPropertyContactByBookingId: Retrieved contact_number"
-      );
 
       return profileData?.[0]?.phone;
     } catch (err) {
@@ -154,7 +150,6 @@ export const fetchPropetyContactByBookingId = createAsyncThunk(
 export const fetchAllBookingById = createAsyncThunk(
   "data/fetchAllBookingById",
   async ({ id }, { rejectWithValue }) => {
-    console.log(id, "my id is ");
     try {
       // Fetch data from the Supabase "guests" table
       const { data, error } = await supabase

@@ -25,15 +25,14 @@ const ContactUs = () => {
           </h1>
           <div className="text-lg text-gray-700 space-y-4">
             <p>
-              <strong>Email:</strong>support@shreeshyamyatra.com
+              <strong>Email:</strong>hello@shreeshyamyatra.com
             </p>
             <p>
               <strong>Phone:</strong> 7073390557
             </p>
             <p>
-              <strong>Address:</strong> 123 Main Street, Suite 100,
-              <br />
-              Cityville, State 12345
+              <strong>Address:</strong> Suratwali Dharmshala,Khatu Shyam
+              Chauraha ,Khatu 332602
             </p>
           </div>
         </div>

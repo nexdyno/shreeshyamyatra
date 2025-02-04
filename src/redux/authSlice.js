@@ -41,7 +41,6 @@ export const newUserSignUp = createAsyncThunk(
 export const userSignUp = createAsyncThunk(
   "auth/userSignUp",
   async ({ email, password }, { rejectWithValue }) => {
-    console.log(email, password, "what my email");
     try {
       // Call the signUp function directly within try block
       const { data, error } = await supabase.auth.signUp({
@@ -168,7 +167,6 @@ export const sendOtp = createAsyncThunk(
 export const verifyOtp = createAsyncThunk(
   "auth/verifyOtp",
   async ({ phone, email, token }, { rejectWithValue }) => {
-    console.log("this is hit");
     try {
       // Dynamically set the type based on whether phone or email is provided
       const type = phone ? "sms" : email ? "email" : null;

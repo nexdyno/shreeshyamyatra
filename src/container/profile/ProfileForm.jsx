@@ -33,7 +33,6 @@ export default function ProfileForm({ setType }) {
     fetchData();
   }, []);
 
-  console.log(userData, "UserData");
   return (
     // <div className="w-full bg-white p-8 rounded-sm font-poppins ">
     //   <div className="flex items-center justify-between mb-8 ">

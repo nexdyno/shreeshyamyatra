@@ -48,11 +48,18 @@ export default function BookingPaymentDetails() {
         ? Math.max(Math.ceil((endDate - startDate) / (1000 * 3600 * 24)), 1)
         : 1;
 
+    // Calculate extra person price
+    const extraPersonPrice =
+      (roomAndGuest?.guestExtra || 0) *
+      selectedRoom?.extra_charge_per_adult *
+      numberOfDays;
+
     // Calculate commission
     const roomRate = selectedRoom?.rate || 0;
+    const roomRateWithExtraPerson = roomRate + extraPersonPrice || 0;
     const commissionPercentage = matchedProperty?.margin / 100;
     const commission = roomRate
-      ? roomRate *
+      ? roomRateWithExtraPerson *
         commissionPercentage *
         (roomAndGuest?.room || 1) *
         numberOfDays
@@ -63,13 +70,6 @@ export default function BookingPaymentDetails() {
     const gstAmount = (matchedProperty?.gst / 100) * selectedRoom?.rate;
     const roomPriceWIthGST = selectedRoom?.rate + gstAmount;
 
-    // Calculate extra person price
-    const extraPersonPrice =
-      (roomAndGuest?.guestExtra || 0) *
-      selectedRoom?.extra_charge_per_adult *
-      numberOfDays;
-
-    console.log(extraPersonPrice, "extraPersonPrice extraPersonPrice");
     // Calculate final room price
     const finalRoomPrice = roomPriceWIthGST * numberOfDays * roomAndGuest?.room;
 

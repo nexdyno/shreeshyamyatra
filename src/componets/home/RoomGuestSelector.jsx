@@ -63,8 +63,8 @@ const RoomGuestSelector = () => {
   };
 
   const handleGuestChange = (type) => {
-    const baseGuests = rooms * selectedRoom?.base_adults; // Total base guests allowed for all rooms
-    const maxGuests = rooms * selectedRoom?.max_adults; // Total max guests allowed for all rooms
+    const baseGuests = rooms * selectedRoom?.base_adults || rooms * 3; // Total base guests allowed for all rooms
+    const maxGuests = rooms * selectedRoom?.max_adults || rooms * 3; // Total max guests allowed for all rooms
 
     if (type === "increment") {
       if (guests < maxGuests) {
@@ -74,7 +74,7 @@ const RoomGuestSelector = () => {
           const newExtraGuests = guests + 1 - baseGuests;
           setExtraGuests(newExtraGuests);
           alert(
-            `Adding guest ${newExtraGuests} beyond the free limit will incur an extra charge of ₹350 per guest.`
+            `${selectedRoom?.extra_charge_per_adult} per extra guest beyond the free limit.`
           );
         }
       } else {
@@ -101,10 +101,49 @@ const RoomGuestSelector = () => {
   // };
 
   useEffect(() => {
+    const baseGuests = rooms * selectedRoom?.base_adults || rooms * 3;
+    const maxGuests = rooms * selectedRoom?.max_adults || rooms * 3;
+
+    // Ensure guests are within the allowed range
+    let newGuests = guests > maxGuests ? maxGuests : guests;
+    let newExtraGuests = Math.max(newGuests - baseGuests, 0);
+
+    setGuests(newGuests);
+    setExtraGuests(newExtraGuests);
+
     dispatch(
-      setroomAndGuest({ room: rooms, guest: guests, guestExtra: extraGuest })
+      setroomAndGuest({
+        room: rooms,
+        guest: newGuests,
+        guestExtra: newExtraGuests,
+      })
     );
-  }, [rooms, guests]);
+  }, [rooms, guests, selectedRoom]);
+
+  // useEffect(() => {
+  //   // Default values if selectedRoom is undefined or false
+  //   const baseAdults = selectedRoom?.base_adults || 2; // Default: 2 free guests
+  //   const maxAdults = selectedRoom?.max_adults || 3; // Default: 3 max guests
+  //   const roomCount = rooms || 1; // Default: 1 room
+
+  //   const baseGuests = roomCount * baseAdults;
+  //   const maxGuests = roomCount * maxAdults;
+
+  //   // Ensure guests do not exceed max limit
+  //   let newGuests = guests > maxGuests ? maxGuests : guests;
+  //   let newExtraGuests = Math.max(newGuests - baseGuests, 0);
+
+  //   setGuests(newGuests);
+  //   setExtraGuests(newExtraGuests);
+
+  //   dispatch(
+  //     setroomAndGuest({
+  //       room: roomCount,
+  //       guest: newGuests,
+  //       guestExtra: newExtraGuests,
+  //     })
+  //   );
+  // }, [rooms, guests, selectedRoom]);
 
   return (
     <div className="w-full lg:w-fit lg:relative">

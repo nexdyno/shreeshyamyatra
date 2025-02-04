@@ -105,7 +105,6 @@ const SignupForm = ({
       return;
     }
     if (step < 3) {
-      console.log(email, "email");
       if (email && step === 1) {
         setStep(step + 2);
       } else {
@@ -188,7 +187,6 @@ const SignupForm = ({
       setError("Please enter a valid email or phone number.");
     }
   };
-  console.log(email, password, " email, password   email, password ");
   return (
     <div className="w-full max-w-md">
       {step === 1 && (

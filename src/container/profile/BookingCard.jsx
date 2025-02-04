@@ -23,7 +23,6 @@ export default function BookingCard({ setType, setShowInvoice, showInvoice }) {
         if (!session) {
           await dispatch(checkUserSession()).unwrap();
         }
-        console.log(session?.user?.id, "session?.user?.id session?.user?.id");
         await dispatch(fetchAllBookingById({ id: session?.user?.id })).unwrap();
       } catch (error) {
         console.error(error, "Error while fetching the booking data");
@@ -136,10 +135,10 @@ export default function BookingCard({ setType, setShowInvoice, showInvoice }) {
                   </p>
                 </div>
 
-                <div className="flex justify-end">
+                <div className="flex justify-end ">
                   <button
                     onClick={() => setShowInvoice(true)}
-                    className="px-5 py-2 text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 transition-colors"
+                    className="px-5 hidden py-2 text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 transition-colors"
                   >
                     Download Invoice
                   </button>

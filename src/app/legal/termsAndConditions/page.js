@@ -141,10 +141,10 @@
 //                 contact our support team:
 //               </p>
 //               <a
-//                 href="mailto:support@shreeshyamyatra.com"
+//                 href="mailto:hello@shreeshyamyatra.com"
 //                 className="text-blue-600 hover:text-blue-800 font-medium"
 //               >
-//                 support@shreeshyamyatra.com
+//                 hello@shreeshyamyatra.com
 //               </a>
 //             </section>
 //           </div>
@@ -340,10 +340,10 @@ const TermsAndConditions = () => {
                 contact our support team:
               </p>
               <a
-                href="mailto:support@shreeshyamyatra.com"
+                href="mailto:hello@shreeshyamyatra.com"
                 className="text-blue-600 hover:text-blue-800 font-medium"
               >
-                support@shreeshyamyatra.com
+                hello@shreeshyamyatra.com
               </a>
             </section>
           </div>

@@ -278,7 +278,6 @@ export default function PaymentBar({ formData, setStep, valid }) {
                 await dispatch(clearAll()).unwrap();
               } else {
                 dispatch(setIsConfirmOrder(true));
-                console.log("this will hit");
                 const bookingDetails = [
                   { type: "text", text: guestData?.name },
                   { type: "text", text: matchPropertyValue?.name },
