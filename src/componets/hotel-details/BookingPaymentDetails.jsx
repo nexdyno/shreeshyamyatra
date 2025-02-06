@@ -49,10 +49,14 @@ export default function BookingPaymentDetails() {
         : 1;
 
     // Calculate extra person price
+
+    const extraPersonGST =
+      (matchedProperty?.gst / 100) * selectedRoom?.extra_charge_per_adult;
+    const extraPersonPriceWIthGST =
+      selectedRoom?.extra_charge_per_adult + extraPersonGST;
+
     const extraPersonPrice =
-      (roomAndGuest?.guestExtra || 0) *
-      selectedRoom?.extra_charge_per_adult *
-      numberOfDays;
+      (roomAndGuest?.guestExtra || 0) * extraPersonPriceWIthGST * numberOfDays;
 
     // Calculate commission
     const roomRate = selectedRoom?.rate || 0;

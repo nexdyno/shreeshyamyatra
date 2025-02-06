@@ -66,7 +66,7 @@ const DateSelector = ({ type }) => {
     <div
       className={`flex items-center w-full lg:flex-1 ${
         type === "no-border" ? "border-none" : "border-b"
-      } lg:border-r lg:border-b-0 border-gray-500 relative font-medium px-2 z-20`}
+      } lg:border-r lg:border-b-0 border-gray-500 relative font-medium px-2 z-30`}
     >
       <FiCalendar size={20} className="text-primary" />
       <div

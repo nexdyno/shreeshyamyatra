@@ -49,7 +49,10 @@ export default function InsideNavabr() {
               className="text-black font-bold"
             />
           </span>
-          <p className="ml-4 text-lg font-semibold font-poppins text-gray-800">
+          <p
+            onClick={() => dispatch(setIsSearchOpen(true))}
+            className="ml-4 text-lg font-semibold font-poppins text-gray-800"
+          >
             {(matchedProperty?.name || searchValue || "Khatu Shyam").slice(
               0,
               20
@@ -64,7 +67,10 @@ export default function InsideNavabr() {
         {/* Booking Info */}
         <div className="flex items-center text-sm font-semibold font-poppins text-gray-600 px-2">
           {/* Date Range */}
-          <span className="mr-6">
+          <span
+            onClick={() => dispatch(setIsSearchOpen(true))}
+            className="mr-6"
+          >
             {bookingDate
               ? `${new Date(bookingDate?.startDate).toLocaleDateString(
                   "en-US",
@@ -83,7 +89,7 @@ export default function InsideNavabr() {
           </span>
 
           {/* Room and Guest Info */}
-          <span>
+          <span onClick={() => dispatch(setIsSearchOpen(true))} className="">
             {roomAndGuest
               ? `${roomAndGuest?.room} room${
                   roomAndGuest.room > 1 ? "s" : ""

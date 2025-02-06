@@ -78,7 +78,7 @@ const SearchInput = () => {
 
       {/* Suggestions Dropdown */}
       {showSuggestions && filteredProperties.length > 0 && (
-        <ul className="absolute left-0 w-full bg-white shadow-md border rounded-md mt-2 z-30">
+        <ul className="absolute left-0 w-full bg-white shadow-md border rounded-md mt-2 z-50">
           {filteredProperties.map((item, index) => (
             <li
               key={index}

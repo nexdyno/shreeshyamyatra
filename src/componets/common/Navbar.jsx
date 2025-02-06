@@ -80,6 +80,14 @@ export default function Navbar() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (session?.user?.email === "" && session?.user?.phone === "")
+        setShowLogin(true);
+    }, 10000); // 10 seconds
+
+    return () => clearTimeout(timer); // Cleanup on unmount
+  }, []);
 
   const data = [
     {
