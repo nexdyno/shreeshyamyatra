@@ -89,9 +89,14 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
       // If a matching event is found, update the room rate
       if (matchingEvent) {
         room.rate = matchingEvent.updated_price;
+        console.log(room?.rate, "room.rate of property");
+      }
+      if (selectedRoom?.id === room?.id) {
+        dispatch(setSelectedRoom(room));
       }
     });
 
+    console.log(rooms, "what is the room");
     return rooms;
   };
 

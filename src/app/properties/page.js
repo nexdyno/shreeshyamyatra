@@ -46,7 +46,6 @@ export default function Page() {
       : property; // If query is empty, show all properties
   };
   useEffect(() => {
-    // const value = localStorage.getItem("searchValue");
     const value = searchValue;
     const filtered = filterProperties(value);
     setFilteredProperties(filtered);

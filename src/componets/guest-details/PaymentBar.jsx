@@ -79,7 +79,10 @@ export default function PaymentBar({ formData, setStep, valid }) {
         payments: [paymentTableId],
       };
 
-      if (!bookingData[0]?.is_manual_entry) {
+      // if (!bookingData[0]?.is_manual_entry) {
+      //   updatedGuestData.booking_status = "confirmed";
+      // }
+      if (bookingData[0]?.is_manual_entry) {
         updatedGuestData.booking_status = "confirmed";
       }
 
