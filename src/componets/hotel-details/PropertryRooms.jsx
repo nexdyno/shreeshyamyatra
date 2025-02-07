@@ -5,18 +5,10 @@ import {
 } from "@/redux/dataSlice";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import {
-  FaCheckCircle,
-  FaTv,
-  FaSnowflake,
-  FaWifi,
-  FaCouch,
-} from "react-icons/fa";
+
 import { useDispatch, useSelector } from "react-redux";
 import DateSelector from "../home/DateSelector";
 import RoomGuestSelector from "../home/RoomGuestSelector";
-import { IoFitnessOutline } from "react-icons/io5";
-import { MdPool, MdSpa, MdTv, MdWifi } from "react-icons/md";
 import Amenities from "../common/Amenities";
 
 export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
