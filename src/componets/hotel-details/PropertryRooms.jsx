@@ -96,7 +96,6 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
       }
     });
 
-    console.log(rooms, "what is the room");
     return rooms;
   };
 
