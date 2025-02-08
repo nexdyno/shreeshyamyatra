@@ -69,7 +69,7 @@ const SearchInput = () => {
         <input
           type="text"
           placeholder="Search by city, hotel"
-          value={inputValue}
+          value={inputValue || searchValue}
           onChange={handleInputChange}
           onFocus={() => setShowSuggestions(true)} // Show suggestions on focus
           className="text-sm px-5 py-1 w-full focus:outline-none font-medium"

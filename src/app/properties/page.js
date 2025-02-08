@@ -1,7 +1,12 @@
 "use client";
 
 import LoadingOfferForYou from "@/container/home/LoadingOfferForYou";
-import { fetchImages, fetchProperty, setIsSearchOpen } from "@/redux/dataSlice";
+import {
+  fetchImages,
+  fetchProperty,
+  fetchPropertyEvent,
+  setIsSearchOpen,
+} from "@/redux/dataSlice";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,9 +20,14 @@ import MobileFooter from "@/componets/common/MobileFooter";
 export default function Page() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const { property, IsSearchOpen, allImages, searchValue } = useSelector(
-    (state) => state.data
-  );
+  const {
+    property,
+    IsSearchOpen,
+    allImages,
+    searchValue,
+    propertyEvent,
+    bookingDate,
+  } = useSelector((state) => state.data);
   const [filteredProperties, setFilteredProperties] = useState(property);
 
   useEffect(() => {
@@ -26,6 +36,7 @@ export default function Page() {
       try {
         await dispatch(fetchProperty()).unwrap();
         await dispatch(fetchImages()).unwrap();
+        await dispatch(fetchPropertyEvent()).unwrap();
       } catch (err) {
       } finally {
         setIsLoading(false);
@@ -45,11 +56,40 @@ export default function Page() {
         )
       : property; // If query is empty, show all properties
   };
+
+  const updateProperties = (properties) => {
+    const start = new Date(bookingDate?.startDate);
+    const end = new Date(bookingDate?.endDate);
+
+    // Filter properties based on matching property_id and overlapping dates with "dateBlock" type
+    const filteredProperties = properties.filter((property) => {
+      const hasDateBlock = propertyEvent.some((event) => {
+        const eventStart = new Date(event.start_date);
+        const eventEnd = new Date(event.end_date);
+
+        return (
+          event.property_id === property.id && // Match property_id
+          event.event_type === "dateBlock" && // Check for 'dateBlock' type
+          ((start >= eventStart && start <= eventEnd) || // Start date overlaps
+            (end >= eventStart && end <= eventEnd) || // End date overlaps
+            (start <= eventStart && end >= eventEnd)) // Encloses the event date
+        );
+      });
+
+      // Exclude properties that have a matching 'dateBlock' event
+      return !hasDateBlock;
+    });
+
+    return filteredProperties;
+  };
+
   useEffect(() => {
     const value = searchValue;
-    const filtered = filterProperties(value);
-    setFilteredProperties(filtered);
-  }, [property, searchValue]);
+    const properties = filterProperties(value);
+    const result = updateProperties(properties);
+
+    setFilteredProperties(result);
+  }, [property, propertyEvent, searchValue, JSON.stringify(bookingDate)]);
 
   const getValidImages = (propertyId) =>
     (Array.isArray(allImages) ? allImages : [])

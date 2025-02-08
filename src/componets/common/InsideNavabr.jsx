@@ -1,6 +1,6 @@
 "use client";
 
-import { setIsSearchOpen } from "@/redux/dataSlice";
+import { setIsSearchOpen, setSearchValue } from "@/redux/dataSlice";
 import React, { useEffect, useState } from "react";
 import { CiEdit } from "react-icons/ci";
 import { IoMdArrowBack } from "react-icons/io";
@@ -28,14 +28,6 @@ export default function InsideNavabr() {
     }
   };
 
-  // useEffect(() => {
-  //   // Ensure localStorage is available
-  //   const storedValue = localStorage.getItem("searchValue");
-  //   if (storedValue) {
-  //     setSearchValue(storedValue);
-  //   }
-  // }, []);
-
   return (
     <div className="bg-white py-4 border-b border-gray-400 px-6 flex items-center justify-between shadow-sm rounded-sm">
       {/* Left Section */}
@@ -53,11 +45,11 @@ export default function InsideNavabr() {
             onClick={() => dispatch(setIsSearchOpen(true))}
             className="ml-4 text-lg font-semibold font-poppins text-gray-800"
           >
-            {(matchedProperty?.name || searchValue || "Khatu Shyam").slice(
+            {(searchValue || matchedProperty?.name || "Khatu Shyam").slice(
               0,
               20
             ) +
-              ((matchedProperty?.name || searchValue || "Khatu Shyam").length >
+              ((searchValue || matchedProperty?.name || "Khatu Shyam").length >
               20
                 ? "..."
                 : "")}

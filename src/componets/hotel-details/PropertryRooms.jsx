@@ -65,8 +65,9 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
   const updateRoomRates = (rooms) => {
     const start = new Date(bookingDate?.startDate);
     const end = new Date(bookingDate?.endDate);
-    rooms.forEach((room) => {
-      // Check if there's an event that matches the room and date range
+
+    // Create a new array of updated rooms
+    const updatedRooms = rooms.map((room) => {
       const matchingEvent = propertyEvent.find((event) => {
         const eventStart = new Date(event.start_date);
         const eventEnd = new Date(event.end_date);
@@ -78,17 +79,21 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
         );
       });
 
-      // If a matching event is found, update the room rate
-      if (matchingEvent) {
-        room.rate = matchingEvent.updated_price;
-        console.log(room?.rate, "room.rate of property");
-      }
-      if (selectedRoom?.id === room?.id) {
-        dispatch(setSelectedRoom(room));
-      }
+      // Return a new room object with updated rate (avoid modifying the original object)
+      return matchingEvent
+        ? { ...room, rate: matchingEvent.updated_price }
+        : room;
     });
 
-    return rooms;
+    // Check if selectedRoom exists and its rate actually changed before dispatching
+    const updatedSelectedRoom = updatedRooms.find(
+      (r) => r.id === selectedRoom?.id
+    );
+    if (updatedSelectedRoom && updatedSelectedRoom.rate !== selectedRoom.rate) {
+      dispatch(setSelectedRoom(updatedSelectedRoom)); // Only dispatch if the rate changed
+    }
+
+    return updatedRooms;
   };
 
   useEffect(() => {
