@@ -222,7 +222,7 @@ export default function Navbar() {
             >
               <FaUserCircle size={24} className="text-primary" />
               <p className="text-sm font-semibold text-gray-700">
-                Welcome, {guestName}
+                Welcome, {guestName?.split(" ")[0]}
               </p>
               {/* Dropdown Menu */}
               {isDropdownOpen && (

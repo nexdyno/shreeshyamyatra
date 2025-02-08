@@ -24,6 +24,7 @@ import RoomCardSkeleton from "@/componets/hotel-details/RoomCardSkeleton";
 
 export default function Page() {
   const [isVisible, setIsVisible] = useState(false);
+  const [isAvalProperty, setIsAvalProperty] = useState(false);
   const dispatch = useDispatch();
   const {
     property,
@@ -31,6 +32,7 @@ export default function Page() {
     matchedProperty,
     error,
     IsSearchOpen,
+    bookingDate,
     allImages,
   } = useSelector((state) => state.data);
   const { sessionFromLocal } = useSelector((state) => state.auth);
@@ -93,6 +95,39 @@ export default function Page() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!matchedProperty || !bookingDate?.startDate || !bookingDate?.endDate)
+      return;
+
+    const start = new Date(bookingDate.startDate);
+    const end = new Date(bookingDate.endDate);
+
+    // Check if the given property has a 'dateBlock' event with overlapping dates
+    const hasDateBlock = propertyEvent.some((event) => {
+      const eventStart = new Date(event.start_date);
+      const eventEnd = new Date(event.end_date);
+
+      return (
+        event?.property_id === matchedProperty?.id && // Match property_id
+        event.event_type === "dateBlock" && // Check for 'dateBlock' type
+        ((start >= eventStart && start <= eventEnd) || // Start date overlaps
+          (end >= eventStart && end <= eventEnd) || // End date overlaps
+          (start <= eventStart && end >= eventEnd)) // Encloses the event date
+      );
+    });
+
+    if (hasDateBlock) {
+      setIsAvalProperty(true);
+      alert("This property is not available for the selected dates."); // Show alert
+    } else {
+      setIsAvalProperty(false);
+    }
+  }, [
+    JSON.stringify(bookingDate),
+    JSON.stringify(matchedProperty),
+    propertyEvent,
+  ]); // Runs when any of these change
+
   return (
     <div className="lg:pt-20">
       <div
@@ -119,7 +154,10 @@ export default function Page() {
             </div>
           </div>
         ) : matchedProperty ? (
-          <HotelDetails property={matchedProperty} />
+          <HotelDetails
+            property={matchedProperty}
+            isAvalProperty={isAvalProperty}
+          />
         ) : error ? (
           <p className="text-center text-red-500">Error: {error}</p> // Show error message
         ) : (

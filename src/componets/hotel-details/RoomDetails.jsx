@@ -17,7 +17,11 @@ import { MdLocationPin } from "react-icons/md";
 import BookingPaymentDetails from "./BookingPaymentDetails";
 import PropertryRooms from "./PropertryRooms";
 
-export default function RoomDetails({ property, propertyWiseImages }) {
+export default function RoomDetails({
+  property,
+  propertyWiseImages,
+  isAvalProperty,
+}) {
   const propertyRules = [
     {
       heading: "Cancellation Policy",
@@ -174,7 +178,7 @@ export default function RoomDetails({ property, propertyWiseImages }) {
           </div>
           <PropertyRules Rules={propertyRules} />
         </div>
-        <div className="hidden lg:block">
+        <div className={`hidden ${isAvalProperty ? "hidden" : "lg:block"}`}>
           <PropertryRooms
             matchRooms={matchRooms}
             propertyWiseImages={propertyWiseImages}
@@ -198,7 +202,7 @@ export default function RoomDetails({ property, propertyWiseImages }) {
               isRedirecting
                 ? "opacity-50 cursor-not-allowed"
                 : "hover:bg-gray-800 hover:text-white"
-            }`}
+            } ${isAvalProperty ? "hidden" : ""}`}
           >
             {isRedirecting ? "Redirecting..." : "Select Rooms"}
           </button>
@@ -211,7 +215,11 @@ export default function RoomDetails({ property, propertyWiseImages }) {
       </div> */}
 
       {/* Booking Details (Desktop) */}
-      <div className="w-[40%] h-full  hidden lg:block ">
+      <div
+        className={`w-[40%] h-full  hidden  ${
+          isAvalProperty ? "hidden" : " lg:block"
+        }`}
+      >
         <BookingPaymentDetails matchRooms={matchRooms} />
       </div>
     </div>

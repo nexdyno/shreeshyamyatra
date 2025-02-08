@@ -62,40 +62,100 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
       .filter((room) => room.available_quantity > 0);
   };
 
+  // const updateRoomRates = (rooms) => {
+  //   const start = new Date(bookingDate?.startDate);
+  //   const end = new Date(bookingDate?.endDate);
+
+  //   // Create a new array of updated rooms
+  //   const updatedRooms = rooms.map((room) => {
+  //     const matchingEvent = propertyEvent.find((event) => {
+  //       const eventStart = new Date(event.start_date);
+  //       const eventEnd = new Date(event.end_date);
+  //       return (
+  //         event.room_id === room.id &&
+  //         ((start >= eventStart && start <= eventEnd) ||
+  //           (end >= eventStart && end <= eventEnd) ||
+  //           (start <= eventStart && end >= eventEnd)) // Overlap check
+  //       );
+  //     });
+
+  //     // Return a new room object with updated rate (avoid modifying the original object)
+  //     return matchingEvent
+  //       ? { ...room, rate: matchingEvent.updated_price }
+  //       : room;
+  //   });
+
+  //   // Check if selectedRoom exists and its rate actually changed before dispatching
+  //   const updatedSelectedRoom = updatedRooms.find(
+  //     (r) => r.id === selectedRoom?.id
+  //   );
+  //   if (updatedSelectedRoom && updatedSelectedRoom.rate !== selectedRoom.rate) {
+  //     dispatch(setSelectedRoom(updatedSelectedRoom)); // Only dispatch if the rate changed
+  //   }
+
+  //   return updatedRooms;
+  // };
   const updateRoomRates = (rooms) => {
     const start = new Date(bookingDate?.startDate);
     const end = new Date(bookingDate?.endDate);
 
+    console.log(rooms, "inside the rooms");
+
     // Create a new array of updated rooms
-    const updatedRooms = rooms.map((room) => {
-      const matchingEvent = propertyEvent.find((event) => {
-        const eventStart = new Date(event.start_date);
-        const eventEnd = new Date(event.end_date);
-        return (
-          event.room_id === room.id &&
-          ((start >= eventStart && start <= eventEnd) ||
+    const updatedRooms = rooms
+      .map((room) => {
+        let updatedRoom = { ...room }; // Copy the room object
+
+        propertyEvent.forEach((event) => {
+          const eventStart = new Date(event.start_date);
+          const eventEnd = new Date(event.end_date);
+
+          // Check if event applies to this room and overlaps with selected dates
+          const isOverlap =
+            (start >= eventStart && start <= eventEnd) ||
             (end >= eventStart && end <= eventEnd) ||
-            (start <= eventStart && end >= eventEnd)) // Overlap check
-        );
-      });
+            (start <= eventStart && end >= eventEnd);
 
-      // Return a new room object with updated rate (avoid modifying the original object)
-      return matchingEvent
-        ? { ...room, rate: matchingEvent.updated_price }
-        : room;
-    });
+          if (event.room_id === room.id && isOverlap) {
+            if (event.event_type === "priceChange") {
+              // Update price only for "priceChange"
+              updatedRoom.rate = event.updated_price;
+            } else if (event.event_type === "roomDateBlock" && event.quantity) {
+              // Subtract quantity for "roomDateBlock"
+              updatedRoom.available_quantity = Math.max(
+                0,
+                updatedRoom.available_quantity - event.quantity
+              );
+            }
+          }
+        });
 
-    // Check if selectedRoom exists and its rate actually changed before dispatching
+        return updatedRoom;
+      })
+      // Remove rooms where available_quantity is 0 or less
+      .filter((room) => room.available_quantity > 0);
+
+    // Check if selectedRoom exists and update only if it changed
     const updatedSelectedRoom = updatedRooms.find(
       (r) => r.id === selectedRoom?.id
     );
-    if (updatedSelectedRoom && updatedSelectedRoom.rate !== selectedRoom.rate) {
-      dispatch(setSelectedRoom(updatedSelectedRoom)); // Only dispatch if the rate changed
+
+    if (
+      updatedSelectedRoom &&
+      (updatedSelectedRoom.rate !== selectedRoom.rate ||
+        updatedSelectedRoom.available_quantity !==
+          selectedRoom.available_quantity)
+    ) {
+      dispatch(setSelectedRoom(updatedSelectedRoom)); // Dispatch only if changes occurred
+    } else if (!updatedSelectedRoom && selectedRoom) {
+      // If selected room is removed (because available_quantity became 0), clear selection
+      dispatch(setSelectedRoom(null));
     }
 
     return updatedRooms;
   };
 
+  console.log(avlRoom, "avlRoom");
   useEffect(() => {
     // Dispatch the action to fetch busy rooms
     dispatch(fetchRoomsBusy());

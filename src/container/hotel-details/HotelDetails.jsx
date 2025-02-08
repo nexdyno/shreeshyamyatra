@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 import { fetchImages } from "@/redux/dataSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-export default function HotelDetails({ property }) {
+export default function HotelDetails({ property, isAvalProperty }) {
   const dispatch = useDispatch();
   const { allImages } = useSelector((state) => state.data);
 
@@ -31,6 +31,7 @@ export default function HotelDetails({ property }) {
         <RoomDetails
           property={property}
           propertyWiseImages={propertyWiseImages}
+          isAvalProperty={isAvalProperty}
         />
       </div>
     </section>

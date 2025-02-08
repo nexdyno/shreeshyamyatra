@@ -45,11 +45,11 @@ export default function InsideNavabr() {
             onClick={() => dispatch(setIsSearchOpen(true))}
             className="ml-4 text-lg font-semibold font-poppins text-gray-800"
           >
-            {(searchValue || matchedProperty?.name || "Khatu Shyam").slice(
+            {(matchedProperty?.name || searchValue || "Khatu Shyam").slice(
               0,
               20
             ) +
-              ((searchValue || matchedProperty?.name || "Khatu Shyam").length >
+              ((matchedProperty?.name || searchValue || "Khatu Shyam").length >
               20
                 ? "..."
                 : "")}
