@@ -16,6 +16,7 @@ import PropertyRules from "../common/PropertyRules";
 import { MdLocationPin } from "react-icons/md";
 import BookingPaymentDetails from "./BookingPaymentDetails";
 import PropertryRooms from "./PropertryRooms";
+import { BiCheckCircle, BiMapPin } from "react-icons/bi";
 
 export default function RoomDetails({
   property,
@@ -173,8 +174,43 @@ export default function RoomDetails({
         {/* Amenities */}
         <div className="pt-4">
           <Amenities amenities={property?.facilities} />
+        </div>
+
+        {/* start form here  */}
+        <div className=" max-w-lg w-full mx-auto">
+          {/* Location Header */}
+          <h2 className="text-xl font-semibold mb-2">Location</h2>
+
+          {/* Location Details */}
+          <div className="space-y-2 text-gray-700">
+            <p className="flex items-center gap-2">
+              <BiCheckCircle className="text-green-500 w-4 h-4" />
+              Khatu
+            </p>
+            {/* <p className="flex items-center gap-2">
+              <BiCheckCircle className="text-green-500 w-4 h-4" />
+              10 minutes walk to Khatu Shyam Mandir
+            </p> */}
+          </div>
+
+          {/* Google Map Embed */}
+          <div className="mt-4 rounded-lg overflow-hidden border">
+            <iframe
+              width="100%"
+              height="200"
+              loading="lazy"
+              allowFullScreen
+              src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}&q=${property?.latitude},${property?.longitude}`}
+            ></iframe>
+          </div>
+
+          {/* Address */}
+          <p className="mt-3 text-sm text-gray-800"> {property?.address}</p>
+        </div>
+        {/* end map here */}
+        <div className="pt-4">
           <div className="flex gap-2 items-center">
-            <p className="text-sm text-black py-2">{property?.description}</p>
+            {/* <p className="text-sm text-black py-2">{property?.description}</p> */}
           </div>
           <PropertyRules Rules={propertyRules} />
         </div>

@@ -86,7 +86,7 @@ const AboutPage = () => {
               <ContactCard
                 icon={<MdEmail size={30} />}
                 title="Email Us"
-                info="contact@shreeshyamyatra.com"
+                info="hello@shreeshyamyatra.com"
               />
               <ContactCard
                 icon={<MdAccessTime size={30} />}

@@ -21,6 +21,7 @@ import InsideNavabr from "@/componets/common/InsideNavabr";
 import { IoArrowBack } from "react-icons/io5";
 import ImageSkeleton from "@/componets/hotel-details/ImageSkeleton";
 import RoomCardSkeleton from "@/componets/hotel-details/RoomCardSkeleton";
+import Swal from "sweetalert2";
 
 export default function Page() {
   const [isVisible, setIsVisible] = useState(false);
@@ -48,7 +49,7 @@ export default function Page() {
       try {
         await dispatch(fetchProperty()).unwrap();
         await dispatch(fetchImages()).unwrap();
-        await dispatch(fetchPropertyEvent().unwrap());
+        await dispatch(fetchPropertyEvent()).unwrap();
       } catch (err) {
         console.error("Error while fetching the data", err);
       } finally {
@@ -102,23 +103,51 @@ export default function Page() {
     const start = new Date(bookingDate.startDate);
     const end = new Date(bookingDate.endDate);
 
-    // Check if the given property has a 'dateBlock' event with overlapping dates
-    const hasDateBlock = propertyEvent.some((event) => {
+    // Function to format date (e.g., "March 1" or "March 1, 2025")
+    const formatDate = (dateStr) => {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "long",
+      });
+    };
+
+    // Find a blocking event
+    const blockedEvent = propertyEvent.find((event) => {
       const eventStart = new Date(event.start_date);
       const eventEnd = new Date(event.end_date);
 
       return (
-        event?.property_id === matchedProperty?.id && // Match property_id
-        event.event_type === "dateBlock" && // Check for 'dateBlock' type
-        ((start >= eventStart && start <= eventEnd) || // Start date overlaps
-          (end >= eventStart && end <= eventEnd) || // End date overlaps
-          (start <= eventStart && end >= eventEnd)) // Encloses the event date
+        event?.property_id === matchedProperty?.id &&
+        event.event_type === "dateBlock" &&
+        ((start >= eventStart && start <= eventEnd) ||
+          (end >= eventStart && end <= eventEnd) ||
+          (start <= eventStart && end >= eventEnd))
       );
     });
 
-    if (hasDateBlock) {
+    if (blockedEvent) {
       setIsAvalProperty(true);
-      alert("This property is not available for the selected dates."); // Show alert
+      Swal.fire({
+        title: "Property Unavailable",
+        html: `
+    <p style="font-size: 16px; color: #555;">
+      Sorry, this property is <strong style="color: #D9534F;">unavailable</strong> from 
+      <strong>${formatDate(blockedEvent.start_date)}</strong> to 
+      <strong>${formatDate(blockedEvent.end_date)}</strong>.
+    </p>
+    <p style="font-size: 14px; margin-top: 10px; color: #777;">
+      Please select different dates or explore other properties.
+    </p>
+  `,
+        icon: "warning",
+        iconColor: "#FFA500",
+        confirmButtonText: "Choose New Dates",
+        confirmButtonColor: "#3085d6",
+        backdrop: true,
+        showCloseButton: true,
+        allowOutsideClick: false,
+      });
     } else {
       setIsAvalProperty(false);
     }
@@ -126,7 +155,7 @@ export default function Page() {
     JSON.stringify(bookingDate),
     JSON.stringify(matchedProperty),
     propertyEvent,
-  ]); // Runs when any of these change
+  ]);
 
   return (
     <div className="lg:pt-20">

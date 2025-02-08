@@ -325,7 +325,7 @@ export default function Page() {
           {/* Individual Price Details */}
           <div className="text-xs">
             <p>
-              Room Price (incl. GST): Rs. {billingData?.finalRoomPrice || 0}
+              Room Price (incl. GST): Rs. {billingData?.roomPriceWIthGST || 0}
             </p>
             {/* Show only if extraPersonPrice > 0 */}
             {billingData?.extraPersonPrice > 0 && (

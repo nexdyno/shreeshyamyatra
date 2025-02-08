@@ -62,44 +62,9 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
       .filter((room) => room.available_quantity > 0);
   };
 
-  // const updateRoomRates = (rooms) => {
-  //   const start = new Date(bookingDate?.startDate);
-  //   const end = new Date(bookingDate?.endDate);
-
-  //   // Create a new array of updated rooms
-  //   const updatedRooms = rooms.map((room) => {
-  //     const matchingEvent = propertyEvent.find((event) => {
-  //       const eventStart = new Date(event.start_date);
-  //       const eventEnd = new Date(event.end_date);
-  //       return (
-  //         event.room_id === room.id &&
-  //         ((start >= eventStart && start <= eventEnd) ||
-  //           (end >= eventStart && end <= eventEnd) ||
-  //           (start <= eventStart && end >= eventEnd)) // Overlap check
-  //       );
-  //     });
-
-  //     // Return a new room object with updated rate (avoid modifying the original object)
-  //     return matchingEvent
-  //       ? { ...room, rate: matchingEvent.updated_price }
-  //       : room;
-  //   });
-
-  //   // Check if selectedRoom exists and its rate actually changed before dispatching
-  //   const updatedSelectedRoom = updatedRooms.find(
-  //     (r) => r.id === selectedRoom?.id
-  //   );
-  //   if (updatedSelectedRoom && updatedSelectedRoom.rate !== selectedRoom.rate) {
-  //     dispatch(setSelectedRoom(updatedSelectedRoom)); // Only dispatch if the rate changed
-  //   }
-
-  //   return updatedRooms;
-  // };
   const updateRoomRates = (rooms) => {
     const start = new Date(bookingDate?.startDate);
     const end = new Date(bookingDate?.endDate);
-
-    console.log(rooms, "inside the rooms");
 
     // Create a new array of updated rooms
     const updatedRooms = rooms
@@ -155,7 +120,6 @@ export default function PropertryRooms({ matchRooms, propertyWiseImages }) {
     return updatedRooms;
   };
 
-  console.log(avlRoom, "avlRoom");
   useEffect(() => {
     // Dispatch the action to fetch busy rooms
     dispatch(fetchRoomsBusy());
